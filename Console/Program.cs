@@ -1,8 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using ClassLibrary;
+using EasySaveLibrary;
+using EasySaveLibrary.Model;
 
-Person p = new Person();
-p.Nom = "Elio";
+JobManager jm = new JobManager(new English());
 
-Console.WriteLine(p.Nom);
