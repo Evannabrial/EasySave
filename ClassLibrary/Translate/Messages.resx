@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <data name="WelcomeMessage" xml:space="preserve">
+    <value>Welcome to the EasySave !</value>
+  </data>
+
+    <data name="PromptLanguage" xml:space="preserve">
+    <value>Please choose a language (EN/FR):</value>
+  </data>
+
+    <data name="Error_NotFound" xml:space="preserve">
+    <value>The requested file was not found.</value>
+  </data>
+</root>
