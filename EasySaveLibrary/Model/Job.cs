@@ -39,4 +39,13 @@ public class Job
         get => _save;
         set => _save = value ?? throw new ArgumentNullException(nameof(value));
     }
+
+    public Job(string name, string source, string target, ITypeSave save)
+    {
+        Id = Guid.NewGuid();
+        Name = name;
+        Source = source;
+        Target = target;
+        Save = save;
+    }
 }
