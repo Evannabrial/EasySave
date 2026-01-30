@@ -41,7 +41,12 @@ public class JobManager
     
     public int DeleteJob(Job jobToDelete)
     {
-        throw new NotImplementedException();
+        if (jobToDelete == null)
+        {
+            return 0;
+        }
+
+        return _lJobs.Remove(jobToDelete) ? 1 : 0;
     }
 
     public int StartMultipleSave(List<int> lIndexJob)
