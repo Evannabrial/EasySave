@@ -9,9 +9,11 @@
     <ItemGroup>
       <EmbeddedResource Update="Translate\Messages.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Messages.Designer.cs</LastGenOutput>
       </EmbeddedResource>
       <EmbeddedResource Update="Translate\Messages.fr.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Messages.fr.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
 

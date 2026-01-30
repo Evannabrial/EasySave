@@ -1,10 +1,9 @@
-﻿using ClassLibrary;
-using System.Globalization;
+﻿using System.Globalization;
 using ClassLibrary.Translate;
-CultureInfo.CurrentUICulture = new CultureInfo("fr-FR");
+
+CultureInfo.CurrentUICulture = new CultureInfo("en-EN");
 
 
 Console.WriteLine("------------------------------\n");
-Console.WriteLine(ClassLibrary.Translate.Messages.WelcomeMessage + "\n");
+Console.WriteLine(Messages.WelcomeMessage + "\n");
 Console.WriteLine("------------------------------\n");
-
