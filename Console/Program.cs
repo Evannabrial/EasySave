@@ -1,9 +1,20 @@
 ﻿using System.Globalization;
-using ClassLibrary.Translate;
+using EasySaveLibrary;
+using EasySaveLibrary.Model;
 
-CultureInfo.CurrentUICulture = new CultureInfo("en-EN");
+
+JobManager jm = new JobManager(new French());
+Dictionary<string, string> dictText = jm.Language.GetTranslations();
 
 
-Console.WriteLine("------------------------------\n");
-Console.WriteLine(Messages.WelcomeMessage + "\n");
-Console.WriteLine("------------------------------\n");
+var @continue = true;
+while (@continue)
+{
+    Console.WriteLine(dictText.GetValueOrDefault("LanguageMessage") + "\n");
+    var input = Console.ReadLine();
+    Console.WriteLine("------------------------------\n");
+    Console.WriteLine(dictText.GetValueOrDefault("WelcomeMessage") + "\n");
+    Console.WriteLine("------------------------------\n");
+    Console.WriteLine(dictText.GetValueOrDefault("MenuMessage"));
+    Console.WriteLine(dictText.GetValueOrDefault("ActionMessage"));
+}

@@ -7,4 +7,9 @@
         <RootNamespace>ClassLibrary</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Update="Translate\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
