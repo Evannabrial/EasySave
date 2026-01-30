@@ -26,7 +26,6 @@ public class JobManager
         _lJobs = new List<Job>();
     }
 
-    // TODO Implémenter l'ajout d'un Job dans lJobs
     public Job AddJob(string name, string source, string target, ITypeSave typeSave)
     {
         Job newJob = new Job(name, source, target, typeSave);
@@ -36,7 +35,17 @@ public class JobManager
     
     public Job UpdateJob(Job jobToUpdate, string name, string source, string target, ITypeSave typeSave)
     {
-        throw new NotImplementedException();
+        if (jobToUpdate == null || !_lJobs.Contains(jobToUpdate))
+        {
+            return null;
+        }
+
+        jobToUpdate.Name = name;
+        jobToUpdate.Source = source;
+        jobToUpdate.Target = target;
+        jobToUpdate.Save = typeSave;
+
+        return jobToUpdate;
     }
     
     public int DeleteJob(Job jobToDelete)
