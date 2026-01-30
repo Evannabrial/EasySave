@@ -29,7 +29,9 @@ public class JobManager
     // TODO Implémenter l'ajout d'un Job dans lJobs
     public Job AddJob(string name, string source, string target, ITypeSave typeSave)
     {
-        throw new NotImplementedException();
+        Job newJob = new Job(name, source, target, typeSave);
+        _lJobs.Add(newJob);
+        return newJob;
     }
     
     public Job UpdateJob(Job jobToUpdate, string name, string source, string target, ITypeSave typeSave)

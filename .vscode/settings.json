@@ -1,0 +1,10 @@
+{
+  "code-runner.runInTerminal": true,
+  "code-runner.saveAllFilesBeforeRun": true,
+  "code-runner.executorMap": {
+    "csharp": "dotnet run --project \"$workspaceRoot/Console/Console.csproj\""
+  },
+  "code-runner.executorMapByFileExtension": {
+    ".cs": "dotnet run --project \"$workspaceRoot/Console/Console.csproj\""
+  }
+}
