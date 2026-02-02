@@ -60,7 +60,32 @@ public class JobManager
 
     public int StartMultipleSave(List<int> lIndexJob)
     {
-        throw new NotImplementedException();
+        if (lIndexJob == null || lIndexJob.Count == 0)
+        {
+            return 0;
+        }
+
+        int successCount = 0;
+
+        foreach (int index in lIndexJob)
+        {
+            // Check if the index is valid
+            if (index >= 0 && index < _lJobs.Count)
+            {
+                Job job = _lJobs[index];
+                
+                // Start the save
+                int result = job.Save.StartSave(job);
+                
+                // If the save succeeds (convention: returns 1 for success)
+                if (result > 0)
+                {
+                    successCount++;
+                }
+            }
+        }
+
+        return successCount;
     }
     
     public void SwitchLanguage(ILanguage language)
