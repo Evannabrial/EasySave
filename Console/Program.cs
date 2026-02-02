@@ -1,10 +1,10 @@
-﻿using EasySaveLibrary;
+using EasySaveLibrary;
 using EasySaveLibrary.Model;
 
 
 JobManager jm = new JobManager(new English());
 Dictionary<string, string> dictText = jm.Language.GetTranslations();
-
+Console.ForegroundColor = ConsoleColor.Blue;
 
 var @continue = true;
 while (@continue)
