@@ -4,17 +4,21 @@ namespace EasySaveLibrary.Model;
 
 public class Job
 {
-    private Guid _id;
     private string _name;
+    private ITypeSave _save;
     private string _source;
     private string _target;
-    private ITypeSave _save;
 
-    public Guid Id
+    public Job(string name, string source, string target, ITypeSave save)
     {
-        get => _id;
-        set => _id = value;
+        Id = Guid.NewGuid();
+        Name = name;
+        Source = source;
+        Target = target;
+        Save = save;
     }
+
+    public Guid Id { get; set; }
 
     public string Name
     {
@@ -38,14 +42,5 @@ public class Job
     {
         get => _save;
         set => _save = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public Job(string name, string source, string target, ITypeSave save)
-    {
-        Id = Guid.NewGuid();
-        Name = name;
-        Source = source;
-        Target = target;
-        Save = save;
     }
 }

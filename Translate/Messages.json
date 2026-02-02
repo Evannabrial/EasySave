@@ -1,0 +1,8 @@
+{
+  "LanguageMessage": "Please select a language \n 1. Français \n 2. English :",
+  "WelcomeMessage": "Welcome to EasySave v1.0 !",
+  "DescriptionMessage": "A backup solution from ProSoft",
+  "MenuMessage": "Main Menu",
+  "ActionMessage": "What would you like to do?",
+  "LanguageErrorMessage": "Invalid choice, please try again."
+}

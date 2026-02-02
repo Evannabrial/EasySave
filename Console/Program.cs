@@ -1,18 +1,46 @@
-﻿// See https://aka.ms/new-console-template for more information
-
 using EasySaveLibrary;
-using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 
+
 JobManager jm = new JobManager(new English());
+Dictionary<string, string> dictText = jm.Language.GetTranslations();
 
-ITypeSave typeSave = new Differential();
-Job job = jm.AddJob("test", "C:/source", "C:/target", typeSave);
-Console.WriteLine($"Job créé: {job.Name} | {job.Source} -> {job.Target}");
 
-Job updatedJob = jm.UpdateJob(job, "test modifié", "C:/new_source", "C:/new_target", new Sequential());
-Console.WriteLine($"Job mis à jour: {updatedJob.Name} | {updatedJob.Source} -> {updatedJob.Target}");
+var @continue = true;
+while (@continue)
+{
+    Console.WriteLine(dictText.GetValueOrDefault("LanguageMessage") + "\n");
+    var input = Console.ReadLine();
+    bool isLangChoose = false;
+    while (!isLangChoose)
+    {
+        switch (input)
+        {
+            case "1":
+                jm.Language = new French();
+                dictText = jm.Language.GetTranslations();
+                isLangChoose = true;
+                Console.Clear();
+                break;
+            case "2":
+                jm.Language = new English();
+                dictText = jm.Language.GetTranslations();
+                isLangChoose = true;
+                Console.Clear();
+                break;
+            default:
+                Console.Clear();
+                Console.WriteLine(dictText.GetValueOrDefault("LanguageErrorMessage"));
+                Console.WriteLine(dictText.GetValueOrDefault("LanguageMessage") + "\n");
+                input = Console.ReadLine();
+                break;
+        } 
+    }
+    Console.WriteLine("------------------------------\n");
+    Console.WriteLine(dictText.GetValueOrDefault("WelcomeMessage") + "\n");
+    Console.WriteLine("------------------------------\n");
+    Console.WriteLine(dictText.GetValueOrDefault("MenuMessage"));
+    Console.WriteLine(dictText.GetValueOrDefault("ActionMessage"));
+    @continue = false;
 
-int result = jm.DeleteJob(updatedJob);
-Console.WriteLine($"Job supprimé: {(result == 1 ? "succès" : "échec")}");
-
+}

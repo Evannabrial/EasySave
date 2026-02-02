@@ -5,8 +5,8 @@ namespace EasySaveLibrary;
 
 public class JobManager
 {
-    private List<Job> _lJobs;
     private ILanguage _language;
+    private List<Job> _lJobs;
 
     public List<Job> LJobs
     {
