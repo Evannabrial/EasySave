@@ -23,7 +23,7 @@ public class JobManager
     public JobManager(ILanguage language)
     {
         _language = language;
-        _lJobs = new List<Job>();
+        _lJobs = this.LoadJobsFromJson();
     }
 
     public Job AddJob(string name, string source, string target, ITypeSave typeSave)
@@ -89,6 +89,18 @@ public class JobManager
     }
     
     public void SwitchLanguage(ILanguage language)
+    {
+        throw new NotImplementedException();
+    }
+
+    // Return all the jobs from a json file
+    private List<Job> LoadJobsFromJson()
+    {
+        throw new NotImplementedException();
+    }
+
+    // Save the jobs in lJobs in json file
+    public void SaveJobs()
     {
         throw new NotImplementedException();
     }
