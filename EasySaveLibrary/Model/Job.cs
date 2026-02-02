@@ -8,6 +8,7 @@ public class Job
     private string _name;
     private string _source;
     private string _target;
+    private DateTime? _lastTimeRun;
     private ITypeSave _save;
 
     public Guid Id
@@ -34,6 +35,12 @@ public class Job
         set => _target = value ?? throw new ArgumentNullException(nameof(value));
     }
 
+    public DateTime? LastTimeRun
+    {
+        get => _lastTimeRun;
+        set => _lastTimeRun = value;
+    }
+
     public ITypeSave Save
     {
         get => _save;
@@ -46,6 +53,7 @@ public class Job
         Name = name;
         Source = source;
         Target = target;
+        LastTimeRun = null;
         Save = save;
     }
 }

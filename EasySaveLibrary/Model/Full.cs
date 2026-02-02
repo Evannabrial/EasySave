@@ -16,6 +16,8 @@ public class Full : ITypeSave
     {
         bool isFile = File.Exists(job.Source);
         bool isDirectory = Directory.Exists(job.Source);
+        string target = job.Target + "\\" + job.Name + "-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+        Directory.CreateDirectory(target);
         
         if (!isDirectory && !isFile)
         {
@@ -27,7 +29,7 @@ public class Full : ITypeSave
             try
             {
                 string nameFile = Regex.Match(job.Source, @"[^\\]+$").Value;
-                File.Copy(job.Source, job.Target + "\\"  + nameFile);
+                File.Copy(job.Source, target + "\\"  + nameFile);
             }
             catch (Exception e)
             {
@@ -60,7 +62,10 @@ public class Full : ITypeSave
 
                         try
                         {
-                            Directory.CreateDirectory(job.Target + pathToCreate);
+                            if (!Directory.Exists(target + pathToCreate))
+                            {
+                                Directory.CreateDirectory(target + pathToCreate);
+                            }
                         }
                         catch (Exception e)
                         {
@@ -72,7 +77,11 @@ public class Full : ITypeSave
                     {
                         try
                         {
-                            File.Copy(el, job.Target + pathToCreate);
+                            if (File.Exists(target + pathToCreate))
+                            {
+                                File.Delete(target + pathToCreate);
+                            }
+                            File.Copy(el, target + pathToCreate);
                         }
                         catch (Exception e)
                         {
@@ -83,7 +92,7 @@ public class Full : ITypeSave
                 }
             }
         }
-        
+        job.LastTimeRun = DateTime.Now;
         return 0;
     }
 }
