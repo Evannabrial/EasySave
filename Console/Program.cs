@@ -8,8 +8,8 @@ JobManager jm = new JobManager(new English());
 Dictionary<string, string> dictText = jm.Language.GetTranslations();
 Console.ForegroundColor = ConsoleColor.DarkBlue;
 
-var @continue = true;
-while (@continue)
+var _continue = true;
+while (_continue)
 {
     Console.WriteLine(dictText.GetValueOrDefault("LanguageMessage") + "\n");
     var input = Console.ReadLine();
@@ -63,37 +63,62 @@ while (@continue)
                 string target = Console.ReadLine();
                 Console.WriteLine(dictText.GetValueOrDefault("TypeSaveMessage"));
                 string typeSave = Console.ReadLine();
+                ITypeSave typesave = new Full();
                 switch (typeSave)
                 {
-                    case "1"
+                    case "1" :
                     {
+                        typesave = new Full();
+                        break;
+                    }
+                    case "2" :
+                    {
+                        typesave = new Differential();
+                        break;
+                    }
+                    default:
+                    {
+                        typesave = new Full();
+                        break;
                     }
                 }
-                jm.AddJob(name, source, target, typeSave);
+                jm.AddJob(name, source, target, typesave);
                 isActionChoose = true;
                 break;
             case "2":
                 Console.Clear();
-                Console.WriteLine(dictText.GetValueOrDefault("ModifyJobsMessage"));
-                // TODO Implémenter l'affichage des Jobs
+                Console.WriteLine(dictText.GetValueOrDefault("DisplayJobMessage"));
+                foreach (Job job in jm.LJobs)
+                {
+                    Console.WriteLine(job);
+                }
                 isActionChoose = true;
                 break;
             case "3":
+                Console.Clear();
+                Console.WriteLine(dictText.GetValueOrDefault("ModifyJobsMessage"));
+                foreach (var job in jm.LJobs.Select((value, index) => new { value, index }))
+                {
+                    Console.WriteLine(job.index.ToString() + job.value);
+                }
+                isActionChoose = true;
+                break;
+            case "4":
                 Console.Clear();
                 Console.WriteLine(dictText.GetValueOrDefault("DeleteJobsMessage"));
                 // TODO Implémenter la suppression d'un Job
                 isActionChoose = true;
                 break;
-            case "4":
+            case "5":
                 Console.Clear();
                 Console.WriteLine(dictText.GetValueOrDefault("StartSaveMessage"));
                 // TODO Implémenter le lancement d'une sauvegarde
                 isActionChoose = true;
                 break;
-            case "5":
+            case "6":
                 Console.Clear();
                 Console.WriteLine(dictText.GetValueOrDefault("ExitMessage"));
-                @continue = false;
+                _continue = false;
                 isActionChoose = true;
                 break;
 

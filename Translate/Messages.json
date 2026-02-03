@@ -13,5 +13,5 @@
   "ModifyJobMessage" : "Modify an existing backup job:",
   "DeleteJobMessage" : "Delete a backup job:",
   "StartBackupMessage" : "Select a job to start the backup:",
-  "ExitMessage" : "Exiting the application. Goodbye!"
+  "ExitMessage" : "Exiting the application. Goodbye!",
 }
