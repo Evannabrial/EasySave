@@ -1,5 +1,6 @@
 using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
+using System.Text.Json;
 
 namespace EasySaveLibrary;
 
@@ -96,12 +97,91 @@ public class JobManager
     // Return all the jobs from a json file
     private List<Job> LoadJobsFromJson()
     {
-        throw new NotImplementedException();
+        string filePath = "../Jobs/jobs.json";
+
+        // Check if file exists
+        if (!File.Exists(filePath))
+        {
+            return new List<Job>();
+        }
+
+        // Read file
+        string jsonString = File.ReadAllText(filePath);
+
+        // If file is empty, return empty list
+        if (string.IsNullOrWhiteSpace(jsonString))
+        {
+            return new List<Job>();
+        }
+
+        // Deserialize manually because ITypeSave is an interface
+        List<Job> jobs = new List<Job>();
+        using JsonDocument doc = JsonDocument.Parse(jsonString);
+        
+        foreach (JsonElement element in doc.RootElement.EnumerateArray())
+        {
+            string name = element.GetProperty("Name").GetString() ?? "";
+            string source = element.GetProperty("Source").GetString() ?? "";
+            string target = element.GetProperty("Target").GetString() ?? "";
+            string saveType = element.GetProperty("SaveType").GetString() ?? "Full";
+            
+            // Create the correct save type
+            ITypeSave typeSave = saveType switch
+            {
+                "Differential" => new Differential(),
+                _ => new Full()
+            };
+            
+            Job job = new Job(name, source, target, typeSave);
+            
+            // Get ID if present
+            if (element.TryGetProperty("Id", out JsonElement idElement))
+            {
+                job.Id = idElement.GetGuid();
+            }
+            
+            // Get LastTimeRun if present
+            if (element.TryGetProperty("LastTimeRun", out JsonElement lastTimeElement) && lastTimeElement.ValueKind != JsonValueKind.Null)
+            {
+                job.LastTimeRun = lastTimeElement.GetDateTime();
+            }
+            
+            jobs.Add(job);
+        }
+
+        return jobs;
     }
 
     // Save the jobs in lJobs in json file
     public void SaveJobs()
     {
-        throw new NotImplementedException();
+        string filePath = "../Jobs/jobs.json";
+
+        // Create directory if it doesn't exist
+        string? directory = Path.GetDirectoryName(filePath);
+        if (directory != null && !Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        // Create a list of anonymous objects for serialization
+        var jobsToSave = _lJobs.Select(job => new
+        {
+            job.Id,
+            job.Name,
+            job.Source,
+            job.Target,
+            job.LastTimeRun,
+            SaveType = job.Save.GetType().Name // Store the type name
+        }).ToList();
+
+        // Serialize to JSON
+        string jsonString = JsonSerializer.Serialize(jobsToSave, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        // Write to file
+        File.WriteAllText(filePath, jsonString);
     }
 }
