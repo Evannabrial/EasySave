@@ -3,6 +3,15 @@
   "WelcomeMessage": "Welcome to EasySave v1.0 !",
   "DescriptionMessage": "A backup solution from ProSoft",
   "MenuMessage": "Main Menu",
-  "ActionMessage": "What would you like to do?",
-  "LanguageErrorMessage": "Invalid choice, please try again."
+  "ActionMessage": "What would you like to do? \n 1. Create a job \n 2. Modify a job \n 3. Delete a Job \n 4. Start a Save \n 5. Exit",
+  "LanguageErrorMessage": "Invalid choice, please try again.",
+  "CreateJobMessage" : "Create a new backup job:\n Enter name, source path, destination path, and type of backup (Full or Differential).",
+  "JobNameMessage" : "Enter the job name:",
+  "SourcePathMessage" : "Enter the source path:",
+  "DestinationPathMessage" : "Enter the destination path:",
+  "BackupTypeMessage" : "Enter the type of backup (1.Full\n2.Differential):",
+  "ModifyJobMessage" : "Modify an existing backup job:",
+  "DeleteJobMessage" : "Delete a backup job:",
+  "StartBackupMessage" : "Select a job to start the backup:",
+  "ExitMessage" : "Exiting the application. Goodbye!"
 }

@@ -3,6 +3,15 @@
   "WelcomeMessage": "Bienvenue sur EasySave v.1.0",
   "DescriptionMessage": "Une solution de sauvegarde signée ProSoft",
   "MenuMessage": "Menu principal",
-  "ActionMessage": "Que souhaitez-vous faire ?",
-  "LanguageErrorMessage": "Choix invalide, veuillez réessayer."
+  "ActionMessage": "Que souhaitez-vous faire ? \n 1. Créer une tâche \n 2. Modifier une tâche \n 3. Supprimer une tâche \n 4. Lancer une sauvegarde \n 5. Quitter",
+  "LanguageErrorMessage": "Choix invalide, veuillez réessayer.",
+  "CreateJobMessage" : "Créer une nouvelle tâche de sauvegarde : \n Entrez le nom, le chemin source, le chemin de destination et le type de sauvegarde (Complète ou Différentielle).",
+    "JobNameMessage" : "Entrez le nom de la tâche :",
+    "SourcePathMessage" : "Entrez le chemin source :",
+    "DestinationPathMessage" : "Entrez le chemin de destination :",
+    "BackupTypeMessage" : "Entrez le type de sauvegarde (1.Complète\n2.Différentielle) :",
+  "ModifyJobMessage" : "Modifier une tâche de sauvegarde existante :",
+  "DeleteJobMessage" : "Supprimer une tâche de sauvegarde :",
+  "StartBackupMessage" : "Sélectionnez une tâche pour lancer la sauvegarde :",
+  "ExitMessage" : "Fermeture de l'application. Au revoir !"
 }
