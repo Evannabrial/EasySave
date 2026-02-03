@@ -97,15 +97,12 @@ public class Differential : ITypeSave
                     {
                         queue.Enqueue(el);
                         marked.Add(el);
-
-                        try
+                        DirectoryInfo actualDirInfo = new DirectoryInfo(el);
+                        
+                        // If a directory is new and he has been add after the last save we create it
+                        if (!Directory.Exists(pathLastSave + pathToCreate) && actualDirInfo.LastWriteTime > dateLast)
                         {
                             Directory.CreateDirectory(target + pathToCreate);
-                        }
-                        catch (Exception e)
-                        {
-                            // Console.WriteLine(e);
-                            return 3;
                         }
                     }
                     else
@@ -114,12 +111,23 @@ public class Differential : ITypeSave
                         {
                             if (File.GetLastWriteTime(el) > dateLast)
                             {
+                                MatchCollection directories = Regex.Matches(pathToCreate,  @"[^\\]+(?=\\)");
+                                string pathNewDirectory = "";
+                                foreach (Match match in directories)
+                                {
+                                    // We create every directory the modified file is inside
+                                    if (!Directory.Exists(target + match.Value))
+                                    {
+                                        pathNewDirectory = pathNewDirectory + "\\" + match.Value;
+                                        Directory.CreateDirectory(target + pathNewDirectory);
+                                    }
+                                }
                                 File.Copy(el, target + pathToCreate);
                             }
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.Message);
+                            // Console.WriteLine(e.Message);
                             return 2;
                         }
                     }

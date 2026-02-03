@@ -77,10 +77,6 @@ public class Full : ITypeSave
                     {
                         try
                         {
-                            if (File.Exists(target + pathToCreate))
-                            {
-                                File.Delete(target + pathToCreate);
-                            }
                             File.Copy(el, target + pathToCreate);
                         }
                         catch (Exception e)
