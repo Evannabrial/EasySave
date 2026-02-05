@@ -12,6 +12,6 @@
     "BackupTypeMessage" : "Entrez le type de sauvegarde (1.Complète\n2.Différentielle) :",
   "ModifyJobMessage" : "Modifier une tâche de sauvegarde existante :\nChoisissez la tâche à modifier et entrez les nouvelles informations.",
   "DeleteJobMessage" : "Supprimer une tâche de sauvegarde :",
-  "StartBackupMessage" : "Sélectionnez une tâche pour lancer la sauvegarde :",
+  "StartSaveMessage" : "Sélectionnez une tâche pour lancer la sauvegarde :",
   "ExitMessage" : "Fermeture de l'application. Au revoir !"
 }

@@ -159,7 +159,18 @@ while (!isLangChoose)
                 case "5":
                     Console.Clear();
                     Console.WriteLine(dictText.GetValueOrDefault("StartSaveMessage"));
-                    // TODO Implémenter le lancement d'une sauvegarde
+                    foreach (var job in jm.LJobs.Select((value, index) => new { value, index }))
+                    {
+                        Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
+                    }
+                    string input4 = Console.ReadLine();
+                    List<int> lIndexJob = new List<int>();
+                    if (int.TryParse(input4, out int selectedIndex3) && selectedIndex3 >= 0 &&
+                        selectedIndex3 < jm.LJobs.Count)
+                    {
+                        lIndexJob.Add(selectedIndex3);
+                    }
+                    jm.StartMultipleSave(lIndexJob);
                     isActionChoose = true;
                     break;
                 case "6":
