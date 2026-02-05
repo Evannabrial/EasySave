@@ -54,10 +54,10 @@ public class JobManager
     {
         if (jobToDelete == null)
         {
-            return 0;
+            return 1;
         }
 
-        return _lJobs.Remove(jobToDelete) ? 1 : 0;
+        return _lJobs.Remove(jobToDelete) ? 0 : 1;
     }
 
     public int StartMultipleSave(string userChoice)

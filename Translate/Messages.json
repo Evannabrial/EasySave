@@ -1,5 +1,5 @@
 {
-  "LanguageMessage": "Please select a language \n 1. Français \n 2. English :",
+  "LanguageMessage": "Please select a language \n 1. Français \n 2. English:",
   "WelcomeMessage": "Welcome to EasySave v1.0 !",
   "DescriptionMessage": "A backup solution from ProSoft",
   "MenuMessage": "Main Menu",
@@ -13,5 +13,9 @@
   "ModifyJobMessage" : "Modify an existing backup job:\nChoose the job to modify and enter the new information.",
   "DeleteJobMessage" : "Delete a backup job:",
   "StartBackupMessage" : "Select a job to start the backup:",
-  "ExitMessage" : "Exiting the application. Goodbye!"
+  "ExitMessage" : "Exiting the application. Goodbye!",
+    "SaveSuccessMessage" : "Backup completed successfully!",
+    "SaveErrorMessage" : "An error occurred during the backup.",
+    "DeleteSuccessMessage" : "Job deleted successfully!",
+    "DeleteErrorMessage" : "An error occurred while deleting the job."
 }

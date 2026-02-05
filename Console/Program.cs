@@ -153,7 +153,19 @@ while (!isLangChoose)
                     {
                         selectedJob2 = jm.LJobs[selectedIndex2];
                     }
-                    jm.DeleteJob(selectedJob2);
+                    int statusDeleteJob = jm.DeleteJob(selectedJob2);
+                    if (statusDeleteJob == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(dictText.GetValueOrDefault("DeleteSuccessMessage"));
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(dictText.GetValueOrDefault("DeleteErrorMessage"));
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    }
                     isActionChoose = true;
                     break;
                 case "5":
@@ -164,7 +176,19 @@ while (!isLangChoose)
                         Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
                     }
                     string input4 = Console.ReadLine();
-                    jm.StartMultipleSave(input4);
+                    int status = jm.StartMultipleSave(input4);
+                    if (status == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(dictText.GetValueOrDefault("SaveSuccessMessage"));
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(dictText.GetValueOrDefault("SaveErrorMessage"));
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    }
                     isActionChoose = true;
                     break;
                 case "6":
@@ -184,4 +208,4 @@ while (!isLangChoose)
 
     }
 }
-
+jm.SaveJobs();

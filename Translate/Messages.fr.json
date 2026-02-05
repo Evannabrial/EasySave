@@ -1,5 +1,5 @@
 {
-  "LanguageMessage": "Veuillez selectionner le langage \n 1. Français \n 2. English :",
+  "LanguageMessage": "Veuillez selectionner le langage \n 1. Français \n 2. English:",
   "WelcomeMessage": "Bienvenue sur EasySave v.1.0",
   "DescriptionMessage": "Une solution de sauvegarde signée ProSoft",
   "MenuMessage": "Menu principal",
@@ -13,5 +13,9 @@
   "ModifyJobMessage" : "Modifier une tâche de sauvegarde existante :\nChoisissez la tâche à modifier et entrez les nouvelles informations.",
   "DeleteJobMessage" : "Supprimer une tâche de sauvegarde :",
   "StartSaveMessage" : "Sélectionnez une tâche pour lancer la sauvegarde :",
-  "ExitMessage" : "Fermeture de l'application. Au revoir !"
+  "ExitMessage" : "Fermeture de l'application. Au revoir !",
+  "SaveSuccessMessage" : "Sauvegarde réussie !",
+  "SaveErrorMessage" : "Une erreur est survenue lors de la sauvegarde.",
+  "DeleteSuccessMessage" : "Tâche supprimée avec succès !",
+  "DeleteErrorMessage" : "Une erreur est survenue lors de la suppression de la tâche."
 }
