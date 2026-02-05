@@ -164,13 +164,7 @@ while (!isLangChoose)
                         Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
                     }
                     string input4 = Console.ReadLine();
-                    List<int> lIndexJob = new List<int>();
-                    if (int.TryParse(input4, out int selectedIndex3) && selectedIndex3 >= 0 &&
-                        selectedIndex3 < jm.LJobs.Count)
-                    {
-                        lIndexJob.Add(selectedIndex3);
-                    }
-                    jm.StartMultipleSave(lIndexJob);
+                    jm.StartMultipleSave(input4);
                     isActionChoose = true;
                     break;
                 case "6":
@@ -190,3 +184,4 @@ while (!isLangChoose)
 
     }
 }
+

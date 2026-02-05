@@ -1,6 +1,7 @@
 using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace EasySaveLibrary;
 
@@ -59,14 +60,64 @@ public class JobManager
         return _lJobs.Remove(jobToDelete) ? 1 : 0;
     }
 
-    public int StartMultipleSave(List<int> lIndexJob)
+    public int StartMultipleSave(string userChoice)
     {
-        if (lIndexJob == null || lIndexJob.Count == 0)
+        if (userChoice == null && userChoice.Length >3)
         {
-            return 0;
+            return 1;
         }
 
-        int successCount = 0;
+        List<int> lIndexJob = new List<int>();
+
+        if (userChoice.Contains('-'))
+        {
+            Match regexMatches = Regex.Match(userChoice, @"(\d+)\s*[;-]\s*(\d+)");
+
+            if (!regexMatches.Success)
+            {
+                return 1;
+            }
+            
+            int firstNumber = int.Parse(regexMatches.Groups[1].Value);
+            int secondNumber = int.Parse(regexMatches.Groups[2].Value);
+
+            if (secondNumber < firstNumber && secondNumber <= LJobs.Count)
+            {
+                return 1;
+            }
+            lIndexJob = Enumerable.Range(firstNumber, secondNumber - firstNumber + 1).ToList();
+        }
+        else if (userChoice.Contains(';'))
+        {
+            Match regexMatches = Regex.Match(userChoice, @"(\d+)\s*[;-]\s*(\d+)");
+            
+            if (!regexMatches.Success)
+            {
+                return 1;
+            }
+            
+            int firstNumber = int.Parse(regexMatches.Groups[1].Value);
+            int secondNumber = int.Parse(regexMatches.Groups[2].Value);
+            
+            if (secondNumber < firstNumber && secondNumber <= LJobs.Count)
+            {
+                return 1;
+            }
+            
+            lIndexJob.Add(firstNumber);
+            lIndexJob.Add(secondNumber);
+        }
+        else
+        {
+            Match match = Regex.Match(userChoice, @"(\d+)");
+            if (!match.Success)
+            {
+                return 1;
+            }
+            int job = int.Parse(match.Value);
+            
+            lIndexJob.Add(job);
+        }
 
         foreach (int index in lIndexJob)
         {
@@ -79,14 +130,14 @@ public class JobManager
                 int result = job.Save.StartSave(job);
                 
                 // If the save succeeds (convention: returns 1 for success)
-                if (result > 0)
+                if (result != 0)
                 {
-                    successCount++;
+                    return 1;
                 }
             }
         }
 
-        return successCount;
+        return 0;
     }
     
     public void SwitchLanguage(ILanguage language)
