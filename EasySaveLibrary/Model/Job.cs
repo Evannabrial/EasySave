@@ -56,4 +56,19 @@ public class Job
         LastTimeRun = null;
         Save = save;
     }
+
+    public override string ToString()
+    {
+        string stringTypesave = "";
+        if (Save is Full)
+        {
+            stringTypesave = "Full backup";
+        }
+        else if (Save is Differential)
+        {
+            stringTypesave = "Differential backup";
+        }
+        
+        return Name + " | " + Source + " | " + Target + " | "+ stringTypesave;
+    }
 }
