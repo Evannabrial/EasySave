@@ -75,6 +75,17 @@ public class Differential : ITypeSave
                 if (File.GetLastWriteTime(job.Source) > File.GetLastWriteTime(pathLastSave))
                 {
                     Stopwatch startTimeDir = Stopwatch.StartNew();
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target,
+                        action: "Creation of a directory",
+                        state: "ON",
+                        progress: 0,
+                        nbFile: 2,
+                        nbFileLeft: 2,
+                        sizeFileLeft: new FileInfo(job.Source).Length
+                    );
                     Directory.CreateDirectory(target);
                     startTimeDir.Stop();
                     logManager.WriteNewLog(
@@ -83,6 +94,17 @@ public class Differential : ITypeSave
                         targetPath: target, 
                         action: "Creation of a directory", 
                         execTime: startTimeDir.Elapsed.TotalMilliseconds
+                    );
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target,
+                        action: "Copy of a file",
+                        state: "ON",
+                        progress: 50,
+                        nbFile: 2,
+                        nbFileLeft: 1,
+                        sizeFileLeft: new FileInfo(job.Source).Length
                     );
                     
                     Stopwatch startTime = Stopwatch.StartNew();
@@ -95,6 +117,17 @@ public class Differential : ITypeSave
                         action: "Copy of a file", 
                         execTime: startTimeDir.Elapsed.TotalMilliseconds
                     );
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target,
+                        action: "Copy of a file",
+                        state: "ON",
+                        progress: 100,
+                        nbFile: 2,
+                        nbFileLeft: 0,
+                        sizeFileLeft: 0
+                    );
                 }
             }
             catch (Exception e)
@@ -105,11 +138,28 @@ public class Differential : ITypeSave
             return 0;
         }
         
+        // Vars for data and logs
+        long size = Directory.EnumerateFiles(job.Source, "*", SearchOption.AllDirectories)
+            .Sum(f => new FileInfo(f).Length);
+        int nbFile = Directory.EnumerateFiles(job.Source, "*", SearchOption.AllDirectories)
+            .Count();
+        int nbFileManaged = 0;
+        
         // We use the Breadth-first (parcours en largeur) search algorithm to visit all the folders and files in the source
         // See algorithm here https://en.wikipedia.org/wiki/Breadth-first_search
         Queue<string> queue = new Queue<string>();
         List<string> marked = new List<string>();
+        
+        Stopwatch startTimeDirStart = Stopwatch.StartNew();
         Directory.CreateDirectory(target);
+        startTimeDirStart.Stop();
+        logManager.WriteNewLog(
+            name: job.Name, 
+            sourcePath: job.Source, 
+            targetPath: target , 
+            action: "Creation of a directory", 
+            execTime: startTimeDirStart.Elapsed.TotalMilliseconds
+        );
         queue.Enqueue(job.Source);
         
         while (queue.Count > 0)
@@ -168,15 +218,38 @@ public class Differential : ITypeSave
                                         );
                                     }
                                 }
+                                logManager.WriteNewLog(
+                                    name: job.Name,
+                                    sourcePath: job.Source,
+                                    targetPath: target + pathToCreate,
+                                    action: "Copy of a File",
+                                    state: "ON",
+                                    progress: (nbFileManaged / (double)nbFile) * 100,
+                                    nbFile: nbFile,
+                                    nbFileLeft: nbFile - nbFileManaged,
+                                    sizeFileLeft: size / (nbFileManaged + 1)
+                                );
                                 Stopwatch startTimeFile = Stopwatch.StartNew();
                                 File.Copy(el, target + pathToCreate);
                                 startTimeFile.Stop();
+                                nbFileManaged++;
                                 logManager.WriteNewLog(
                                     name: job.Name, 
                                     sourcePath: job.Source, 
                                     targetPath: target + pathToCreate, 
                                     action: "Copy of a file", 
                                     execTime: startTimeFile.Elapsed.TotalMilliseconds
+                                );
+                                logManager.WriteNewLog(
+                                    name: job.Name,
+                                    sourcePath: job.Source,
+                                    targetPath: target + pathToCreate,
+                                    action: "Copy of a File",
+                                    state: "ON",
+                                    progress: (nbFileManaged / (double)nbFile) * 100,
+                                    nbFile: nbFile,
+                                    nbFileLeft: nbFile - nbFileManaged,
+                                    sizeFileLeft: size / (nbFileManaged + 1)
                                 );
                             }
                         }
@@ -189,7 +262,17 @@ public class Differential : ITypeSave
                 }
             }
         }
-        
+        logManager.WriteNewLog(
+            name: job.Name,
+            sourcePath: job.Source,
+            targetPath: job.Target,
+            action: "Copy of a File",
+            state: "OFF",
+            progress: 0,
+            nbFile: 0,
+            nbFileLeft: 0,
+            sizeFileLeft: 0
+        );
         return 0;
     }
 }

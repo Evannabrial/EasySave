@@ -25,7 +25,17 @@ public class Full : ITypeSave
         bool isFile = File.Exists(job.Source);
         bool isDirectory = Directory.Exists(job.Source);
         string target = job.Target + "\\" + job.Name + "-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+        
+        Stopwatch startTimeDirStart = Stopwatch.StartNew();
         Directory.CreateDirectory(target);
+        startTimeDirStart.Stop();
+        logManager.WriteNewLog(
+            name: job.Name, 
+            sourcePath: job.Source, 
+            targetPath: target , 
+            action: "Creation of a directory", 
+            execTime: startTimeDirStart.Elapsed.TotalMilliseconds
+        );
         
         if (!isDirectory && !isFile)
         {

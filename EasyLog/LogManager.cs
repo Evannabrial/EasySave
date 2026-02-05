@@ -27,7 +27,7 @@ public class LogManager
         
         Log log = new DailyLog(name, action, sourcePath, targetPath, size, execTime, LogType.JSON);
 
-        return log.WriteLog("C:\\Users\\evann\\Documents\\SavesEasySave");
+        return log.WriteLog(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs"));
     }
     
     
@@ -35,7 +35,7 @@ public class LogManager
         int nbFile, int nbFileLeft, long sizeFileLeft )
     {
         Log log = new LiveLog(name, action, state, nbFile, progress, nbFileLeft, sizeFileLeft, sourcePath, targetPath);
-        
-        return log.WriteLog("C:\\Users\\evann\\Documents\\SavesEasySave");
+        var p = AppDomain.CurrentDomain;
+        return log.WriteLog(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs"));
     }
 }

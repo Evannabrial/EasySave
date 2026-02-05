@@ -72,7 +72,7 @@ public class DailyLog : Log
             
                     string jsonObject = JsonSerializer.Serialize(this, options);
                     File.AppendAllLines(
-                        path + "\\" +  this.Name + "-" + DateTime.ToString("yyyyMMddHHmmss") + ".json", 
+                        path + "\\" +  this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".json", 
                         [jsonObject]);
                     break;
                 
