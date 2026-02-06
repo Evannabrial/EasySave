@@ -70,6 +70,14 @@ public class LiveLog : Log
         Target = target;
     }
 
+    /// <summary>
+    /// Write the object inside a file in json.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns>
+    /// 0 => OK
+    /// 1 => KO
+    /// </returns>
     public override int WriteLog(string path)
     {
         try
@@ -91,6 +99,7 @@ public class LiveLog : Log
                     break;
                 
                 case LogType.XML:
+                    //TODO: to implement
                     break;
             }
             

@@ -5,6 +5,11 @@ namespace EasySaveLibrary.Model;
 
 public class English : ILanguage
 {
+    /// <summary>
+    /// Return the Dictionnary of all text in the application.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="FileNotFoundException"></exception>
     public Dictionary<string, string> GetTranslations()
     {
         string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Translate", "Messages.json");

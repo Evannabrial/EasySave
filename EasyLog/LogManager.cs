@@ -3,7 +3,7 @@ namespace EasyLog;
 public class LogManager
 {
     /// <summary>
-    /// Write a log 
+    /// Write a DailyLog 
     /// </summary>
     /// <param name="name"></param>
     /// <param name="sourcePath"></param>
@@ -32,6 +32,19 @@ public class LogManager
     }
     
     
+    /// <summary>
+    /// Write a LiveLog
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="sourcePath"></param>
+    /// <param name="targetPath"></param>
+    /// <param name="action"></param>
+    /// <param name="state"></param>
+    /// <param name="progress"></param>
+    /// <param name="nbFile"></param>
+    /// <param name="nbFileLeft"></param>
+    /// <param name="sizeFileLeft"></param>
+    /// <returns></returns>
     public int WriteNewLog(string name, string sourcePath, string targetPath, string action, string state, double progress, 
         int nbFile, int nbFileLeft, long sizeFileLeft )
     {
