@@ -34,7 +34,7 @@ while (!isLangChoose)
             input = Console.ReadLine();
             break;
     }
-
+    
     var _continue = true;
     while (_continue)
     {
@@ -92,7 +92,8 @@ while (!isLangChoose)
                     {
                         Console.WriteLine(job + "\n");
                     }
-
+                    Console.WriteLine(dictText.GetValueOrDefault("PressAnyKeyMessage"));
+                    Console.ReadKey(true);
                     isActionChoose = true;
                     break;
                 case "3":

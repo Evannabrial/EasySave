@@ -17,5 +17,6 @@
     "SaveSuccessMessage" : "Backup completed successfully!",
     "SaveErrorMessage" : "An error occurred during the backup.",
     "DeleteSuccessMessage" : "Job deleted successfully!",
-    "DeleteErrorMessage" : "An error occurred while deleting the job."
+    "DeleteErrorMessage" : "An error occurred while deleting the job.",
+    "PressAnyKeyMessage" : "Press any key to continue..."
 }

@@ -17,5 +17,6 @@
   "SaveSuccessMessage" : "Sauvegarde réussie !",
   "SaveErrorMessage" : "Une erreur est survenue lors de la sauvegarde.",
   "DeleteSuccessMessage" : "Tâche supprimée avec succès !",
-  "DeleteErrorMessage" : "Une erreur est survenue lors de la suppression de la tâche."
+  "DeleteErrorMessage" : "Une erreur est survenue lors de la suppression de la tâche.",
+  "PressAnyKeyMessage" : "Appuyez sur une touche pour continuer..."
 }
