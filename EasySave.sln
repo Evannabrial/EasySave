@@ -2,7 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{14C87576-64D6-4B4B-A859-6E12A8B0E49D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{C367F672-D314-4C45-9C54-B31EF40A36BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySaveLibrary", "EasySaveLibrary\EasySaveLibrary.csproj", "{C367F672-D314-4C45-9C54-B31EF40A36BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyLog", "EasyLog\EasyLog.csproj", "{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +20,9 @@ Global
 		{C367F672-D314-4C45-9C54-B31EF40A36BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C367F672-D314-4C45-9C54-B31EF40A36BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C367F672-D314-4C45-9C54-B31EF40A36BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
