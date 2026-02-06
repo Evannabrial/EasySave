@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySaveLibrary", "EasySaveLibrary\EasySaveLibrary.csproj", "{C367F672-D314-4C45-9C54-B31EF40A36BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLib", "LogLib\LogLib.csproj", "{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyLog", "EasyLog\EasyLog.csproj", "{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
