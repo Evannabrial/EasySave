@@ -26,8 +26,9 @@ public class LogManager
         }
         
         Log log = new DailyLog(name, action, sourcePath, targetPath, size, execTime, LogType.JSON);
-
-        return log.WriteLog(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs"));
+        
+        string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        return log.WriteLog(Path.Combine(programDataPath, "EasySave", "Logs"));
     }
     
     
@@ -36,6 +37,21 @@ public class LogManager
     {
         Log log = new LiveLog(name, action, state, nbFile, progress, nbFileLeft, sizeFileLeft, sourcePath, targetPath);
         var p = AppDomain.CurrentDomain;
-        return log.WriteLog(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs"));
+        
+        string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+
+        // Créer le dossier s'il n'existe pas
+        if (!Directory.Exists(Path.Combine(programDataPath, "EasySave")))
+        {
+            Directory.CreateDirectory(Path.Combine(programDataPath, "EasySave"));
+        }
+        
+        // Créer le dossier s'il n'existe pas
+        if (!Directory.Exists(Path.Combine(programDataPath, "EasySave", "Logs")))
+        {
+            Directory.CreateDirectory(Path.Combine(programDataPath, "EasySave", "Logs"));
+        }
+        
+        return log.WriteLog(Path.Combine(programDataPath, "EasySave", "Logs"));
     }
 }

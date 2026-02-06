@@ -81,7 +81,7 @@ public class JobManager
             int firstNumber = int.Parse(regexMatches.Groups[1].Value);
             int secondNumber = int.Parse(regexMatches.Groups[2].Value);
 
-            if (secondNumber < firstNumber && secondNumber <= LJobs.Count)
+            if (secondNumber < firstNumber || secondNumber > LJobs.Count - 1)
             {
                 return 1;
             }
@@ -99,7 +99,7 @@ public class JobManager
             int firstNumber = int.Parse(regexMatches.Groups[1].Value);
             int secondNumber = int.Parse(regexMatches.Groups[2].Value);
             
-            if (secondNumber < firstNumber && secondNumber <= LJobs.Count)
+            if (secondNumber < firstNumber || secondNumber > LJobs.Count - 1)
             {
                 return 1;
             }
@@ -115,6 +115,11 @@ public class JobManager
                 return 1;
             }
             int job = int.Parse(match.Value);
+
+            if (job > LJobs.Count - 1)
+            {
+                return 1;
+            }
             
             lIndexJob.Add(job);
         }
