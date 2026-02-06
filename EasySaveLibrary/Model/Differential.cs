@@ -16,6 +16,10 @@ public class Differential : ITypeSave
         logManager = new LogManager();
     }
     
+    /// <summary>
+    /// Start the save of a job
+    /// </summary>
+    /// <param name="job"></param>
     /// <returns>
     /// 0 => OK
     /// 1 => Element source non trouvé

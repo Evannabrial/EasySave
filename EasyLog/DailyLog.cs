@@ -78,6 +78,7 @@ public class DailyLog : Log
                 
                 case LogType.XML:
                     XmlSerializer xmlSerializer = new(typeof(DailyLog));
+                    //TODO: To implement
                     break;
             }
         }

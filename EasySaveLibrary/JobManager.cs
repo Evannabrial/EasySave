@@ -35,13 +35,24 @@ public class JobManager
         return newJob;
     }
     
+    /// <summary>
+    /// Update a Job
+    /// </summary>
+    /// <param name="jobToUpdate"></param>
+    /// <param name="name"></param>
+    /// <param name="source"></param>
+    /// <param name="target"></param>
+    /// <param name="typeSave"></param>
+    /// <returns></returns>
     public Job UpdateJob(Job jobToUpdate, string name, string source, string target, ITypeSave typeSave)
     {
+        // Check if the job to update exist
         if (jobToUpdate == null || !_lJobs.Contains(jobToUpdate))
         {
             return null;
         }
 
+        // Update the job
         jobToUpdate.Name = name;
         jobToUpdate.Source = source;
         jobToUpdate.Target = target;
@@ -50,8 +61,14 @@ public class JobManager
         return jobToUpdate;
     }
     
+    /// <summary>
+    /// Delete a job 
+    /// </summary>
+    /// <param name="jobToDelete"></param>
+    /// <returns></returns>
     public int DeleteJob(Job jobToDelete)
     {
+        // Check if the Job to delete exist
         if (jobToDelete == null)
         {
             return 1;
@@ -60,18 +77,29 @@ public class JobManager
         return _lJobs.Remove(jobToDelete) ? 0 : 1;
     }
 
+    /// <summary>
+    /// Start multiple job save
+    /// </summary>
+    /// <param name="userChoice"></param>
+    /// <returns>
+    /// 0 => OK
+    /// 1 => KO
+    /// </returns>
     public int StartMultipleSave(string userChoice)
     {
-        if (userChoice == null && userChoice.Length >3)
+        // If the userChoice is null
+        if (userChoice == null)
         {
             return 1;
         }
 
         List<int> lIndexJob = new List<int>();
 
+        // If the userChoice is like 1-3 we need to start the save of 1-2-3
         if (userChoice.Contains('-'))
         {
-            Match regexMatches = Regex.Match(userChoice, @"(\d+)\s*[;-]\s*(\d+)");
+            // Match the first number before the '-' et the first number after '-'
+            Match regexMatches = Regex.Match(userChoice, @"(\d+)\s*[-]\s*(\d+)");
 
             if (!regexMatches.Success)
             {
@@ -81,15 +109,21 @@ public class JobManager
             int firstNumber = int.Parse(regexMatches.Groups[1].Value);
             int secondNumber = int.Parse(regexMatches.Groups[2].Value);
 
+            // Check if the second number is bigger than the first or
+            // if the second number is bigger than the number of jobs in the list 
             if (secondNumber < firstNumber || secondNumber > LJobs.Count - 1)
             {
                 return 1;
             }
+            // Create a list of int of all number between the first element and the last
+            // Exemple: '2-6' ==> [2,3,4,5,6]
             lIndexJob = Enumerable.Range(firstNumber, secondNumber - firstNumber + 1).ToList();
         }
+        // If the userChoice is like 1;3 we need to start the save of 1-3
         else if (userChoice.Contains(';'))
         {
-            Match regexMatches = Regex.Match(userChoice, @"(\d+)\s*[;-]\s*(\d+)");
+            // Match the first number before the ';' et the first number after '-'
+            Match regexMatches = Regex.Match(userChoice, @"(\d+)\s*[;]\s*(\d+)");
             
             if (!regexMatches.Success)
             {
@@ -99,6 +133,8 @@ public class JobManager
             int firstNumber = int.Parse(regexMatches.Groups[1].Value);
             int secondNumber = int.Parse(regexMatches.Groups[2].Value);
             
+            // Check if the second number is bigger than the first or
+            // if the second number is bigger than the number of jobs in the list 
             if (secondNumber < firstNumber || secondNumber > LJobs.Count - 1)
             {
                 return 1;
@@ -109,6 +145,7 @@ public class JobManager
         }
         else
         {
+            // Match the first number of the string
             Match match = Regex.Match(userChoice, @"(\d+)");
             if (!match.Success)
             {
@@ -134,7 +171,7 @@ public class JobManager
                 // Start the save
                 int result = job.Save.StartSave(job);
                 
-                // If the save succeeds (convention: returns 1 for success)
+                // If the save succeeds
                 if (result != 0)
                 {
                     return 1;
@@ -145,6 +182,11 @@ public class JobManager
         return 0;
     }
     
+    /// <summary>
+    /// Change the language of the JobManager
+    /// </summary>
+    /// <param name="language"></param>
+    /// <exception cref="NotImplementedException"></exception>
     public void SwitchLanguage(ILanguage language)
     {
         throw new NotImplementedException();
