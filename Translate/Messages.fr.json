@@ -3,7 +3,7 @@
   "WelcomeMessage": "Bienvenue sur EasySave v.1.0",
   "DescriptionMessage": "Une solution de sauvegarde signée ProSoft",
   "MenuMessage": "Menu principal",
-  "ActionMessage": "Que souhaitez-vous faire ? \n 1. Créer une tâche \n 2. Voir les tâches existantes \n 3. Modifier une tâche \n 4. Supprimer une tâche \n 5. Lancer une sauvegarde \n 6. Quitter",
+  "ActionMessage": "Que souhaitez-vous faire ? \n 1. Créer une tâche \n 2. Voir les tâches existantes \n 3. Modifier une tâche \n 4. Supprimer une tâche \n 5. Lancer une sauvegarde \n 6. Sélectionner le type de fichier de log \n 7. Quitter",
   "LanguageErrorMessage": "Choix invalide, veuillez réessayer.",
   "CreateJobMessage" : "Créer une nouvelle tâche de sauvegarde :\n Entrez le nom, le chemin source, le chemin de destination et le type de sauvegarde (Complète ou Différentielle).",
     "JobNameMessage" : "Entrez le nom de la tâche :",
@@ -18,5 +18,7 @@
   "SaveErrorMessage" : "Une erreur est survenue lors de la sauvegarde.",
   "DeleteSuccessMessage" : "Tâche supprimée avec succès !",
   "DeleteErrorMessage" : "Une erreur est survenue lors de la suppression de la tâche.",
-  "PressAnyKeyMessage" : "Appuyez sur une touche pour continuer..."
+  "PressAnyKeyMessage" : "Appuyez sur une touche pour continuer...",
+  "ChangeLogFileTypeMessage" : "De quel type souhaitez vous que le fichier de log soit ? \n 1. JSON \n 2. XML :",
+    "ChangeLogFileTypeSuccessMessage" : "Type de fichier de log changé avec succès !"
 }

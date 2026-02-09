@@ -1,4 +1,3 @@
-using System.Drawing;
 using EasyLog;
 using EasySaveLibrary;
 using EasySaveLibrary.Interfaces;
@@ -194,6 +193,31 @@ while (!isLangChoose)
                     isActionChoose = true;
                     break;
                 case "6":
+                    Console.Clear();
+                    Console.WriteLine(dictText.GetValueOrDefault("ChangeLogFileTypeMessage"));
+                    var inpute = Console.ReadLine();
+                    switch (inpute)
+                    {
+                        case "1":
+                            jm.LogType = LogType.JSON;
+                            Console.Clear();
+                            Console.WriteLine(dictText.GetValueOrDefault("ChangeLogFileTypeSuccessMessage"));
+                            isActionChoose = true;
+                            break;
+                        case "2":
+                            jm.LogType = LogType.XML;
+                            Console.Clear();
+                            Console.WriteLine(dictText.GetValueOrDefault("ChangeLogFileTypeSuccessMessage"));
+                            isActionChoose = true;
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine(dictText.GetValueOrDefault("LanguageErrorMessage"));
+                            inpute = Console.ReadLine();
+                            break;
+                    }
+                    break;
+                case "7":
                     Console.Clear();
                     Console.WriteLine(dictText.GetValueOrDefault("ExitMessage"));
                     _continue = false;
