@@ -1,10 +1,11 @@
 using System.Drawing;
+using EasyLog;
 using EasySaveLibrary;
 using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 
 
-JobManager jm = new JobManager(new English());
+JobManager jm = new JobManager(new English(), LogType.XML);
 Dictionary<string, string> dictText = jm.Language.GetTranslations();
 Console.ForegroundColor = ConsoleColor.DarkBlue;
 
@@ -62,22 +63,22 @@ while (!isLangChoose)
                     string target = Console.ReadLine();
                     Console.WriteLine(dictText.GetValueOrDefault("BackupTypeMessage"));
                     string typeSave = Console.ReadLine();
-                    ITypeSave typesave = new Full();
+                    ITypeSave typesave = new Full(jm.LogType);
                     switch (typeSave)
                     {
                         case "1":
                         {
-                            typesave = new Full();
+                            typesave = new Full(jm.LogType);
                             break;
                         }
                         case "2":
                         {
-                            typesave = new Differential();
+                            typesave = new Differential(jm.LogType);
                             break;
                         }
                         default:
                         {
-                            typesave = new Full();
+                            typesave = new Full(jm.LogType);
                             break;
                         }
                     }
@@ -104,7 +105,7 @@ while (!isLangChoose)
                         Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
                     }
                     string input2 = Console.ReadLine();
-                    var selectedJob = new Job("", "", "", new Full());
+                    var selectedJob = new Job("", "", "", new Full(jm.LogType));
                     if (int.TryParse(input2, out int selectedIndex) && selectedIndex >= 0 &&
                         selectedIndex < jm.LJobs.Count)
                     {
@@ -118,22 +119,22 @@ while (!isLangChoose)
                     string target2 = Console.ReadLine();
                     Console.WriteLine(dictText.GetValueOrDefault("BackupTypeMessage"));
                     string typeSave2 = Console.ReadLine();
-                    ITypeSave typesave2 = new Full();
+                    ITypeSave typesave2 = new Full(jm.LogType);
                     switch (typeSave2)
                     {
                         case "1":
                         {
-                            typesave2 = new Full();
+                            typesave2 = new Full(jm.LogType);
                             break;
                         }
                         case "2":
                         {
-                            typesave2 = new Differential();
+                            typesave2 = new Differential(jm.LogType);
                             break;
                         }
                         default:
                         {
-                            typesave2 = new Full();
+                            typesave2 = new Full(jm.LogType);
                             break;
                         }
                     }
@@ -148,7 +149,7 @@ while (!isLangChoose)
                         Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
                     }
                     string input3 = Console.ReadLine();
-                    var selectedJob2 = new Job("", "", "", new Full());
+                    var selectedJob2 = new Job("", "", "", new Full(jm.LogType));
                     if (int.TryParse(input3, out int selectedIndex2) && selectedIndex2 >= 0 &&
                         selectedIndex2 < jm.LJobs.Count)
                     {

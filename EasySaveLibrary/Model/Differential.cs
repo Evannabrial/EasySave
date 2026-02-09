@@ -10,10 +10,12 @@ namespace EasySaveLibrary.Model;
 public class Differential : ITypeSave
 {
     private LogManager logManager;
+    private LogType _logType;
     
-    public Differential()
+    public Differential(LogType logType)
     {
-        logManager = new LogManager();
+        _logType = logType;
+        logManager = new LogManager(logType);
     }
     
     /// <summary>
@@ -42,7 +44,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job);
+            return new Full(_logType).StartSave(job);
         }
         
         bool isFile = File.Exists(job.Source);

@@ -9,9 +9,9 @@ public class Full : ITypeSave
 {
     private LogManager logManager;
     
-    public Full()
+    public Full(LogType type)
     {
-        logManager = new LogManager();
+        logManager = new LogManager(type);
     }
     
      /// <summary>

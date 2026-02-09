@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Xml.Serialization;
 
 namespace EasyLog;
 
@@ -54,8 +55,12 @@ public class LiveLog : Log
         set => _target = value ?? throw new ArgumentNullException(nameof(value));
     }
 
+    public LiveLog()
+    {
+    }
+
     public LiveLog(string name, string action, string state, long nbFile, double progress, long nbFileLeft, 
-        long sizeFileLeft, string source, string target)
+        long sizeFileLeft, string source, string target, LogType logType)
     {
         Id = Guid.NewGuid();
         DateTime = DateTime.Now;
@@ -68,6 +73,7 @@ public class LiveLog : Log
         SizeFileLeft = sizeFileLeft;
         Source = source;
         Target = target;
+        Type = logType;
     }
 
     /// <summary>
@@ -99,7 +105,13 @@ public class LiveLog : Log
                     break;
                 
                 case LogType.XML:
-                    //TODO: to implement
+                    XmlSerializer xmlSerializer = new(typeof(LiveLog));
+
+                    using (var writer = new StreamWriter(path + "\\" + "livestate.xml"))
+                    {
+                        xmlSerializer.Serialize(writer, this);
+                    }
+                    
                     break;
             }
             
