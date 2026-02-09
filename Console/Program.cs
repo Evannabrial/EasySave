@@ -62,22 +62,22 @@ while (!isLangChoose)
                     string target = Console.ReadLine();
                     Console.WriteLine(dictText.GetValueOrDefault("BackupTypeMessage"));
                     string typeSave = Console.ReadLine();
-                    ITypeSave typesave = new Full(jm.LogType);
+                    ITypeSave typesave = new Full();
                     switch (typeSave)
                     {
                         case "1":
                         {
-                            typesave = new Full(jm.LogType);
+                            typesave = new Full();
                             break;
                         }
                         case "2":
                         {
-                            typesave = new Differential(jm.LogType);
+                            typesave = new Differential();
                             break;
                         }
                         default:
                         {
-                            typesave = new Full(jm.LogType);
+                            typesave = new Full();
                             break;
                         }
                     }
@@ -104,7 +104,7 @@ while (!isLangChoose)
                         Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
                     }
                     string input2 = Console.ReadLine();
-                    var selectedJob = new Job("", "", "", new Full(jm.LogType));
+                    var selectedJob = new Job("", "", "", new Full());
                     if (int.TryParse(input2, out int selectedIndex) && selectedIndex >= 0 &&
                         selectedIndex < jm.LJobs.Count)
                     {
@@ -118,22 +118,22 @@ while (!isLangChoose)
                     string target2 = Console.ReadLine();
                     Console.WriteLine(dictText.GetValueOrDefault("BackupTypeMessage"));
                     string typeSave2 = Console.ReadLine();
-                    ITypeSave typesave2 = new Full(jm.LogType);
+                    ITypeSave typesave2 = new Full();
                     switch (typeSave2)
                     {
                         case "1":
                         {
-                            typesave2 = new Full(jm.LogType);
+                            typesave2 = new Full();
                             break;
                         }
                         case "2":
                         {
-                            typesave2 = new Differential(jm.LogType);
+                            typesave2 = new Differential();
                             break;
                         }
                         default:
                         {
-                            typesave2 = new Full(jm.LogType);
+                            typesave2 = new Full();
                             break;
                         }
                     }
@@ -148,7 +148,7 @@ while (!isLangChoose)
                         Console.WriteLine(job.index.ToString() + " - " + job.value + "\n");
                     }
                     string input3 = Console.ReadLine();
-                    var selectedJob2 = new Job("", "", "", new Full(jm.LogType));
+                    var selectedJob2 = new Job("", "", "", new Full());
                     if (int.TryParse(input3, out int selectedIndex2) && selectedIndex2 >= 0 &&
                         selectedIndex2 < jm.LJobs.Count)
                     {

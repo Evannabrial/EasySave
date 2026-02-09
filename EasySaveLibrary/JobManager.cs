@@ -178,7 +178,7 @@ public class JobManager
                 Job job = _lJobs[index];
                 
                 // Start the save
-                int result = job.Save.StartSave(job);
+                int result = job.Save.StartSave(job, LogType);
                 
                 // If the save succeeds
                 if (result != 0)
@@ -235,8 +235,8 @@ public class JobManager
             // Create the correct save type
             ITypeSave typeSave = saveType switch
             {
-                "Differential" => new Differential(LogType),
-                _ => new Full(LogType)
+                "Differential" => new Differential(),
+                _ => new Full()
             };
             
             Job job = new Job(name, source, target, typeSave);

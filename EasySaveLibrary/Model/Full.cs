@@ -9,9 +9,9 @@ public class Full : ITypeSave
 {
     private LogManager logManager;
     
-    public Full(LogType type)
+    public Full()
     {
-        logManager = new LogManager(type);
+        logManager = new LogManager();
     }
     
      /// <summary>
@@ -24,8 +24,10 @@ public class Full : ITypeSave
      /// 2 => Erreur copie du fichier
      /// 3 => Erreur création du dossier
      /// </returns>
-     public int StartSave(Job job)
-    {
+     public int StartSave(Job job, LogType logType)
+     { 
+         logManager.TypeSave = logType;
+        
         bool isFile = File.Exists(job.Source);
         bool isDirectory = Directory.Exists(job.Source);
         string target = job.Target + "\\" + job.Name + "-" + DateTime.Now.ToString("yyyyMMddHHmmss");

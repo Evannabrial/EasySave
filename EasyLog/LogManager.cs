@@ -10,9 +10,8 @@ public class LogManager
         set => _typeSave = value;
     }
 
-    public LogManager(LogType typeSave)
+    public LogManager()
     {
-        _typeSave = typeSave;
     }
 
 
