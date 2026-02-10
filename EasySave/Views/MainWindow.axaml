@@ -15,12 +15,23 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <ListBox ItemsSource="{Binding Jobs}">
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <TextBlock Text="{Binding Name}"/>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-    </ListBox>
+    <SplitView IsPaneOpen="True"
+               DisplayMode="CompactInline"
+               OpenPaneLength="200"
+               CompactPaneLength="50">
+    
+        <SplitView.Pane>
+            <StackPanel Spacing="5" Margin="5">
+                <Button Content="Jobs" Command="{Binding NavJobs}" HorizontalAlignment="Stretch"/>
+                <Button Content="Status" Command="{Binding NavStatus}" HorizontalAlignment="Stretch"/>
+                <Button Content="Settings" Command="{Binding NavSettings}" HorizontalAlignment="Stretch"/>
+            </StackPanel>
+            
+        </SplitView.Pane>
+
+        <Grid>
+            <ContentControl Content="{Binding CurrentPage}" />        
+        </Grid>
+    </SplitView>
 
 </Window>

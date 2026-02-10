@@ -10,14 +10,24 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly JobManager _jobManager;
 
-    // On expose la liste pour que la Vue puisse la voir
-    public ObservableCollection<Job> Jobs { get; set; }
+    private ViewModelBase _currentPage;
 
+    // Cette propriété est liée au ContentControl du XAML
+    public ViewModelBase CurrentPage
+    {
+        get => _currentPage;
+        set => SetProperty(ref _currentPage, value);
+    }
+
+    public void NavJobs() => CurrentPage = new JobsViewModel(_jobManager); // Injection de votre manager !
+    public void NavStatus() => CurrentPage = new StatusViewModel(_jobManager); // Injection de votre manager !
+    public void NavSettings() => CurrentPage = new SettingsViewModel(_jobManager); // Injection de votre manager !
+    
+    
     public MainWindowViewModel(JobManager jobManager)
     {
         _jobManager = jobManager;
-        
-        // On synchronise ou on référence la liste du modèle
-        Jobs = new ObservableCollection<Job>(_jobManager.LJobs);
     }
+    
+    
 }
