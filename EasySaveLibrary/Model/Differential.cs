@@ -10,7 +10,6 @@ namespace EasySaveLibrary.Model;
 public class Differential : ITypeSave
 {
     private LogManager logManager;
-    
     public Differential()
     {
         logManager = new LogManager();
@@ -26,8 +25,10 @@ public class Differential : ITypeSave
     /// 2 => Erreur copie du fichier
     /// 3 => Erreur création du dossier
     /// </returns>
-    public int StartSave(Job job)
+    public int StartSave(Job job, LogType logType)
     {
+        logManager.TypeSave = logType;
+        
         // S'il n'y a jamais eu de sauvegarde de faites, on effectue une sauvegarde complète
         IEnumerable<string> listNameSave = Directory.EnumerateDirectories(job.Target);
         bool isCompleteSaveExist = false;
@@ -42,7 +43,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job);
+            return new Full().StartSave(job, logType);
         }
         
         bool isFile = File.Exists(job.Source);

@@ -3,7 +3,7 @@
   "WelcomeMessage": "Welcome to EasySave v1.0 !",
   "DescriptionMessage": "A backup solution from ProSoft",
   "MenuMessage": "Main Menu",
-  "ActionMessage": "What would you like to do? \n 1. Create a job \n 2. Display existing jobs \n 3. Modify a job \n 4. Delete a Job \n 5. Start a Save \n 6. Exit",
+  "ActionMessage": "What would you like to do? \n 1. Create a job \n 2. Display existing jobs \n 3. Modify a job \n 4. Delete a Job \n 5. Start a Save \n 6. Select log file type \n 7. Exit",
   "LanguageErrorMessage": "Invalid choice, please try again.",
   "CreateJobMessage" : "Create a new backup job:\n Enter name, source path, destination path, and type of backup (Full or Differential).",
   "JobNameMessage" : "Enter the job name:",
@@ -18,5 +18,7 @@
     "SaveErrorMessage" : "An error occurred during the backup.",
     "DeleteSuccessMessage" : "Job deleted successfully!",
     "DeleteErrorMessage" : "An error occurred while deleting the job.",
-    "PressAnyKeyMessage" : "Press any key to continue..."
+    "PressAnyKeyMessage" : "Press any key to continue...",
+    "ChangeLogFileTypeMessage" : "What type of log file would you like? \n 1. JSON \n 2. XML :",
+  "ChangeLogFileTypeSuccessMessage" : "Log file type changed successfully!"
 }

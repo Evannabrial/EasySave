@@ -34,6 +34,10 @@ public class DailyLog : Log
         set => _execTime = value;
     }
 
+    public DailyLog()
+    {
+    }
+
     public DailyLog(string name, string action, string sourcePath, string targetPath, long size, double execTime, LogType type)
     {
         Id = Guid.NewGuid();
@@ -78,7 +82,12 @@ public class DailyLog : Log
                 
                 case LogType.XML:
                     XmlSerializer xmlSerializer = new(typeof(DailyLog));
-                    //TODO: To implement
+
+                    using (var writer = new StreamWriter(path + "\\" +  this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml"))
+                    {
+                        xmlSerializer.Serialize(writer, this);
+                    }
+                    
                     break;
             }
         }

@@ -2,6 +2,7 @@ using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using EasyLog;
 
 namespace EasySaveLibrary;
 
@@ -9,6 +10,7 @@ public class JobManager
 {
     private ILanguage _language;
     private List<Job> _lJobs;
+    private LogType _logType;
 
     public List<Job> LJobs
     {
@@ -22,10 +24,17 @@ public class JobManager
         set => _language = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public JobManager(ILanguage language)
+    public LogType LogType
     {
-        _language = language;
-        _lJobs = this.LoadJobsFromJson();
+        get => _logType;
+        set => _logType = value;
+    }
+
+    public JobManager(ILanguage language, LogType logType)
+    {
+        Language = language;
+        LogType = logType;
+        LJobs = this.LoadJobsFromJson();
     }
 
     public Job AddJob(string name, string source, string target, ITypeSave typeSave)
@@ -169,7 +178,7 @@ public class JobManager
                 Job job = _lJobs[index];
                 
                 // Start the save
-                int result = job.Save.StartSave(job);
+                int result = job.Save.StartSave(job, LogType);
                 
                 // If the save succeeds
                 if (result != 0)

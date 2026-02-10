@@ -2,6 +2,19 @@ namespace EasyLog;
 
 public class LogManager
 {
+    private LogType _typeSave;
+
+    public LogType TypeSave
+    {
+        get => _typeSave;
+        set => _typeSave = value;
+    }
+
+    public LogManager()
+    {
+    }
+
+
     /// <summary>
     /// Write a DailyLog 
     /// </summary>
@@ -25,7 +38,7 @@ public class LogManager
                 .Sum(f => new FileInfo(f).Length);;
         }
         
-        Log log = new DailyLog(name, action, sourcePath, targetPath, size, execTime, LogType.JSON);
+        Log log = new DailyLog(name, action, sourcePath, targetPath, size, execTime, TypeSave);
         
         string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
         return log.WriteLog(Path.Combine(programDataPath, "EasySave", "Logs"));
@@ -48,7 +61,7 @@ public class LogManager
     public int WriteNewLog(string name, string sourcePath, string targetPath, string action, string state, double progress, 
         int nbFile, int nbFileLeft, long sizeFileLeft )
     {
-        Log log = new LiveLog(name, action, state, nbFile, progress, nbFileLeft, sizeFileLeft, sourcePath, targetPath);
+        Log log = new LiveLog(name, action, state, nbFile, progress, nbFileLeft, sizeFileLeft, sourcePath, targetPath, TypeSave);
         var p = AppDomain.CurrentDomain;
         
         string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
