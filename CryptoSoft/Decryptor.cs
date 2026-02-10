@@ -18,28 +18,35 @@ public static class Decryptor
     /// <returns>Decryption time in milliseconds.</returns>
     public static double DecryptFile(string sourceFilePath, string destinationFilePath, string key)
     {
+        // Validate that the encrypted source file exists
         if (!File.Exists(sourceFilePath))
             throw new FileNotFoundException("Encrypted source file not found.", sourceFilePath);
 
-        // Ensure destination directory exists
+        // Create the destination directory if it doesn't exist yet
         string? dir = Path.GetDirectoryName(destinationFilePath);
         if (dir != null && !Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
         double elapsed = 0;
 
+        // Measure the total decryption time
         elapsed = Utils.MeasureExecutionTime(() =>
         {
+            // Open the encrypted file for reading
             using var fsIn = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read);
 
-            // Read salt (16 bytes) and IV (16 bytes) from header
+            // Read the salt (first 16 bytes) and IV (next 16 bytes) from the file header
+            // These were written by the Encryptor and are needed to reconstruct the key
             byte[] salt = new byte[16];
             byte[] iv = new byte[16];
-            fsIn.ReadExactly(salt, 0, salt.Length);
-            fsIn.ReadExactly(iv, 0, iv.Length);
+            fsIn.ReadExactly(salt, 0, salt.Length);  // Read salt
+            fsIn.ReadExactly(iv, 0, iv.Length);      // Read IV
 
+            // Derive the same AES key using the password + the salt from the file
+            // This will only produce the correct key if the password matches
             byte[] derivedKey = Utils.DeriveKey(key, salt);
 
+            // Configure AES with the same settings used during encryption
             using var aes = Aes.Create();
             aes.KeySize = 256;
             aes.Mode = CipherMode.CBC;
@@ -47,13 +54,16 @@ public static class Decryptor
             aes.Key = derivedKey;
             aes.IV = iv;
 
+            // Create the AES decryptor and wrap the input stream in a CryptoStream
             using var decryptor = aes.CreateDecryptor();
             using var cs = new CryptoStream(fsIn, decryptor, CryptoStreamMode.Read);
+
+            // Write the decrypted data to the output file
             using var fsOut = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write);
-            cs.CopyTo(fsOut);
+            cs.CopyTo(fsOut); // Decrypts data as it streams through
         });
 
-        return elapsed;
+        return elapsed; // Return decryption time in milliseconds
     }
 
     /// <summary>
@@ -66,9 +76,11 @@ public static class Decryptor
     /// <returns>Total decryption time in milliseconds and count of decrypted files.</returns>
     public static (double totalTimeMs, int fileCount) DecryptDirectory(string directoryPath, string key, string extensions)
     {
+        // Check that the directory exists
         if (!Directory.Exists(directoryPath))
             throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
 
+        // Parse the comma-separated extensions into a case-insensitive HashSet
         var allowed = extensions
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(e => e.StartsWith('.') ? e : "." + e)
@@ -77,30 +89,38 @@ public static class Decryptor
         double totalTime = 0;
         int count = 0;
 
+        // Recursively iterate through all files in the directory and subdirectories
         foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
         {
+            // Skip files whose extension is not in the allowed list
             string ext = Path.GetExtension(filePath);
             if (!allowed.Contains(ext))
                 continue;
 
+            // Use a temporary file for decryption output to avoid corrupting the original
             string tempFile = filePath + ".dec.tmp";
             try
             {
+                // Decrypt the file to the temp file
                 double elapsed = DecryptFile(filePath, tempFile, key);
-                File.Delete(filePath);
-                File.Move(tempFile, filePath);
+
+                // Replace the encrypted file with the decrypted version (in-place decryption)
+                File.Delete(filePath);           // Delete the encrypted file
+                File.Move(tempFile, filePath);   // Rename the decrypted temp file to the original name
+
                 totalTime += elapsed;
                 count++;
                 Console.WriteLine($"  Decrypted: {filePath} ({elapsed:F2} ms)");
             }
             catch (Exception ex)
             {
+                // On error, clean up the temp file and report the failure
                 Console.Error.WriteLine($"  Failed: {filePath} — {ex.Message}");
                 if (File.Exists(tempFile))
                     File.Delete(tempFile);
             }
         }
 
-        return (totalTime, count);
+        return (totalTime, count); // Return total time and number of files decrypted
     }
 }

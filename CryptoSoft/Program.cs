@@ -27,62 +27,70 @@
 ///Program.cs	CLI entry point with extension filtering
 /// </summary>
 
+// Validate minimum number of arguments (action + at least 2 params)
 if (args.Length < 3)
 {
     PrintUsage();
-    return 1;
+    return 1; // Exit code 1 = invalid arguments
 }
 
+// Parse the action (first argument), case-insensitive
 string action = args[0].ToLowerInvariant();
 
-// Handle directory modes first (encrypt-dir / decrypt-dir) — requires 3 args
+// ===== DIRECTORY MODE =====
+// Handle encrypt-dir / decrypt-dir: encrypts/decrypts all matching files in a folder recursively
 if (action == "encrypt-dir" || action == "decrypt-dir")
 {
+    // Directory mode requires: action + directory + key + extensions = 4 args
     if (args.Length < 4)
     {
         PrintUsage();
         return 1;
     }
 
-    string dir = args[1];
-    string dirKey = args[2];
-    string dirExtensions = args[3];
+    string dir = args[1];            // Path to the directory
+    string dirKey = args[2];         // Encryption/decryption password
+    string dirExtensions = args[3];  // Comma-separated extensions (e.g. ".txt,.pdf")
 
     try
     {
         if (action == "encrypt-dir")
         {
+            // Encrypt all matching files in the directory, returns (total time, file count)
             var (totalMs, count) = Encryptor.EncryptDirectory(dir, dirKey, dirExtensions);
             Console.WriteLine($"\nEncrypted {count} file(s) in {totalMs:F2} ms total");
-            Console.WriteLine(totalMs.ToString("F2"));
+            Console.WriteLine(totalMs.ToString("F2")); // Machine-readable time on last line
         }
         else
         {
+            // Decrypt all matching files in the directory
             var (totalMs, count) = Decryptor.DecryptDirectory(dir, dirKey, dirExtensions);
             Console.WriteLine($"\nDecrypted {count} file(s) in {totalMs:F2} ms total");
             Console.WriteLine(totalMs.ToString("F2"));
         }
-        return 0;
+        return 0; // Exit code 0 = success
     }
     catch (Exception ex)
     {
         Console.Error.WriteLine($"Error: {ex.Message}");
-        return 3;
+        return 3; // Exit code 3 = runtime error
     }
 }
 
-// File mode — requires at least 4 args
+// ===== SINGLE FILE MODE =====
+// For encrypt/decrypt a single file: action + source + destination + key = 4 args minimum
 if (args.Length < 4)
 {
     PrintUsage();
     return 1;
 }
 
-string source = args[1];
-string destination = args[2];
-string key = args[3];
+string source = args[1];       // Path to the input file
+string destination = args[2];  // Path to the output file
+string key = args[3];          // Encryption/decryption password
 
-// Optional comma-separated list of extensions to encrypt (e.g. ".txt,.docx,.pdf")
+// Optional 5th argument: comma-separated list of allowed extensions
+// If provided, only files with matching extensions will be encrypted
 string? allowedExtensions = args.Length >= 5 ? args[4] : null;
 
 try
@@ -90,34 +98,41 @@ try
     switch (action)
     {
         case "encrypt":
-            // Check extension filter
+            // If an extension filter was provided, check if the file extension is allowed
             if (allowedExtensions != null)
             {
-                string ext = Path.GetExtension(source); // e.g. ".txt"
+                // Get the file extension (e.g. ".txt")
+                string ext = Path.GetExtension(source);
+
+                // Build a HashSet of allowed extensions for fast case-insensitive lookup
                 var allowed = allowedExtensions
                     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     .Select(e => e.StartsWith('.') ? e : "." + e)
                     .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+                // If the file extension is not in the allowed list, skip it
                 if (!allowed.Contains(ext))
                 {
                     Console.Error.WriteLine($"Extension '{ext}' is not in the allowed list. File skipped.");
-                    return 2;
+                    return 2; // Exit code 2 = extension not allowed
                 }
             }
 
+            // Encrypt the file and display the elapsed time
             double encryptTime = Encryptor.EncryptFile(source, destination, key);
             Console.WriteLine($"Encryption completed in {encryptTime:F2} ms");
-            Console.WriteLine(encryptTime.ToString("F2")); // machine-readable line
+            Console.WriteLine(encryptTime.ToString("F2")); // Machine-readable line for EasySave to parse
             return 0;
 
         case "decrypt":
+            // Decrypt the file and display the elapsed time
             double decryptTime = Decryptor.DecryptFile(source, destination, key);
             Console.WriteLine($"Decryption completed in {decryptTime:F2} ms");
-            Console.WriteLine(decryptTime.ToString("F2"));
+            Console.WriteLine(decryptTime.ToString("F2")); // Machine-readable line for EasySave to parse
             return 0;
 
         default:
+            // Unknown action provided
             Console.Error.WriteLine($"Unknown action: {action}");
             PrintUsage();
             return 1;
@@ -125,10 +140,14 @@ try
 }
 catch (Exception ex)
 {
+    // Catch any runtime error (file not found, wrong password, etc.)
     Console.Error.WriteLine($"Error: {ex.Message}");
-    return 3;
+    return 3; // Exit code 3 = runtime error
 }
 
+/// <summary>
+/// Displays the usage instructions for the CryptoSoft CLI tool.
+/// </summary>
 static void PrintUsage()
 {
     Console.WriteLine("CryptoSoft – AES-256 File Encryption Tool");
