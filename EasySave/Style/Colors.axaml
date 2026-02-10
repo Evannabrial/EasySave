@@ -1,0 +1,29 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:EasySave.Style">
+    <Design.PreviewWith>
+        <controls:Colors />
+    </Design.PreviewWith>
+    
+    <Styles.Resources>
+        <Color x:Key="PrimaryColor">#B849FF</Color>
+        <Color x:Key="SecondaryColor">#210029</Color>
+        <Color x:Key="ButtonColor">#B849FF</Color>
+        <Color x:Key="HoverButtonColor">#6F3DAA</Color>
+        <Color x:Key="TextColor">White</Color>
+        
+        <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+        <SolidColorBrush x:Key="HoverButtonBrush" Color="{StaticResource HoverButtonColor}" />
+    </Styles.Resources>
+    
+    <Style Selector="Button.primary">
+        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource HoverButtonBrush}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    
+</Styles>

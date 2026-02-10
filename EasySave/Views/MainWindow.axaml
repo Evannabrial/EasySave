@@ -15,23 +15,59 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <SplitView IsPaneOpen="True"
-               DisplayMode="CompactInline"
-               OpenPaneLength="200"
-               CompactPaneLength="50">
     
-        <SplitView.Pane>
-            <StackPanel Spacing="5" Margin="5">
-                <Button Content="Jobs" Command="{Binding NavJobs}" HorizontalAlignment="Stretch"/>
-                <Button Content="Status" Command="{Binding NavStatus}" HorizontalAlignment="Stretch"/>
-                <Button Content="Settings" Command="{Binding NavSettings}" HorizontalAlignment="Stretch"/>
-            </StackPanel>
-            
-        </SplitView.Pane>
+    <Grid RowDefinitions="Auto, *">
+        <Border Grid.Row="0" 
+                Background="{StaticResource PrimaryColor}" 
+                Height="50" >
+            <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
+                    <TextBlock Text="EasySave" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
+                </StackPanel>
 
-        <Grid>
-            <ContentControl Content="{Binding CurrentPage}" />        
-        </Grid>
-    </SplitView>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0">
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <SplitView IsPaneOpen="True"
+                   DisplayMode="CompactInline"
+                   OpenPaneLength="190"
+                   CompactPaneLength="50"
+                   HorizontalAlignment="Left"
+                   Grid.Row="1">
+            <SplitView.Pane>
+                <Grid Row="3" RowDefinitions="Auto,7*,*" Background="{StaticResource SecondaryColor}">
+                    <StackPanel Spacing="5" Margin="5" Grid.Row="0">
+                        <Button Content="Jobs" Command="{Binding NavJobs}"  Classes="primary"
+                                HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
+                                Foreground="{StaticResource TextColor}"/>
+                        <Button Content="Status" Command="{Binding NavStatus}" Classes="primary"
+                                HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
+                                Foreground="{StaticResource TextColor}" />
+                        <Button Content="Settings" Command="{Binding NavSettings}" Classes="primary"
+                                HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
+                                Foreground="{StaticResource TextColor}"/>
+                    </StackPanel>
+                
+                    <StackPanel Grid.Row="2">
+                        <Separator Background="{StaticResource PrimaryColor}"></Separator>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{StaticResource TextColor}">
+                                EasySave
+                            </TextBlock>
+                            <TextBlock HorizontalAlignment="Center" FontSize="10" Foreground="Gray">
+                                Version 2.0.0
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </SplitView.Pane>
+
+            <Grid>
+                <ContentControl Content="{Binding CurrentPage}" />        
+            </Grid>
+        </SplitView>
+    </Grid>
 
 </Window>

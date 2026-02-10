@@ -23,6 +23,10 @@ public partial class MainWindowViewModel : ViewModelBase
     public void NavStatus() => CurrentPage = new StatusViewModel(_jobManager); // Injection de votre manager !
     public void NavSettings() => CurrentPage = new SettingsViewModel(_jobManager); // Injection de votre manager !
     
+    public MainWindowViewModel()
+    {
+        _jobManager = null; // Ou new JobManager() si possible
+    }
     
     public MainWindowViewModel(JobManager jobManager)
     {

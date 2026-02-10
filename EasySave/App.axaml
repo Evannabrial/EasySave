@@ -23,5 +23,6 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="/Style/Colors.axaml" />
     </Application.Styles>
 </Application>
