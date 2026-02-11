@@ -20,5 +20,6 @@
     "DeleteErrorMessage" : "An error occurred while deleting the job.",
     "PressAnyKeyMessage" : "Press any key to continue...",
     "ChangeLogFileTypeMessage" : "What type of log file would you like? \n 1. JSON \n 2. XML :",
-  "ChangeLogFileTypeSuccessMessage" : "Log file type changed successfully!"
+  "ChangeLogFileTypeSuccessMessage" : "Log file type changed successfully!",
+  "SettingsMessage" : "caca"
 }

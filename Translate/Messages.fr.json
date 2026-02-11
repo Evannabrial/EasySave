@@ -20,5 +20,6 @@
   "DeleteErrorMessage" : "Une erreur est survenue lors de la suppression de la tâche.",
   "PressAnyKeyMessage" : "Appuyez sur une touche pour continuer...",
   "ChangeLogFileTypeMessage" : "De quel type souhaitez vous que le fichier de log soit ? \n 1. JSON \n 2. XML :",
-    "ChangeLogFileTypeSuccessMessage" : "Type de fichier de log changé avec succès !"
+    "ChangeLogFileTypeSuccessMessage" : "Type de fichier de log changé avec succès !",
+    "SettingsMessage" : "Paramètres"
 }

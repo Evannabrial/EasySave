@@ -29,4 +29,11 @@
     <ItemGroup>
       <ProjectReference Include="..\EasySaveLibrary\EasySaveLibrary.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\Translate\**\*.json">
+            <Link>Translate\%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
