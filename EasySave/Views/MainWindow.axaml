@@ -53,13 +53,16 @@
             <SplitView.Pane>
                 <Grid Row="3" RowDefinitions="Auto,7*,*" Background="{StaticResource SecondaryColor}">
                     <StackPanel Spacing="5" Margin="5" Grid.Row="0">
-                        <Button Content="Jobs" Command="{Binding NavJobs}"  Classes="primary"
+                        <Button Content="{Binding DictText[JobsMessage]}" 
+                                Command="{Binding NavJobs}"  Classes="primary"
                                 HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
                                 Foreground="{StaticResource TextColor}"/>
-                        <Button Content="Status" Command="{Binding NavStatus}" Classes="primary"
+                        <Button Content="{Binding DictText[StatusMessage]}" 
+                                Command="{Binding NavStatus}" Classes="primary"
                                 HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
                                 Foreground="{StaticResource TextColor}" />
-                        <Button Content="Settings" Command="{Binding NavSettings}" Classes="primary"
+                        <Button Content="{Binding DictText[SettingsMessage]}" 
+                                Command="{Binding NavSettings}" Classes="primary"
                                 HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
                                 Foreground="{StaticResource TextColor}"/>
                     </StackPanel>

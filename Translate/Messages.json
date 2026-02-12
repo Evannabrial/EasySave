@@ -35,5 +35,7 @@
   "ExtensionsEncryptionDescriptionMessage" : "Files with these extensions will be encrypted before backup.",
   "EasySaveMessage" : "EasySave",
   "FrenchMessage" : "French",
-  "EnglishMessage" : "English"
+  "EnglishMessage" : "English",
+  "JobsMessage" : "Jobzz",
+  "StatusMessage" : "Status"
 }
