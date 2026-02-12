@@ -16,14 +16,22 @@
         <SolidColorBrush x:Key="HoverButtonBrush" Color="{StaticResource HoverButtonColor}" />
     </Styles.Resources>
     
-    <Style Selector="Button.primary">
+    <Style Selector="Button">
         <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
         <Setter Property="Foreground" Value="White" />
     </Style>
 
-    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
         <Setter Property="Background" Value="{StaticResource HoverButtonBrush}" />
         <Setter Property="Foreground" Value="White" />
+    </Style>
+    
+    <Style Selector="ProgressBar">
+        <Setter Property="Background" Value="#33FFFFFF" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryColor}" />
+        <Style.Resources>
+            <SolidColorBrush x:Key="ProgressBarIndicatorBrush" Color="{StaticResource PrimaryColor}" />
+        </Style.Resources>
     </Style>
     
 </Styles>

@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using EasySaveLibrary.Interfaces;
 
 namespace EasySaveLibrary.Model;

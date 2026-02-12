@@ -9,6 +9,7 @@ namespace EasySaveLibrary.Model;
 
 public class Differential : ITypeSave
 {
+    public string DisplayName => "Differential";
     private LogManager logManager;
     public Differential()
     {

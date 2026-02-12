@@ -7,6 +7,7 @@ namespace EasySaveLibrary.Model;
 
 public class Full : ITypeSave
 {
+    public string DisplayName => "Full";
     private LogManager logManager;
     
     public Full()

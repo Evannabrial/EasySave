@@ -2,7 +2,157 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:EasySaveLibrary.Model;assembly=EasySaveLibrary"
+             xmlns:vm="clr-namespace:EasySave.ViewModels"
+             xmlns:dto="clr-namespace:EasySave.DTO"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:JobsViewModel"
              x:Class="EasySave.Views.JobControl">
-    Welcome to the JobControl view!
+    <Grid Row="2" RowDefinitions="50, *" Margin="24 12">
+        <Grid ColumnDefinitions="Auto, *, Auto, Auto" Grid.Row="0" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0" FontSize="32">Job Management</TextBlock>
+            <Button Grid.Column="2" Content="Run Selected Jobs" Margin="0,0,24,0"
+                    Background="DarkGreen"
+                    Foreground="White"
+                    IsVisible="{Binding ShowMultiSelectButton}" />
+            
+            <Button Grid.Column="3" Background="{StaticResource PrimaryColor}"
+                    Foreground="{StaticResource TextColor}">
+                Add a job
+            </Button>
+        </Grid>
+
+        <Panel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border IsVisible="{Binding Jobs.Count}"
+                    Background="{StaticResource PrimaryColor}"
+                    CornerRadius="8"
+                    Padding="10">
+                <Grid RowDefinitions="Auto, *">
+
+                    <Border Grid.Row="0" Padding="15,10" Background="{StaticResource SecondaryColor}"
+                            CornerRadius="12 12 0 0" BorderBrush="{StaticResource PrimaryColor}">
+                        <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130" ColumnSpacing="3">
+                            <TextBlock Grid.Column="1" Text="Job Name" FontWeight="Bold"
+                                   Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="2" Text="Type" FontWeight="Bold"
+                                       Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="3" Text="Source" FontWeight="Bold"
+                                       Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="4" Text="Destination" FontWeight="Bold"
+                                       Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="5" Text="Status" FontWeight="Bold"
+                                       Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="6" Text="Progress" FontWeight="Bold"
+                                       Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                            
+                            <TextBlock Grid.Column="7" Text="Actions" FontWeight="Bold"
+                                       Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <ListBox ItemsSource="{Binding Jobs}" Grid.Row="1" 
+                             Background="{StaticResource SecondaryColor}" 
+                             CornerRadius="0 0 12 12" Padding="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="dto:JobDto">
+                                <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130"
+                                      Background="Transparent" ColumnSpacing="3">
+
+                                    <CheckBox Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                              Margin="0" IsChecked="{Binding IsSelected}" >
+                                        <CheckBox.Resources>
+                                            <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="{StaticResource PrimaryColor}" />
+                                            <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" Color="{StaticResource HoverButtonColor}" />
+                                            <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{StaticResource SecondaryColor}" />
+                                            <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{StaticResource PrimaryColor}" />
+                                        </CheckBox.Resources>
+                                    </CheckBox>
+
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}" />
+
+                                    <TextBlock Grid.Column="2" Text="{Binding Save}" VerticalAlignment="Center"
+                                               Foreground="{StaticResource TextColor}" />
+
+                                    <TextBlock Grid.Column="3" Text="{Binding Source}" VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}"
+                                               ToolTip.Tip="{Binding Source}" />
+
+                                    <TextBlock Grid.Column="4" Text="{Binding Target}" VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}"
+                                               ToolTip.Tip="{Binding Target}" />
+
+                                    <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6"
+                                                VerticalAlignment="Center">
+                                        <Ellipse Width="8" Height="8" Fill="#4CAF50" />
+                                        <TextBlock Text="Idle" VerticalAlignment="Center" FontSize="12"
+                                                   Foreground="{StaticResource TextColor}" />
+                                    </StackPanel>
+
+                                    <Grid Grid.Column="6" ColumnDefinitions="*, Auto" ColumnSpacing="8"
+                                          VerticalAlignment="Center">
+                                        <ProgressBar Value="45" Height="10" CornerRadius="5" 
+                                                     Background="#33FFFFFF">
+                                        </ProgressBar>
+                                        <TextBlock Grid.Column="1" Text="45%" FontSize="11"
+                                                   Foreground="{StaticResource TextColor}" />
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Background="Transparent" Padding="4">
+                                            <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
+                                                <Svg.Css>
+                                                    path { fill: green; }
+                                                </Svg.Css>
+                                            </Svg>
+                                        </Button>
+                                        
+                                        <Button Background="Transparent" Padding="4">
+                                            <Svg Path="avares://EasySave/Assets/pen-solid-full.svg" Width="24" Height="24">
+                                                <Svg.Css>
+                                                    path { fill: #B849FF; }
+                                                </Svg.Css>
+                                            </Svg>
+                                        </Button>
+                                        
+                                        <Button Background="Transparent" Padding="4">
+                                            <Svg Path="avares://EasySave/Assets/trash-solid-full.svg" Width="24" Height="24">
+                                                <Svg.Css>path { fill: red; }</Svg.Css>
+                                            </Svg>
+    
+                                            <Button.Flyout>
+                                                <Flyout Placement="Top">
+                                                    <StackPanel Spacing="10" MinWidth="150" >
+                                                        <TextBlock Text="Supprimer ce job ?" FontWeight="Bold" HorizontalAlignment="Center" />
+                                                        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                                            <Button Content="Oui" 
+                                                                    Background="Red" Foreground="White"
+                                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunDeleteJob}"
+                                                                    CommandParameter="{Binding}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <Border IsVisible="{Binding !Jobs.Count}"
+                    Background="{StaticResource PrimaryColor}"
+                    CornerRadius="8"
+                    Padding="48">
+                <TextBlock Text="Aucun travail de sauvegarde configuré." Foreground="{StaticResource TextColor}" />
+            </Border>
+        </Panel>
+    </Grid>
 </UserControl>

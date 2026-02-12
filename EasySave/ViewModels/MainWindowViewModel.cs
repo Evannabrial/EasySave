@@ -21,9 +21,9 @@ public partial class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _currentPage, value);
     }
 
-    public void NavJobs() => CurrentPage = new JobsViewModel(_jobManager); // Injection de votre manager !
-    public void NavStatus() => CurrentPage = new StatusViewModel(_jobManager); // Injection de votre manager !
-    public void NavSettings() => CurrentPage = new SettingsViewModel(_jobManager); // Injection de votre manager !
+    public void NavJobs() => CurrentPage = new JobsViewModel(_jobManager);
+    public void NavStatus() => CurrentPage = new StatusViewModel(_jobManager);
+    public void NavSettings() => CurrentPage = new SettingsViewModel(_jobManager);
     
     public MainWindowViewModel()
     {
