@@ -4,13 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:EasySaveLibrary.Model;assembly=EasySaveLibrary"
              xmlns:vm="clr-namespace:EasySave.ViewModels"
+             xmlns:dto="clr-namespace:EasySave.DTO"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:JobsViewModel"
              x:Class="EasySave.Views.JobControl">
     <Grid Row="2" RowDefinitions="50, *" Margin="24 12">
-        <Grid ColumnDefinitions="Auto, *, Auto" Grid.Row="0" VerticalAlignment="Center">
+        <Grid ColumnDefinitions="Auto, *, Auto, Auto" Grid.Row="0" VerticalAlignment="Center">
             <TextBlock Grid.Column="0" FontSize="32">Job Management</TextBlock>
-            <Button Grid.Column="2" Background="{StaticResource PrimaryColor}"
+            <Button Grid.Column="2" Content="Run Selected Jobs" Margin="0,0,24,0"
+                    Background="DarkGreen"
+                    Foreground="White"
+                    IsVisible="{Binding ShowMultiSelectButton}" />
+            
+            <Button Grid.Column="3" Background="{StaticResource PrimaryColor}"
                     Foreground="{StaticResource TextColor}">
                 Add a job
             </Button>
@@ -53,12 +59,12 @@
                              Background="{StaticResource SecondaryColor}" 
                              CornerRadius="0 0 12 12" Padding="0">
                         <ListBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:Job">
+                            <DataTemplate x:DataType="dto:JobDto">
                                 <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130"
                                       Background="Transparent" ColumnSpacing="3">
 
                                     <CheckBox Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                              Margin="0" >
+                                              Margin="0" IsChecked="{Binding IsSelected}" >
                                         <CheckBox.Resources>
                                             <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="{StaticResource PrimaryColor}" />
                                             <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" Color="{StaticResource HoverButtonColor}" />
@@ -70,7 +76,7 @@
                                     <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"
                                                TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}" />
 
-                                    <TextBlock Grid.Column="2" Text="{Binding Save.DisplayName}" VerticalAlignment="Center"
+                                    <TextBlock Grid.Column="2" Text="{Binding Save}" VerticalAlignment="Center"
                                                Foreground="{StaticResource TextColor}" />
 
                                     <TextBlock Grid.Column="3" Text="{Binding Source}" VerticalAlignment="Center"
@@ -116,10 +122,22 @@
                                         
                                         <Button Background="Transparent" Padding="4">
                                             <Svg Path="avares://EasySave/Assets/trash-solid-full.svg" Width="24" Height="24">
-                                                <Svg.Css>
-                                                    path { fill: red; }
-                                                </Svg.Css>
+                                                <Svg.Css>path { fill: red; }</Svg.Css>
                                             </Svg>
+    
+                                            <Button.Flyout>
+                                                <Flyout Placement="Top">
+                                                    <StackPanel Spacing="10" MinWidth="150" >
+                                                        <TextBlock Text="Supprimer ce job ?" FontWeight="Bold" HorizontalAlignment="Center" />
+                                                        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                                            <Button Content="Oui" 
+                                                                    Background="Red" Foreground="White"
+                                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunDeleteJob}"
+                                                                    CommandParameter="{Binding}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Flyout>
+                                            </Button.Flyout>
                                         </Button>
                                     </StackPanel>
                                 </Grid>
