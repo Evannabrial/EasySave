@@ -24,7 +24,7 @@ public static class Decryptor
 
         // Create the destination directory if it doesn't exist yet
         string? dir = Path.GetDirectoryName(destinationFilePath);
-        if (dir != null && !Directory.Exists(dir))
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
         double elapsed = 0;
@@ -68,23 +68,27 @@ public static class Decryptor
 
     /// <summary>
     /// Decrypts all files in a directory (recursively) in-place.
-    /// Only files whose extension is in <paramref name="extensions"/> are decrypted.
+    /// Only files matching extensions (if specified) are decrypted.
     /// </summary>
     /// <param name="directoryPath">Root directory to scan.</param>
     /// <param name="key">Secret key / password.</param>
-    /// <param name="extensions">Comma-separated extensions (e.g. ".txt,.docx,.pdf").</param>
+    /// <param name="extensions">Optional: comma-separated extensions filter (e.g. ".txt,.docx").</param>
     /// <returns>Total decryption time in milliseconds and count of decrypted files.</returns>
-    public static (double totalTimeMs, int fileCount) DecryptDirectory(string directoryPath, string key, string extensions)
+    public static (double totalTimeMs, int fileCount) DecryptDirectory(string directoryPath, string key, string? extensions = null)
     {
         // Check that the directory exists
         if (!Directory.Exists(directoryPath))
             throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
 
-        // Parse the comma-separated extensions into a case-insensitive HashSet
-        var allowed = extensions
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(e => e.StartsWith('.') ? e : "." + e)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        // Parse the extensions filter (optional)
+        HashSet<string> allowed = new();
+        if (!string.IsNullOrEmpty(extensions))
+        {
+            allowed = extensions
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(e => e.StartsWith('.') ? e : "." + e)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
 
         double totalTime = 0;
         int count = 0;
@@ -92,10 +96,20 @@ public static class Decryptor
         // Recursively iterate through all files in the directory and subdirectories
         foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
         {
-            // Skip files whose extension is not in the allowed list
-            string ext = Path.GetExtension(filePath);
-            if (!allowed.Contains(ext))
+            // Only decrypt .enc files
+            if (!filePath.EndsWith(".enc"))
                 continue;
+
+            // Get the original filename (without .enc)
+            string decryptedFile = filePath.Substring(0, filePath.Length - 4);
+
+            // If extensions are specified, check if the file matches
+            if (allowed.Count > 0)
+            {
+                string ext = Path.GetExtension(decryptedFile);
+                if (!allowed.Contains(ext))
+                    continue;
+            }
 
             // Use a temporary file for decryption output to avoid corrupting the original
             string tempFile = filePath + ".dec.tmp";
@@ -104,13 +118,15 @@ public static class Decryptor
                 // Decrypt the file to the temp file
                 double elapsed = DecryptFile(filePath, tempFile, key);
 
-                // Replace the encrypted file with the decrypted version (in-place decryption)
-                File.Delete(filePath);           // Delete the encrypted file
-                File.Move(tempFile, filePath);   // Rename the decrypted temp file to the original name
+                // Rename temp to original name (without .enc)
+                File.Move(tempFile, decryptedFile, overwrite: true);
+                
+                // Delete the encrypted .enc file
+                File.Delete(filePath);
 
                 totalTime += elapsed;
                 count++;
-                Console.WriteLine($"  Decrypted: {filePath} ({elapsed:F2} ms)");
+                Console.WriteLine($"  Decrypted: {filePath} → {decryptedFile} ({elapsed:F2} ms)");
             }
             catch (Exception ex)
             {

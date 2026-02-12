@@ -24,7 +24,7 @@ public static class Encryptor
 
         // Create the destination directory if it doesn't exist yet
         string? dir = Path.GetDirectoryName(destinationFilePath);
-        if (dir != null && !Directory.Exists(dir))
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
             Directory.CreateDirectory(dir);
 
         double elapsed = 0;
@@ -70,25 +70,31 @@ public static class Encryptor
 
     /// <summary>
     /// Encrypts all matching files in a directory (recursively) in-place.
-    /// Only files whose extension is in <paramref name="extensions"/> are encrypted.
+    /// If extensions is specified, only files with those extensions are encrypted.
+    /// If extensions is null or empty, all files are encrypted.
     /// </summary>
     /// <param name="directoryPath">Root directory to scan.</param>
     /// <param name="key">Secret key / password.</param>
-    /// <param name="extensions">Comma-separated extensions (e.g. ".txt,.docx,.pdf").</param>
+    /// <param name="extensions">Optional: Comma-separated extensions (e.g. ".txt,.docx,.pdf"). If null, encrypts all files.</param>
     /// <returns>Total encryption time in milliseconds and count of encrypted files.</returns>
-    public static (double totalTimeMs, int fileCount) EncryptDirectory(string directoryPath, string key, string extensions)
+    public static (double totalTimeMs, int fileCount) EncryptDirectory(string directoryPath, string key, string? extensions)
     {
         // Check that the directory exists
         if (!Directory.Exists(directoryPath))
             throw new DirectoryNotFoundException($"Directory not found: {directoryPath}");
 
         // Parse the comma-separated extensions into a HashSet for fast lookup
+        // If extensions is null or empty, allow all files
         // Normalize each extension to start with '.' (e.g. "txt" -> ".txt")
         // Case-insensitive comparison (e.g. ".PDF" matches ".pdf")
-        var allowed = extensions
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(e => e.StartsWith('.') ? e : "." + e)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        HashSet<string> allowed = new();
+        if (!string.IsNullOrEmpty(extensions))
+        {
+            allowed = extensions
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(e => e.StartsWith('.') ? e : "." + e)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
 
         double totalTime = 0;
         int count = 0;
@@ -96,25 +102,31 @@ public static class Encryptor
         // Recursively iterate through all files in the directory and subdirectories
         foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
         {
-            // Get the file extension and skip if not in the allowed list
-            string ext = Path.GetExtension(filePath);
-            if (!allowed.Contains(ext))
-                continue;
+            // If extensions filter is specified, skip files that don't match
+            if (allowed.Count > 0)
+            {
+                string ext = Path.GetExtension(filePath);
+                if (!allowed.Contains(ext))
+                    continue;
+            }
 
             // Use a temporary file for encryption output to avoid corrupting the original
             string tempFile = filePath + ".enc.tmp";
+            string encryptedFile = filePath + ".enc";
             try
             {
                 // Encrypt the file to a temp file
                 double elapsed = EncryptFile(filePath, tempFile, key);
 
-                // Replace the original file with the encrypted version (in-place encryption)
-                File.Delete(filePath);           // Delete the original plaintext file
-                File.Move(tempFile, filePath);   // Rename the encrypted temp file to the original name
+                // Rename temp to .enc format
+                File.Move(tempFile, encryptedFile, overwrite: true);
+                
+                // Delete the original plaintext file
+                File.Delete(filePath);
 
                 totalTime += elapsed;
                 count++;
-                Console.WriteLine($"  Encrypted: {filePath} ({elapsed:F2} ms)");
+                Console.WriteLine($"  Encrypted: {filePath} → {encryptedFile} ({elapsed:F2} ms)");
             }
             catch (Exception ex)
             {

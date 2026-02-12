@@ -10,12 +10,14 @@ public class Job
     private string _target;
     private DateTime? _lastTimeRun;
     private ITypeSave _save;
+    private bool _enableEncryption;
 
     public Guid Id
     {
         get => _id;
         set => _id = value;
     }
+
 
     public string Name
     {
