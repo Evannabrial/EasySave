@@ -21,5 +21,19 @@
   "PressAnyKeyMessage" : "Appuyez sur une touche pour continuer...",
   "ChangeLogFileTypeMessage" : "De quel type souhaitez vous que le fichier de log soit ? \n 1. JSON \n 2. XML :",
     "ChangeLogFileTypeSuccessMessage" : "Type de fichier de log changé avec succès !",
-    "SettingsMessage" : "Paramètres"
+    "SettingsMessage" : "Paramètres",
+    "LogDirectoryMessage"  : "Répertoire de logs :",
+    "LogDirectoryDescriptionMessage" : "Définissez où les logs de l'application seront stockés :",
+    "PathMessage" : "Chemin :",
+    "LogFormatMessage" : "Format de log :",
+    "LogFormatDescriptionMessage" : "Définissez le format du fichier de log ( JSON ou XML) :",
+    "FormatMessage" : "Format :",
+    "EncryptionMessage" : "Chiffrement :",
+    "EncryptionDescriptionMessage" : "Sécurisez vos fichiers sauvegardés en utilisant CryptoSoft.",
+    "EnableEncryptionMessage" : "Activer le chiffrement :",
+    "ExtensionsToEncryptMessage" : "Extensions à chiffrer (séparées par une virgule) :",
+    "ExtensionsEncryptionDescriptionMessage" : "Les fichiers avec ces extensions seront chiffrés avant la sauvegarde.",
+    "EasySaveMessage" : "EasySave",
+    "FrenchMessage" : "Français",
+    "EnglishMessage" : "Anglais"
 }

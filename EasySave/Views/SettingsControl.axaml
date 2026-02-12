@@ -69,10 +69,10 @@
                     </Border>
                     
                     <StackPanel Grid.Column="1">
-                        <TextBlock Classes="Title" Text="Log Directory"/>
-                        <TextBlock Classes="Description" Text="Define where the application logs will be stored."/>
+                        <TextBlock Classes="Title" Text="{Binding DictText[LogDirectoryMessage]}"/>
+                        <TextBlock Classes="Description" Text="{Binding DictText[LogDirectoryDescriptionMessage]}"/>
                         
-                        <TextBlock Classes="Label" Text="Path"/>
+                        <TextBlock Classes="Label" Text="{Binding DictText[PathMessage]}"/>
                         <TextBox Watermark="C:\Users\Admin\EasySave\Logs" 
                                  HorizontalAlignment="Stretch"/>
                     </StackPanel>
@@ -90,10 +90,10 @@
                     </Border>
 
                     <StackPanel Grid.Column="1">
-                        <TextBlock Classes="Title" Text="Log Format"/>
-                        <TextBlock Classes="Description" Text="Choose the structure of your log files."/>
+                        <TextBlock Classes="Title" Text="{Binding DictText[LogFormatMessage]}"/>
+                        <TextBlock Classes="Description" Text="{Binding DictText[LogFormatDescriptionMessage]}"/>
 
-                        <TextBlock Classes="Label" Text="Format"/>
+                        <TextBlock Classes="Label" Text="{Binding DictText[FormatMessage]}"/>
                         <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch">
                             <ComboBoxItem>JSON File (.json)</ComboBoxItem>
                             <ComboBoxItem>XML File (.xml)</ComboBoxItem>
@@ -113,11 +113,11 @@
                     </Border>
 
                     <StackPanel Grid.Column="1">
-                        <TextBlock Classes="Title" Text="Encryption"/>
-                        <TextBlock Classes="Description" Text="Secure your saved files using CryptoSoft."/>
+                        <TextBlock Classes="Title" Text="{Binding DictText[EncryptionMessage]}"/>
+                        <TextBlock Classes="Description" Text="{Binding DictText[EncryptionDescriptionMessage]}"/>
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,5">
-                            <TextBlock Text="Enable Encryption" 
+                            <TextBlock Text="{Binding DictText[EnableEncryptionMessage]}" 
                                        VerticalAlignment="Center" 
                                        Foreground="{DynamicResource TextColor}"/>
                             <ToggleSwitch x:Name="EncryptionToggle" 
@@ -128,10 +128,10 @@
                         </Grid>
 
                         <StackPanel IsVisible="{Binding #EncryptionToggle.IsChecked}">
-                            <TextBlock Classes="Label" Text="Extensions to encrypt (comma separated)"/>
+                            <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}"/>
                             <TextBox Watermark="e.g.: .txt, .docx, .pdf" 
                                      HorizontalAlignment="Stretch"/>
-                            <TextBlock Text="Files with these extensions will be encrypted before backup." 
+                            <TextBlock Text="{Binding DictText[ExtensionsEncryptionDescriptionMessage]}" 
                                        FontSize="11" 
                                        Foreground="{DynamicResource TextColor}" 
                                        Opacity="0.5" 

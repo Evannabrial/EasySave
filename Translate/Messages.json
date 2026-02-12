@@ -21,5 +21,19 @@
     "PressAnyKeyMessage" : "Press any key to continue...",
     "ChangeLogFileTypeMessage" : "What type of log file would you like? \n 1. JSON \n 2. XML :",
   "ChangeLogFileTypeSuccessMessage" : "Log file type changed successfully!",
-  "SettingsMessage" : "caca"
+  "SettingsMessage" : "Settings",
+  "LogDirectoryMessage"  : "Log Directory :",
+  "LogDirectoryDescriptionMessage" : "Define where the application logs will be stored:",
+  "PathMessage" : "Path :",
+  "LogFormatMessage" : "Log Format :",
+  "LogFormatDescriptionMessage" : "Define the format of the log file (JSON or XML):",
+  "FormatMessage" : "Format :",
+  "EncryptionMessage" : "Encryption :",
+  "EncryptionDescriptionMessage" : "Secure your saved files using CryptoSoft.",
+  "EnableEncryptionMessage" : "Enable encryption:",
+  "ExtensionsToEncryptMessage" : "Extensions to encrypt (separate by comma):",
+  "ExtensionsEncryptionDescriptionMessage" : "Files with these extensions will be encrypted before backup.",
+  "EasySaveMessage" : "EasySave",
+  "FrenchMessage" : "French",
+  "EnglishMessage" : "English"
 }

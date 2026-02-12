@@ -22,7 +22,7 @@
                 Height="50" >
             <Grid ColumnDefinitions="*, Auto">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
-                    <TextBlock Text="EasySave" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
+                    <TextBlock Text="{Binding DictText[EasySaveMessage]}" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
@@ -30,13 +30,13 @@
                         <ComboBoxItem>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Svg Path="avares://EasySave/Assets/fr-logo.svg" Width="20" Height="20"/>
-                                <TextBlock Text="French" Foreground="{StaticResource SecondaryColor}"/>
+                                <TextBlock Text="{Binding DictText[FrenchMessage]}" Foreground="{StaticResource SecondaryColor}"/>
                             </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Svg Path="avares://EasySave/Assets/uk-logo.svg" Width="20" Height="20"/>
-                                <TextBlock Text="English" Foreground="{StaticResource SecondaryColor}"/>
+                                <TextBlock Text="{Binding DictText[EnglishMessage]}" Foreground="{StaticResource SecondaryColor}"/>
                             </StackPanel>
                         </ComboBoxItem>
                     </ComboBox>

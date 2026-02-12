@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EasySaveLibrary;
 using EasySave.Services;
@@ -9,6 +10,7 @@ namespace EasySave.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly JobManager _jobManager;
+    private Dictionary<string, string> _dictText;
 
     private ViewModelBase _currentPage;
 
@@ -27,10 +29,16 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _jobManager = null; // Ou new JobManager() si possible
     }
+    public Dictionary<string, string> DictText
+    {
+        get => _dictText;
+        set => _dictText = value ;
+    }
     
     public MainWindowViewModel(JobManager jobManager)
     {
         _jobManager = jobManager;
+        DictText = jobManager.Language.GetTranslations();
     }
     
     
