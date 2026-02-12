@@ -11,7 +11,7 @@
     <Grid Row="2" RowDefinitions="50, *" Margin="24 12">
         <Grid ColumnDefinitions="Auto, *, Auto, Auto" Grid.Row="0" VerticalAlignment="Center">
             <TextBlock Grid.Column="0" FontSize="32">Job Management</TextBlock>
-            <Button Grid.Column="2" Content="Run Selected Jobs" Margin="0,0,24,0"
+            <Button Grid.Column="2" Content="{Binding DictText[RunJobsMessage]}" Margin="0,0,24,0"
                     Background="DarkGreen"
                     Foreground="White"
                     IsVisible="{Binding ShowMultiSelectButton}" />
@@ -32,25 +32,25 @@
                     <Border Grid.Row="0" Padding="15,10" Background="{StaticResource SecondaryColor}"
                             CornerRadius="12 12 0 0" BorderBrush="{StaticResource PrimaryColor}">
                         <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130" ColumnSpacing="3">
-                            <TextBlock Grid.Column="1" Text="Job Name" FontWeight="Bold"
+                            <TextBlock Grid.Column="1" Text="{Binding DictText[JobNameMessage]}" FontWeight="Bold"
                                    Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
 
-                            <TextBlock Grid.Column="2" Text="Type" FontWeight="Bold"
+                            <TextBlock Grid.Column="2" Text="{Binding DictText[TypeMessage]}" FontWeight="Bold"
                                        Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
 
-                            <TextBlock Grid.Column="3" Text="Source" FontWeight="Bold"
+                            <TextBlock Grid.Column="3" Text="{Binding DictText[SourceMessage]}" FontWeight="Bold"
                                        Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
 
-                            <TextBlock Grid.Column="4" Text="Destination" FontWeight="Bold"
+                            <TextBlock Grid.Column="4" Text="{Binding DictText[DestinationMessage]}" FontWeight="Bold"
                                        Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
 
-                            <TextBlock Grid.Column="5" Text="Status" FontWeight="Bold"
+                            <TextBlock Grid.Column="5" Text="{Binding DictText[StatusMessage]}" FontWeight="Bold"
                                        Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
 
-                            <TextBlock Grid.Column="6" Text="Progress" FontWeight="Bold"
+                            <TextBlock Grid.Column="6" Text="{Binding DictText[ProgressMessage]}" FontWeight="Bold"
                                        Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
                             
-                            <TextBlock Grid.Column="7" Text="Actions" FontWeight="Bold"
+                            <TextBlock Grid.Column="7" Text="{Binding DictText[ActionsMessage]}" FontWeight="Bold"
                                        Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" />
                         </Grid>
                     </Border>
@@ -90,7 +90,7 @@
                                     <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6"
                                                 VerticalAlignment="Center">
                                         <Ellipse Width="8" Height="8" Fill="#4CAF50" />
-                                        <TextBlock Text="Idle" VerticalAlignment="Center" FontSize="12"
+                                        <TextBlock Text="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).DictText[IdleMessage]}" VerticalAlignment="Center" FontSize="12"
                                                    Foreground="{StaticResource TextColor}" />
                                     </StackPanel>
 
@@ -128,7 +128,7 @@
                                             <Button.Flyout>
                                                 <Flyout Placement="Top">
                                                     <StackPanel Spacing="10" MinWidth="150" >
-                                                        <TextBlock Text="Supprimer ce job ?" FontWeight="Bold" HorizontalAlignment="Center" />
+                                                        <TextBlock Text="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).DictText[DeleteJobMessage]}" FontWeight="Bold" HorizontalAlignment="Center" />
                                                         <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
                                                             <Button Content="Oui" 
                                                                     Background="Red" Foreground="White"
@@ -151,7 +151,7 @@
                     Background="{StaticResource PrimaryColor}"
                     CornerRadius="8"
                     Padding="48">
-                <TextBlock Text="Aucun travail de sauvegarde configuré." Foreground="{StaticResource TextColor}" />
+                <TextBlock Text="{Binding DictText[NoJobMessage]}" Foreground="{StaticResource TextColor}" />
             </Border>
         </Panel>
     </Grid>

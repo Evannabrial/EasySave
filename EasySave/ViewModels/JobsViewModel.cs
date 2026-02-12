@@ -14,6 +14,7 @@ namespace EasySave.ViewModels;
 public class JobsViewModel : ViewModelBase
 {
     private readonly JobManager _jobManager;
+    private Dictionary<string, string> _dictText;
     
     private ObservableCollection<JobDto> _jobs;
 
@@ -29,9 +30,15 @@ public class JobsViewModel : ViewModelBase
     
     public ICommand RunDeleteJob { get; }
     
+    public Dictionary<string, string> DictText
+    {
+        get => _dictText;
+        set => _dictText = value ;
+    }
     public JobsViewModel(JobManager jobManager)
     {
         _jobManager = jobManager;
+        DictText = jobManager.Language.GetTranslations();
         RunDeleteJob = new RelayCommandService(param => {
             if (param is JobDto dto) 
             {
