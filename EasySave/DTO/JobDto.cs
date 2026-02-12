@@ -14,6 +14,9 @@ public class JobDto : INotifyPropertyChanged
     private DateTime? _lastTimeRun;
     private string _save;
     private bool _isSelected;
+    private double _progress;
+    private string _status;
+    private string _colorStatus;
 
     public string Id
     {
@@ -61,7 +64,25 @@ public class JobDto : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
+    public double Progress
+    {
+        get => _progress;
+        set => _progress = value;
+    }
+
+    public string Status
+    {
+        get => _status;
+        set => _status = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public string ColorStatus
+    {
+        get => _colorStatus;
+        set => _colorStatus = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -77,6 +98,33 @@ public class JobDto : INotifyPropertyChanged
         Target = job.Target;
         LastTimeRun = job.LastTimeRun;
         Save = job.Save.GetType().Name;
+        Progress = 0;
+        Status = "Prêt"; 
+        ColorStatus = "#007ACC"; 
+        return this;
+    }
+
+    public JobDto SetStatus(JobStatus status)
+    {
+        Progress = status.Progress;
+        Status = status.Status;
+
+        switch (Status)
+        {
+            case "En cours": 
+                ColorStatus = "Blue"; 
+                break; 
+            case "Terminé": 
+                ColorStatus = "#28a745"; 
+                break; 
+            case "Prêt": 
+                ColorStatus = "Green"; 
+                break; 
+            default: 
+                ColorStatus = "Green"; 
+                break;
+        }
+        
         return this;
     }
 }

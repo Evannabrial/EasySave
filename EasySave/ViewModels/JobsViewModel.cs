@@ -28,6 +28,7 @@ public class JobsViewModel : ViewModelBase
     public bool ShowMultiSelectButton => Jobs.Count(j => j.IsSelected) >= 2;
     
     public ICommand RunDeleteJob { get; }
+    public ICommand RunStartSingleSave { get; }
     
     public JobsViewModel(JobManager jobManager)
     {
@@ -39,12 +40,21 @@ public class JobsViewModel : ViewModelBase
             }
         });
         
+        RunStartSingleSave = new RelayCommandService(param => {
+            if (param is JobDto dto) 
+            {
+                RunSingleJobSave(dto);
+            }
+        });
+        
         
         ObservableCollection<JobDto> jobDtos = new ObservableCollection<JobDto>();
         
         foreach (var j in jobManager.LJobs)
         {
-            jobDtos.Add(new JobDto().ToDto(j));
+            JobDto jobDto = new JobDto().ToDto(j);
+            jobDto = jobDto.SetStatus(_jobManager.GetStatusOfJob(j.Id));
+            jobDtos.Add(jobDto);
         }
 
         Jobs = jobDtos;
@@ -58,14 +68,20 @@ public class JobsViewModel : ViewModelBase
             };
         }
     }
-    
+
+    private void RunSingleJobSave(JobDto jobDto)
+    {
+        int index = Jobs.IndexOf(jobDto); 
+
+        _jobManager.StartMultipleSave(index.ToString());
+    }
     
     private void RunDeleteJobFunction(JobDto dto)
     {
         if (dto == null) return;
 
         // 1. Trouver le modèle original dans la bibliothèque via l'ID
-        var jobModel = _jobManager.LJobs.FirstOrDefault(j => j.Id.ToString() == dto.Id);
+        Job jobModel = _jobManager.LJobs.FirstOrDefault(j => j.Id.ToString() == dto.Id);
 
         if (jobModel != null)
         {

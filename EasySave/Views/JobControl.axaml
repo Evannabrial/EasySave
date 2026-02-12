@@ -89,22 +89,23 @@
 
                                     <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6"
                                                 VerticalAlignment="Center">
-                                        <Ellipse Width="8" Height="8" Fill="#4CAF50" />
-                                        <TextBlock Text="Idle" VerticalAlignment="Center" FontSize="12"
+                                        <Ellipse Width="8" Height="8" Fill="{Binding ColorStatus}" />
+                                        <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontSize="12"
                                                    Foreground="{StaticResource TextColor}" />
                                     </StackPanel>
 
                                     <Grid Grid.Column="6" ColumnDefinitions="*, Auto" ColumnSpacing="8"
                                           VerticalAlignment="Center">
-                                        <ProgressBar Value="45" Height="10" CornerRadius="5" 
+                                        <ProgressBar Value="{Binding Progress}" Height="10" CornerRadius="5" 
                                                      Background="#33FFFFFF">
                                         </ProgressBar>
-                                        <TextBlock Grid.Column="1" Text="45%" FontSize="11"
+                                        <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat={}{0}%}" FontSize="11"
                                                    Foreground="{StaticResource TextColor}" />
                                     </Grid>
 
                                     <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Background="Transparent" Padding="4">
+                                        <Button Background="Transparent" Padding="4" CommandParameter="{Binding}"
+                                                Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunStartSingleSave}">
                                             <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
                                                 <Svg.Css>
                                                     path { fill: green; }
