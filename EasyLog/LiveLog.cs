@@ -62,7 +62,6 @@ public class LiveLog : Log
     public LiveLog(string name, string action, string state, long nbFile, double progress, long nbFileLeft, 
         long sizeFileLeft, string source, string target, LogType logType)
     {
-        Id = Guid.NewGuid();
         DateTime = DateTime.Now;
         Name = name;
         Action = action;

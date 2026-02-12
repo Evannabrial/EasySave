@@ -317,10 +317,16 @@ public class JobManager
                 string jsonString = File.ReadAllText(filePath);
 
                 LiveLog liveLogJson = JsonSerializer.Deserialize<LiveLog>(jsonString);
-                    
-                progress = liveLogJson.Progress;
-                status = liveLogJson.State switch { "ON" => "En cours", "OFF" => "Prêt", _ => "Prêt" };
-                break;
+                
+                if (liveLogJson.Name == job.Name) 
+                {
+                    progress = liveLogJson.Progress;
+                    status = liveLogJson.State switch { "ON" => "En cours", "OFF" => "Terminé", _ => "Prêt" };
+                    return new JobStatus(idJob, status, progress);
+                }
+
+                // Si le log ne concerne pas ce job, on ne dit rien (null)
+                return null;
             
             case LogType.XML:
                 string filePathXml = Path.Combine(ConfigReader.Root["PathLog"], "livestate.xml");
@@ -352,6 +358,6 @@ public class JobManager
                 break;
         }
         
-        return new JobStatus(Guid.NewGuid(), status, progress);
+        return new JobStatus(idJob, status, progress);
     }
 }

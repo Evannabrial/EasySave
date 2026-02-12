@@ -68,13 +68,19 @@ public class JobDto : INotifyPropertyChanged
     public double Progress
     {
         get => _progress;
-        set => _progress = value;
+        set { _progress = value; OnPropertyChanged(); }
     }
 
     public string Status
     {
         get => _status;
-        set => _status = value ?? throw new ArgumentNullException(nameof(value));
+        set
+        {
+            _status = value ?? throw new ArgumentNullException(nameof(value));
+            OnPropertyChanged();
+            // On notifie la vue que la couleur a aussi changé !
+            OnPropertyChanged(nameof(ColorStatus));     
+        }  
     }
 
     public string ColorStatus
