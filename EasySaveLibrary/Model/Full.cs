@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using EasyLog;
 using EasySaveLibrary.Interfaces;
@@ -7,11 +8,12 @@ namespace EasySaveLibrary.Model;
 
 public class Full : ITypeSave
 {
+    public string DisplayName => "Full";
     private LogManager logManager;
     
     public Full()
     {
-        logManager = new LogManager();
+        logManager = new LogManager(ConfigManager.LogPath);
     }
     
      /// <summary>
@@ -24,8 +26,9 @@ public class Full : ITypeSave
      /// 2 => Erreur copie du fichier
      /// 3 => Erreur création du dossier
      /// </returns>
-     public int StartSave(Job job, LogType logType)
+     public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
      { 
+         logManager = new LogManager(ConfigManager.LogPath);
          logManager.TypeSave = logType;
         
         bool isFile = File.Exists(job.Source);
@@ -198,14 +201,81 @@ public class Full : ITypeSave
             name: job.Name,
             sourcePath: job.Source,
             targetPath: job.Target,
-            action: "Copy of a File",
+            action: "Job Finished",
             state: "OFF",
-            progress: 0,
-            nbFile: 0,
+            progress: 100,
+            nbFile: nbFile,
             nbFileLeft: 0,
             sizeFileLeft: 0
         );
+
         job.LastTimeRun = DateTime.Now;
+
+        // CryptoSoft encryption if enabled
+        if (enableEncryption)
+        {
+            try
+            {
+                // Generate a random 16-byte key and encode it in Base64
+                string key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+                // Display the key so the user can save it for later decryption
+                Console.WriteLine($"Encryption key for '{job.Name}' : {key}");
+
+                // Build the path to the CryptoSoft executable (expected in the same directory)
+                string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft.exe");
+
+                // Build the command-line arguments: encrypt <targetDir> <key> [extensions]
+                string arguments = $"encrypt \"{target}\" \"{key}\"";
+                // If specific extensions are set, only those file types will be encrypted
+                if (!string.IsNullOrWhiteSpace(encryptionExtensions))
+                {
+                    arguments += $" \"{encryptionExtensions}\"";
+                }
+
+                // Launch CryptoSoft as an external process
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = cryptoSoftPath,
+                        Arguments = arguments,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+                };
+
+                process.Start();
+                // Read the output (contains the encryption time on the last line)
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                if (process.ExitCode == 0)
+                {
+                    // Parse the encryption time (in ms) from the last non-empty line of CryptoSoft output
+                    double encryptTimeMs = double.Parse(
+                        output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
+                    );
+                    // Log the encryption result
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: target,
+                        targetPath: target,
+                        action: "Encryption",
+                        execTime: encryptTimeMs
+                    );
+                }
+                else
+                {
+                    return 4; // CryptoSoft returned an error
+                }
+            }
+            catch (Exception)
+            {
+                return 4; // Encryption failed
+            }
+        }
+
         return 0;
     }
 }

@@ -2,6 +2,7 @@ using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using EasyLog;
 
 namespace EasySaveLibrary;
@@ -11,6 +12,8 @@ public class JobManager
     private ILanguage _language;
     private List<Job> _lJobs;
     private LogType _logType;
+    private bool _enableEncryption;
+    private string _encryptionExtensions = "";
 
     public List<Job> LJobs
     {
@@ -28,6 +31,18 @@ public class JobManager
     {
         get => _logType;
         set => _logType = value;
+    }
+
+    public bool EnableEncryption
+    {
+        get => _enableEncryption;
+        set => _enableEncryption = value;
+    }
+
+    public string EncryptionExtensions
+    {
+        get => _encryptionExtensions;
+        set => _encryptionExtensions = value ?? "";
     }
 
     public JobManager(ILanguage language, LogType logType)
@@ -177,8 +192,8 @@ public class JobManager
             {
                 Job job = _lJobs[index];
                 
-                // Start the save
-                int result = job.Save.StartSave(job, LogType);
+                // Start the save with global encryption settings
+                int result = job.Save.StartSave(job, LogType, EnableEncryption, EncryptionExtensions);
                 
                 // If the save succeeds
                 if (result != 0)
@@ -290,5 +305,80 @@ public class JobManager
 
         // Write to file
         File.WriteAllText(filePath, jsonString);
+    }
+
+    public JobStatus GetStatusOfJob(Guid idJob)
+    {
+        Job job = LJobs.FirstOrDefault(j => j.Id == idJob);
+        
+        string pathFromConfig = ConfigManager.LogPath;
+        // LOG DE DEBUG
+
+        if (job == null)
+        {
+            return null;
+        }
+
+        double progress = 0;
+        string status = "Prêt";
+        
+        switch (LogType)
+        {
+            case LogType.JSON:
+                string filePath = ConfigManager.Root["PathLog"] + "\\" + "livestate.json";
+                
+                if (!File.Exists(filePath))
+                {
+                    break;
+                }
+                try 
+                {
+                    // On ouvre le fichier en mode Lecture, mais on autorise les autres à Écrire (ReadWrite)
+                    using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var sr = new StreamReader(fs))
+                    {
+                        string jsonString = sr.ReadToEnd();
+                        if (string.IsNullOrWhiteSpace(jsonString)) return null;
+
+                        LiveLog liveLogJson = JsonSerializer.Deserialize<LiveLog>(jsonString);
+            
+                        if (liveLogJson.Name == job.Name) 
+                        {
+                            return new JobStatus(idJob, liveLogJson.State == "ON" ? "En cours" : "Terminé", liveLogJson.Progress);
+                        }
+                    }
+                }
+                catch (IOException) 
+                {
+                    // Si le fichier est vraiment bloqué, on ignore silencieusement ce cycle de rafraîchissement
+                    return null; 
+                }
+                return null;
+            
+            case LogType.XML:
+                string filePathXml = Path.Combine(ConfigManager.Root["PathLog"], "livestate.xml");
+                if (!File.Exists(filePathXml)) break;
+
+                try 
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(LiveLog));
+                    // Lecture partagée
+                    using (var fs = new FileStream(filePathXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        LiveLog liveLogXml = (LiveLog)serializer.Deserialize(fs);
+
+                        if (liveLogXml.Name == job.Name)
+                        {
+                            progress = liveLogXml.Progress;
+                            status = liveLogXml.State switch { "ON" => "En cours", "OFF" => "Terminé", _ => "Prêt" };
+                            return new JobStatus(idJob, status, progress);
+                        }
+                    }
+                }
+                catch { return null; }
+                break;
+        }
+        
+        return new JobStatus(idJob, status, progress);
     }
 }

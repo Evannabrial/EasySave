@@ -9,6 +9,19 @@
 
     <ItemGroup>
       <ProjectReference Include="..\EasyLog\EasyLog.csproj" />
+      <ProjectReference Include="..\CryptoSoft\CryptoSoft.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.3" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\appsettings.json">
+        <Link>appsettings.json</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     

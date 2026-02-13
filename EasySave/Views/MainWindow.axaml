@@ -1,0 +1,93 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EasySave.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EasySave.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="EasySave">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+
+    <Grid RowDefinitions="Auto, *">
+        <Border Grid.Row="0"
+                Background="{StaticResource PrimaryColor}"
+                Height="50">
+            <Grid ColumnDefinitions="*, Auto">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
+                    <TextBlock Text="{Binding DictText[EasySaveMessage]}" FontWeight="Bold"
+                               VerticalAlignment="Center" Foreground="{StaticResource TextColor}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
+                    <ComboBox SelectedIndex="{Binding SelectedLanguageIndex}" VerticalAlignment="Center">
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Svg Path="avares://EasySave/Assets/fr-logo.svg" Width="20" Height="20" />
+                                <TextBlock Text="{Binding DictText[FrenchMessage]}"
+                                           Foreground="{StaticResource SecondaryColor}" />
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Svg Path="avares://EasySave/Assets/uk-logo.svg" Width="20" Height="20" />
+                                <TextBlock Text="{Binding DictText[EnglishMessage]}"
+                                           Foreground="{StaticResource SecondaryColor}" />
+                            </StackPanel>
+                        </ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto, *">
+            <SplitView IsPaneOpen="True"
+                       DisplayMode="CompactInline"
+                       OpenPaneLength="190"
+                       CompactPaneLength="50"
+                       HorizontalAlignment="Left"
+                       Grid.Column="0">
+                <SplitView.Pane>
+                    <Grid Row="3" RowDefinitions="Auto,7*,*" Background="{StaticResource SecondaryColor}">
+                        <StackPanel Spacing="5" Margin="5" Grid.Row="0">
+                            <Button Content="{Binding DictText[JobsMessage]}"
+                                    Command="{Binding NavJobs}"
+                                    HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
+                                    Foreground="{StaticResource TextColor}" />
+                            <Button Content="{Binding DictText[StatusMessage]}"
+                                    Command="{Binding NavStatus}"
+                                    HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
+                                    Foreground="{StaticResource TextColor}" />
+                            <Button Content="{Binding DictText[SettingsMessage]}"
+                                    Command="{Binding NavSettings}"
+                                    HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
+                                    Foreground="{StaticResource TextColor}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2">
+                            <Separator Background="{StaticResource PrimaryColor}" />
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock HorizontalAlignment="Center" Foreground="{StaticResource TextColor}">
+                                    EasySave
+                                </TextBlock>
+                                <TextBlock HorizontalAlignment="Center" FontSize="10" Foreground="Gray">
+                                    Version 2.0.0
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </SplitView.Pane>
+            </SplitView>
+            <Grid Grid.Column="1">
+                <ContentControl Content="{Binding CurrentPage}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

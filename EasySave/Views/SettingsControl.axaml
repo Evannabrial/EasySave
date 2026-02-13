@@ -1,0 +1,159 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             xmlns:vm="clr-namespace:EasySave.ViewModels"
+             x:DataType="vm:SettingsViewModel"
+             x:Class="EasySave.Views.SettingsControl">
+
+    <UserControl.Styles>
+        <Style Selector="Border.Card">
+            <Setter Property="Background">
+                <SolidColorBrush Color="{DynamicResource SecondaryColor}"/>
+            </Setter>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/> 
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <Style Selector="Border.IconContainer">
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,0,20,0"/>
+            <Setter Property="Background" Value="{DynamicResource HoverButtonBrush}"/>
+        </Style>
+
+        <Style Selector="TextBlock.Title">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        </Style>
+
+        <Style Selector="TextBlock.Description">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/> 
+            <Setter Property="Opacity" Value="0.6"/>
+            <Setter Property="Margin" Value="0,4,0,15"/>
+        </Style>
+        
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,10,0,5"/>
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="40" MaxWidth="800" HorizontalAlignment="Left">
+            
+            <TextBlock Text="{Binding DictText[SettingsMessage]}"
+                       FontSize="32" 
+                       FontWeight="Bold" 
+                       Foreground="{DynamicResource TextColor}"
+                       Margin="0,0,0,30"/>
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z" 
+                              Fill="{DynamicResource PrimaryBrush}" 
+                              Stretch="Uniform" 
+                              Width="24" Height="24"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[LogDirectoryMessage]}"/>
+                        <TextBlock Classes="Description" Text="{Binding DictText[LogDirectoryDescriptionMessage]}"/>
+                        
+                        <TextBlock Classes="Label" Text="{Binding DictText[PathMessage]}"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="15">
+                            <TextBox Watermark="C:\Users\Admin\EasySave\Logs" Text="{Binding LogPath }"
+                                     HorizontalAlignment="Stretch"/>
+                            <Button Command="{Binding OpenFilePickerCommand}">
+                                ...
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M11.5,11L13,12.5L11.5,14L10,12.5L11.5,11M16.5,11L18,12.5L16.5,14L15,12.5L16.5,11M11,15H9V16.5L7.5,15H6V18H7.5V16.5H9V18H10.5V15H11M15.5,18H14V15H18V16.5H15.5V18Z" 
+                              Fill="{DynamicResource PrimaryBrush}" 
+                              Stretch="Uniform" 
+                              Width="24" Height="24"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[LogFormatMessage]}"/>
+                        <TextBlock Classes="Description" Text="{Binding DictText[LogFormatDescriptionMessage]}"/>
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[FormatMessage]}"/>
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  SelectedIndex="{Binding SelectedFormatIndex, Mode=TwoWay}" >
+                            <ComboBoxItem>JSON File (.json)</ComboBoxItem>
+                            <ComboBoxItem>XML File (.xml)</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path Data="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" 
+                              Fill="{DynamicResource PrimaryBrush}" 
+                              Stretch="Uniform" 
+                              Width="24" Height="24"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[EncryptionMessage]}"/>
+                        <TextBlock Classes="Description" Text="{Binding DictText[EncryptionDescriptionMessage]}"/>
+                        
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,5">
+                            <TextBlock Text="{Binding DictText[EnableEncryptionMessage]}" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextColor}"/>
+                            <ToggleSwitch x:Name="EncryptionToggle" 
+                                          Grid.Column="1"
+                                          OffContent="No" 
+                                          OnContent="Yes"
+                                          IsChecked="{Binding EnableEncryption}"/>
+                        </Grid>
+
+                        <StackPanel IsVisible="{Binding #EncryptionToggle.IsChecked}">
+                            <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}"/>
+                            <TextBox Watermark="e.g.: .txt, .docx, .pdf" 
+                                     Text="{Binding EncryptionExtensions}"
+                                     HorizontalAlignment="Stretch"/>
+                            <TextBlock Text="{Binding DictText[ExtensionsEncryptionDescriptionMessage]}" 
+                                       FontSize="11" 
+                                       Foreground="{DynamicResource TextColor}" 
+                                       Opacity="0.5" 
+                                       Margin="0,5,0,0" 
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                        
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <Button Content="{Binding DictText[SaveButtonMessage]}"
+                    Command="{Binding ApplySavesCommand}">
+            </Button>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

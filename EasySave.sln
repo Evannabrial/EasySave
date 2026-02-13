@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySaveLibrary", "EasySave
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyLog", "EasyLog\EasyLog.csproj", "{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSoft", "CryptoSoft\CryptoSoft.csproj", "{7ECFC027-4B83-427B-B123-97E4939541AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySave", "EasySave\EasySave.csproj", "{DA811C40-3604-4510-9ACF-AF9BF961C5D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48A8E04F-F060-4AF4-9C66-9D8463DEFA19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ECFC027-4B83-427B-B123-97E4939541AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ECFC027-4B83-427B-B123-97E4939541AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ECFC027-4B83-427B-B123-97E4939541AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ECFC027-4B83-427B-B123-97E4939541AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

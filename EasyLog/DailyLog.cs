@@ -5,10 +5,17 @@ namespace EasyLog;
 
 public class DailyLog : Log
 {
+    private Guid _id;
     private string _sourcePath;
     private string _targetPath;
     private long _size;
     private double _execTime;
+
+    public Guid Id
+    {
+        get => _id;
+        set => _id = value;
+    }
 
     public string SourcePath
     {
@@ -82,12 +89,13 @@ public class DailyLog : Log
                 
                 case LogType.XML:
                     XmlSerializer xmlSerializer = new(typeof(DailyLog));
+                    string fullPath = Path.Combine(path, this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml");
 
-                    using (var writer = new StreamWriter(path + "\\" +  this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml"))
+                    using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                    using (var writer = new StreamWriter(fs))
                     {
                         xmlSerializer.Serialize(writer, this);
                     }
-                    
                     break;
             }
         }

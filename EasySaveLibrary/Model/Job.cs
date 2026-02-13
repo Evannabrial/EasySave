@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using EasySaveLibrary.Interfaces;
 
 namespace EasySaveLibrary.Model;
@@ -16,6 +18,7 @@ public class Job
         get => _id;
         set => _id = value;
     }
+
 
     public string Name
     {
