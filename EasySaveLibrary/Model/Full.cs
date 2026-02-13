@@ -113,7 +113,6 @@ public class Full : ITypeSave
         
         while (queue.Count > 0)
         {
-            System.Threading.Thread.Sleep(100); // 100ms de pause entre chaque fichier
             string actual = queue.Dequeue();
             
             if (Directory.Exists(actual))
