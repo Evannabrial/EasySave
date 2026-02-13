@@ -45,5 +45,6 @@
   "ActionsMessage" : "Actions",
   "IdleMessage" : "Idle",
   "DeleteJobMessage": "Delete this job ?",
-  "NoJobMessage" : "No job configured"
+  "NoJobMessage" : "No job configured",
+  "AddJobMessage" : "Add a job"
 }
