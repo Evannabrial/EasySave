@@ -26,7 +26,7 @@ public class Full : ITypeSave
      /// 2 => Erreur copie du fichier
      /// 3 => Erreur création du dossier
      /// </returns>
-     public int StartSave(Job job, LogType logType)
+     public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
      { 
          logManager.TypeSave = logType;
         
@@ -211,7 +211,7 @@ public class Full : ITypeSave
         job.LastTimeRun = DateTime.Now;
 
         // CryptoSoft encryption if enabled
-        if (job.EnableEncryption)
+        if (enableEncryption)
         {
             try
             {
@@ -226,9 +226,9 @@ public class Full : ITypeSave
                 // Build the command-line arguments: encrypt <targetDir> <key> [extensions]
                 string arguments = $"encrypt \"{target}\" \"{key}\"";
                 // If specific extensions are set, only those file types will be encrypted
-                if (!string.IsNullOrWhiteSpace(job.EncryptionExtensions))
+                if (!string.IsNullOrWhiteSpace(encryptionExtensions))
                 {
-                    arguments += $" \"{job.EncryptionExtensions}\"";
+                    arguments += $" \"{encryptionExtensions}\"";
                 }
 
                 // Launch CryptoSoft as an external process

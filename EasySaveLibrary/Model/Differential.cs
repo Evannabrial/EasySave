@@ -26,7 +26,7 @@ public class Differential : ITypeSave
     /// 2 => Erreur copie du fichier
     /// 3 => Erreur création du dossier
     /// </returns>
-    public int StartSave(Job job, LogType logType)
+    public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
     {
         logManager.TypeSave = logType;
         
@@ -44,7 +44,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job, logType);
+            return new Full().StartSave(job, logType, enableEncryption, encryptionExtensions);
         }
         
         bool isFile = File.Exists(job.Source);

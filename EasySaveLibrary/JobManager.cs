@@ -192,12 +192,8 @@ public class JobManager
             {
                 Job job = _lJobs[index];
                 
-                // Propagate global encryption settings
-                job.EnableEncryption = EnableEncryption;
-                job.EncryptionExtensions = EncryptionExtensions;
-                
-                // Start the save
-                int result = job.Save.StartSave(job, LogType);
+                // Start the save with global encryption settings
+                int result = job.Save.StartSave(job, LogType, EnableEncryption, EncryptionExtensions);
                 
                 // If the save succeeds
                 if (result != 0)
