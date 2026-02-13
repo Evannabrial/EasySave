@@ -27,7 +27,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
-                    <ComboBox SelectedIndex="0" VerticalAlignment="Center">
+                    <ComboBox SelectedIndex="{Binding SelectedLanguageIndex}" VerticalAlignment="Center">
                         <ComboBoxItem>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Svg Path="avares://EasySave/Assets/fr-logo.svg" Width="20" Height="20" />
