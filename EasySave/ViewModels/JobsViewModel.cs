@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Avalonia.Metadata;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,6 +9,7 @@ using EasySave.DTO;
 using EasySave.Services;
 using EasySaveLibrary;
 using EasySaveLibrary.Model;
+using EasySaveLibrary.Interfaces;
 
 namespace EasySave.ViewModels;
 
@@ -19,6 +19,57 @@ public class JobsViewModel : ViewModelBase
     private Dictionary<string, string> _dictText;
     
     private ObservableCollection<JobDto> _jobs;
+    private LogObserverService _observer;
+
+    // --- Propriétés pour le Formulaire (Pop-up) ---
+    private bool _isFormVisible;
+    private string _formTitle;
+    private string _formName;
+    private string _formSource;
+    private string _formTarget;
+    private string _selectedSaveType;
+    private bool _isEditMode;
+    private JobDto _currentEditingDto; // Pour garder une référence au DTO en cours d'édition
+
+    public ObservableCollection<string> SaveTypes { get; } = new ObservableCollection<string> { "Full", "Differential" };
+
+    public bool IsFormVisible
+    {
+        get => _isFormVisible;
+        set { _isFormVisible = value; OnPropertyChanged(); }
+    }
+
+    public string FormTitle
+    {
+        get => _formTitle;
+        set { _formTitle = value; OnPropertyChanged(); }
+    }
+
+    public string FormName
+    {
+        get => _formName;
+        set { _formName = value; OnPropertyChanged(); }
+    }
+
+    public string FormSource
+    {
+        get => _formSource;
+        set { _formSource = value; OnPropertyChanged(); }
+    }
+
+    public string FormTarget
+    {
+        get => _formTarget;
+        set { _formTarget = value; OnPropertyChanged(); }
+    }
+
+    public string SelectedSaveType
+    {
+        get => _selectedSaveType;
+        set { _selectedSaveType = value; OnPropertyChanged(); }
+    }
+
+    // --- Fin Propriétés Formulaire ---
 
     public JobManager JobManager => _jobManager;
     
@@ -30,41 +81,87 @@ public class JobsViewModel : ViewModelBase
     
     public bool ShowMultiSelectButton => Jobs.Count(j => j.IsSelected) >= 2;
     
-    private LogObserverService _observer;
-    
     public ICommand RunDeleteJob { get; }
     public ICommand RunStartSingleSave { get; }
     
+    // Commandes pour le Formulaire
+    public ICommand OpenAddJobCommand { get; }
+    public ICommand OpenEditJobCommand { get; }
+    public ICommand CloseFormCommand { get; }
+    public ICommand SaveFormCommand { get; }
+
     public Dictionary<string, string> DictText
     {
         get => _dictText;
         set => _dictText = value ;
     }
+
     public JobsViewModel(JobManager jobManager)
     {
         _jobManager = jobManager;
         DictText = jobManager.Language.GetTranslations();
+        
+        // Initialisation des commandes existantes
         RunDeleteJob = new RelayCommandService(param => {
-            if (param is JobDto dto) 
-            {
-                RunDeleteJobFunction(dto);
-            }
+            if (param is JobDto dto) RunDeleteJobFunction(dto);
         });
         
         RunStartSingleSave = new RelayCommandService(param => {
-            if (param is JobDto dto) 
+            if (param is JobDto dto) RunSingleJobSave(dto);
+        });
+
+        // --- Initialisation des commandes du Formulaire ---
+        
+        // Ouvre le popup en mode "Ajout"
+        OpenAddJobCommand = new RelayCommandService(_ => {
+            _isEditMode = false;
+            _currentEditingDto = null;
+            
+            FormTitle = DictText.ContainsKey("AddJobMessage") ? DictText["AddJobMessage"] : "Add a Job";
+            FormName = "";
+            FormSource = "";
+            FormTarget = "";
+            SelectedSaveType = "Full"; // Valeur par défaut
+            
+            IsFormVisible = true;
+        });
+
+        // Ouvre le popup en mode "Édition"
+        OpenEditJobCommand = new RelayCommandService(param => {
+            if (param is JobDto dto)
             {
-                RunSingleJobSave(dto);
+                _isEditMode = true;
+                _currentEditingDto = dto;
+
+                FormTitle = "Edit Job"; // Ou via DictText si dispo
+                FormName = dto.Name;
+                FormSource = dto.Source;
+                FormTarget = dto.Target;
+                
+                // On s'assure que le type correspond à la liste (Full/Differential)
+                SelectedSaveType = SaveTypes.Contains(dto.Save) ? dto.Save : "Full";
+
+                IsFormVisible = true;
             }
         });
-        
+
+        // Ferme le popup sans sauvegarder
+        CloseFormCommand = new RelayCommandService(_ => {
+            IsFormVisible = false;
+        });
+
+        // Sauvegarde (Ajout ou Update)
+        SaveFormCommand = new RelayCommandService(_ => {
+            ProcessSaveForm();
+        });
+
+        // --- Fin Commandes Formulaire ---
+
         _observer = new LogObserverService(_jobManager.LogType.ToString().ToLower());
         _observer.OnLogChanged += () => 
         {
-            // On demande au Dispatcher d'Avalonia d'exécuter la mise à jour
             Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus);
         };
-        
         
         ObservableCollection<JobDto> jobDtos = new ObservableCollection<JobDto>();
         
@@ -73,7 +170,6 @@ public class JobsViewModel : ViewModelBase
             JobDto jobDto = new JobDto().ToDto(j);
             var currentStatus = _jobManager.GetStatusOfJob(j.Id);
     
-            // On ne met à jour le statut que si on a trouvé un log correspondant
             if (currentStatus != null)
             {
                 jobDto.SetStatus(currentStatus);
@@ -84,7 +180,6 @@ public class JobsViewModel : ViewModelBase
 
         Jobs = jobDtos;
         
-        // On s'abonne aux changements de chaque Job
         foreach (var job in Jobs)
         {
             job.PropertyChanged += (s, e) => {
@@ -92,6 +187,63 @@ public class JobsViewModel : ViewModelBase
                     OnPropertyChanged(nameof(ShowMultiSelectButton));
             };
         }
+    }
+
+    private void ProcessSaveForm()
+    {
+        // 1. Validation basique
+        if (string.IsNullOrWhiteSpace(FormName) || 
+            string.IsNullOrWhiteSpace(FormSource) || 
+            string.IsNullOrWhiteSpace(FormTarget))
+        {
+            // Ici on pourrait afficher une erreur, pour l'instant on ne fait rien
+            return;
+        }
+
+        // Création du type de sauvegarde (Model)
+        ITypeSave typeSave = SelectedSaveType == "Differential" ? new Differential() : new Full();
+
+        if (_isEditMode && _currentEditingDto != null)
+        {
+            // --- MODE ÉDITION ---
+            
+            // Trouver le vrai Job dans le Manager
+            var jobModel = _jobManager.LJobs.FirstOrDefault(j => j.Id.ToString() == _currentEditingDto.Id);
+            if (jobModel != null)
+            {
+                // Mise à jour dans le Manager (Logique Métier)
+                _jobManager.UpdateJob(jobModel, FormName, FormSource, FormTarget, typeSave);
+                _jobManager.SaveJobs(); // Sauvegarde JSON
+
+                // Mise à jour de l'UI (DTO)
+                _currentEditingDto.Name = FormName;
+                _currentEditingDto.Source = FormSource;
+                _currentEditingDto.Target = FormTarget;
+                _currentEditingDto.Save = SelectedSaveType;
+            }
+        }
+        else
+        {
+            // --- MODE AJOUT ---
+            
+            // Ajout dans le Manager
+            Job newJob = _jobManager.AddJob(FormName, FormSource, FormTarget, typeSave);
+            _jobManager.SaveJobs(); // Sauvegarde JSON
+
+            // Création du DTO pour l'UI
+            JobDto newDto = new JobDto().ToDto(newJob);
+            
+            // Abonnement pour le bouton multiselect
+            newDto.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(JobDto.IsSelected))
+                    OnPropertyChanged(nameof(ShowMultiSelectButton));
+            };
+
+            Jobs.Add(newDto);
+        }
+
+        // Fermer le formulaire
+        IsFormVisible = false;
     }
 
     private void RunSingleJobSave(JobDto jobDto)
@@ -112,18 +264,13 @@ public class JobsViewModel : ViewModelBase
     {
         if (dto == null) return;
 
-        // 1. Trouver le modèle original dans la bibliothèque via l'ID
         Job jobModel = _jobManager.LJobs.FirstOrDefault(j => j.Id.ToString() == dto.Id);
 
         if (jobModel != null)
         {
-            // 2. Supprimer dans le modèle (la logique métier)
             _jobManager.DeleteJob(jobModel);
-
-            // 3. Supprimer dans la collection de la vue (l'UI)
+            _jobManager.SaveJobs(); // Penser à sauvegarder la suppression dans le JSON aussi
             Jobs.Remove(dto);
-        
-            // Optionnel : notifier pour le bouton multi-select si besoin
             OnPropertyChanged(nameof(ShowMultiSelectButton));
         }
     }
@@ -132,14 +279,11 @@ public class JobsViewModel : ViewModelBase
     {
         foreach (var jobDto in Jobs)
         {
-            // On repasse par le manager pour lire le fichier désérialisé
             var status = _jobManager.GetStatusOfJob(Guid.Parse(jobDto.Id));
             if (status != null)
             {
                 jobDto.Progress = (int)status.Progress;
                 jobDto.Status = status.Status;
-                
-                // La vue se mettra à jour car JobDto doit implémenter INotifyPropertyChanged
             }
         }
     }
