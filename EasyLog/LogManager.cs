@@ -66,9 +66,6 @@ public class LogManager
         Log log = new LiveLog(name, action, state, nbFile, progress, nbFileLeft, sizeFileLeft, sourcePath, targetPath, TypeSave);
         var p = AppDomain.CurrentDomain;
         
-        Debug.WriteLine($"DEBUG: Appel WriteNewLog LIVE pour {name} - Progrès: {progress}%");
-        Console.WriteLine($"CONSOLE: Appel WriteNewLog LIVE pour {name} - Progrès: {progress}%");
-        
         string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
 
         // Créer le dossier s'il n'existe pas

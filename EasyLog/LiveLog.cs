@@ -89,18 +89,16 @@ public class LiveLog : Log
         {
             switch (Type)
             {
+                // Dans LiveLog.cs -> WriteLog
                 case LogType.JSON:
-                    JsonSerializerOptions options = new()
+                    string jsonObject = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+    
+                    // On utilise FileShare.Read pour que l'UI puisse lire pendant qu'on écrit
+                    using (var fs = new FileStream(Path.Combine(path, "livestate.json"), FileMode.Create, FileAccess.Write, FileShare.Read))
+                    using (var sw = new StreamWriter(fs))
                     {
-                        WriteIndented = true
-                    };
-
-                    JsonSerializerOptions optionsCopy = new(options);
-            
-                    string jsonObject = JsonSerializer.Serialize(this, options);
-                    File.WriteAllLines(
-                        path + "\\" + "livestate.json", 
-                        [jsonObject]);
+                        sw.Write(jsonObject);
+                    }
                     break;
                 
                 case LogType.XML:

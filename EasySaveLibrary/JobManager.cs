@@ -314,18 +314,28 @@ public class JobManager
                 {
                     break;
                 }
-                string jsonString = File.ReadAllText(filePath);
-
-                LiveLog liveLogJson = JsonSerializer.Deserialize<LiveLog>(jsonString);
-                
-                if (liveLogJson.Name == job.Name) 
+                try 
                 {
-                    progress = liveLogJson.Progress;
-                    status = liveLogJson.State switch { "ON" => "En cours", "OFF" => "Terminé", _ => "Prêt" };
-                    return new JobStatus(idJob, status, progress);
-                }
+                    // On ouvre le fichier en mode Lecture, mais on autorise les autres à Écrire (ReadWrite)
+                    using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var sr = new StreamReader(fs))
+                    {
+                        string jsonString = sr.ReadToEnd();
+                        if (string.IsNullOrWhiteSpace(jsonString)) return null;
 
-                // Si le log ne concerne pas ce job, on ne dit rien (null)
+                        LiveLog liveLogJson = JsonSerializer.Deserialize<LiveLog>(jsonString);
+            
+                        if (liveLogJson.Name == job.Name) 
+                        {
+                            return new JobStatus(idJob, liveLogJson.State == "ON" ? "En cours" : "Terminé", liveLogJson.Progress);
+                        }
+                    }
+                }
+                catch (IOException) 
+                {
+                    // Si le fichier est vraiment bloqué, on ignore silencieusement ce cycle de rafraîchissement
+                    return null; 
+                }
                 return null;
             
             case LogType.XML:

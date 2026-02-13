@@ -94,6 +94,10 @@ public class JobsViewModel : ViewModelBase
         Task.Run(() => 
         {
             _jobManager.StartMultipleSave(index.ToString());
+            
+            Dispatcher.UIThread.InvokeAsync(() => {
+                RefreshJobsStatus();
+            });
         });
     }
     
@@ -128,7 +132,6 @@ public class JobsViewModel : ViewModelBase
                 jobDto.Progress = (int)status.Progress;
                 jobDto.Status = status.Status;
                 
-                Console.WriteLine($"Update UI: {status.Progress}%");
                 // La vue se mettra à jour car JobDto doit implémenter INotifyPropertyChanged
             }
         }

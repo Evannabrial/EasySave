@@ -104,14 +104,20 @@
                                     </Grid>
 
                                     <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Background="Transparent" Padding="4" CommandParameter="{Binding}"
-                                                Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunStartSingleSave}">
+                                        <Button Background="Transparent" Padding="4" 
+                                                CommandParameter="{Binding}"
+                                                Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunStartSingleSave}"
+                                                IsVisible="{Binding !IsRunning}">
                                             <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
-                                                <Svg.Css>
-                                                    path { fill: green; }
-                                                </Svg.Css>
+                                                <Svg.Css>path { fill: green; }</Svg.Css>
                                             </Svg>
                                         </Button>
+
+                                        <StackPanel IsVisible="{Binding IsRunning}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Svg Path="avares://EasySave/Assets/spinner-solid-full.svg" Width="24" Height="24" Classes="spinner">
+                                                <Svg.Css>path { fill: #007ACC; }</Svg.Css>
+                                            </Svg>
+                                        </StackPanel>
                                         
                                         <Button Background="Transparent" Padding="4">
                                             <Svg Path="avares://EasySave/Assets/pen-solid-full.svg" Width="24" Height="24">
@@ -156,4 +162,19 @@
             </Border>
         </Panel>
     </Grid>
+    
+    <UserControl.Styles>
+        <Style Selector="Svg.spinner">
+            <Style.Animations>
+                <Animation Duration="0:0:2" IterationCount="Infinite">
+                    <KeyFrame KeyTime="0:0:0">
+                        <Setter Property="RotateTransform.Angle" Value="0"/>
+                    </KeyFrame>
+                    <KeyFrame KeyTime="0:0:2">
+                        <Setter Property="RotateTransform.Angle" Value="360"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </UserControl.Styles>
 </UserControl>

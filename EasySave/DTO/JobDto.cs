@@ -76,17 +76,27 @@ public class JobDto : INotifyPropertyChanged
         get => _status;
         set
         {
-            _status = value ?? throw new ArgumentNullException(nameof(value));
+            _status = value;
             OnPropertyChanged();
-            // On notifie la vue que la couleur a aussi changé !
-            OnPropertyChanged(nameof(ColorStatus));     
-        }  
+            OnPropertyChanged(nameof(IsRunning));
+            OnPropertyChanged(nameof(ColorStatus));
+        }
     }
+    
+    public bool IsRunning => Status == "En cours";
 
     public string ColorStatus
     {
-        get => _colorStatus;
-        set => _colorStatus = value ?? throw new ArgumentNullException(nameof(value));
+        get
+        {
+            return Status switch
+            {
+                "En cours" => "Blue",
+                "Terminé"  => "#28a745", // Vert succès
+                "Prêt"     => "Green",
+                _          => "Gray"
+            };
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -106,7 +116,6 @@ public class JobDto : INotifyPropertyChanged
         Save = job.Save.GetType().Name;
         Progress = 0;
         Status = "Prêt"; 
-        ColorStatus = "#007ACC"; 
         return this;
     }
 
@@ -114,22 +123,6 @@ public class JobDto : INotifyPropertyChanged
     {
         Progress = status.Progress;
         Status = status.Status;
-
-        switch (Status)
-        {
-            case "En cours": 
-                ColorStatus = "Blue"; 
-                break; 
-            case "Terminé": 
-                ColorStatus = "#28a745"; 
-                break; 
-            case "Prêt": 
-                ColorStatus = "Green"; 
-                break; 
-            default: 
-                ColorStatus = "Green"; 
-                break;
-        }
         
         return this;
     }

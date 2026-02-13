@@ -196,10 +196,7 @@ public class Full : ITypeSave
                 }
             }
         }
-        // S'assurer qu'aucun autre log n'est écrit après celui-ci
-        job.LastTimeRun = DateTime.Now;
-
-        return logManager.WriteNewLog(
+        logManager.WriteNewLog(
             name: job.Name,
             sourcePath: job.Source,
             targetPath: job.Target,
@@ -210,5 +207,8 @@ public class Full : ITypeSave
             nbFileLeft: 0,
             sizeFileLeft: 0
         );
+
+        job.LastTimeRun = DateTime.Now;
+        return 0;
     }
 }
