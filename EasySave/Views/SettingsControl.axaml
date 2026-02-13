@@ -124,12 +124,13 @@
                                           Grid.Column="1"
                                           OffContent="No" 
                                           OnContent="Yes"
-                                          IsChecked="False"/>
+                                          IsChecked="{Binding EnableEncryption}"/>
                         </Grid>
 
                         <StackPanel IsVisible="{Binding #EncryptionToggle.IsChecked}">
                             <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}"/>
                             <TextBox Watermark="e.g.: .txt, .docx, .pdf" 
+                                     Text="{Binding EncryptionExtensions}"
                                      HorizontalAlignment="Stretch"/>
                             <TextBlock Text="{Binding DictText[ExtensionsEncryptionDescriptionMessage]}" 
                                        FontSize="11" 

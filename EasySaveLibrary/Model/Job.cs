@@ -13,6 +13,19 @@ public class Job
     private DateTime? _lastTimeRun;
     private ITypeSave _save;
     private bool _enableEncryption;
+    private string _encryptionExtensions = "";
+
+    public bool EnableEncryption
+    {
+        get => _enableEncryption;
+        set => _enableEncryption = value;
+    }
+
+    public string EncryptionExtensions
+    {
+        get => _encryptionExtensions;
+        set => _encryptionExtensions = value ?? "";
+    }
 
     public Guid Id
     {

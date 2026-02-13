@@ -12,6 +12,8 @@ public class JobManager
     private ILanguage _language;
     private List<Job> _lJobs;
     private LogType _logType;
+    private bool _enableEncryption;
+    private string _encryptionExtensions = "";
 
     public List<Job> LJobs
     {
@@ -29,6 +31,18 @@ public class JobManager
     {
         get => _logType;
         set => _logType = value;
+    }
+
+    public bool EnableEncryption
+    {
+        get => _enableEncryption;
+        set => _enableEncryption = value;
+    }
+
+    public string EncryptionExtensions
+    {
+        get => _encryptionExtensions;
+        set => _encryptionExtensions = value ?? "";
     }
 
     public JobManager(ILanguage language, LogType logType)
@@ -177,6 +191,10 @@ public class JobManager
             if (index >= 0 && index < _lJobs.Count)
             {
                 Job job = _lJobs[index];
+                
+                // Propagate global encryption settings
+                job.EnableEncryption = EnableEncryption;
+                job.EncryptionExtensions = EncryptionExtensions;
                 
                 // Start the save
                 int result = job.Save.StartSave(job, LogType);
