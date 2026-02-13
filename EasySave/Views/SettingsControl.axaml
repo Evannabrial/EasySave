@@ -73,8 +73,13 @@
                         <TextBlock Classes="Description" Text="{Binding DictText[LogDirectoryDescriptionMessage]}"/>
                         
                         <TextBlock Classes="Label" Text="{Binding DictText[PathMessage]}"/>
-                        <TextBox Watermark="C:\Users\Admin\EasySave\Logs" 
-                                 HorizontalAlignment="Stretch"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="15">
+                            <TextBox Watermark="C:\Users\Admin\EasySave\Logs" Text="{Binding LogPath }"
+                                     HorizontalAlignment="Stretch"/>
+                            <Button Command="{Binding OpenFilePickerCommand}">
+                                ...
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -94,7 +99,8 @@
                         <TextBlock Classes="Description" Text="{Binding DictText[LogFormatDescriptionMessage]}"/>
 
                         <TextBlock Classes="Label" Text="{Binding DictText[FormatMessage]}"/>
-                        <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch">
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  SelectedIndex="{Binding SelectedFormatIndex, Mode=TwoWay}" >
                             <ComboBoxItem>JSON File (.json)</ComboBoxItem>
                             <ComboBoxItem>XML File (.xml)</ComboBoxItem>
                         </ComboBox>
@@ -142,6 +148,10 @@
                     </StackPanel>
                 </Grid>
             </Border>
+            
+            <Button Content="{Binding DictText[SaveButtonMessage]}"
+                    Command="{Binding ApplySavesCommand}">
+            </Button>
 
         </StackPanel>
     </ScrollViewer>

@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using EasySave.Services;
 using EasySave.ViewModels;
@@ -14,7 +15,7 @@ namespace EasySave;
 public partial class App : Application
 {
     public JobManager JobManager => JobManagerService.Instance.JobManager;
-    
+    public static Window MainWindow { get; set; }
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -31,6 +32,7 @@ public partial class App : Application
             {
                 DataContext = new MainWindowViewModel(JobManager),
             };
+            MainWindow = desktop.MainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();

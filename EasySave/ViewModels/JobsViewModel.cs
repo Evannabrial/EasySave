@@ -30,8 +30,6 @@ public class JobsViewModel : ViewModelBase
     
     public bool ShowMultiSelectButton => Jobs.Count(j => j.IsSelected) >= 2;
     
-    private LogObserverService _observer;
-    
     public ICommand RunDeleteJob { get; }
     public ICommand RunStartSingleSave { get; }
     
@@ -58,10 +56,8 @@ public class JobsViewModel : ViewModelBase
             }
         });
         
-        _observer = new LogObserverService(_jobManager.LogType.ToString().ToLower());
-        _observer.OnLogChanged += () => 
+        LogService.Observer.OnLogChanged += () => 
         {
-            // On demande au Dispatcher d'Avalonia d'exécuter la mise à jour
             Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus);
         };
         
@@ -96,6 +92,7 @@ public class JobsViewModel : ViewModelBase
 
     private void RunSingleJobSave(JobDto jobDto)
     {
+        LogService.Observer.StartWatcher();
         int index = Jobs.IndexOf(jobDto); 
 
         Task.Run(() => 
@@ -130,6 +127,7 @@ public class JobsViewModel : ViewModelBase
     
     private void RefreshJobsStatus()
     {
+        Console.WriteLine("Event received: Refreshing UI..."); // <--- AJOUTE ÇA
         foreach (var jobDto in Jobs)
         {
             // On repasse par le manager pour lire le fichier désérialisé

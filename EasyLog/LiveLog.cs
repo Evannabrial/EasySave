@@ -104,11 +104,12 @@ public class LiveLog : Log
                 case LogType.XML:
                     XmlSerializer xmlSerializer = new(typeof(LiveLog));
 
-                    using (var writer = new StreamWriter(path + "\\" + "livestate.xml"))
+                    // Utilisation d'un FileStream partagé pour éviter le blocage de l'UI
+                    using (var fs = new FileStream(Path.Combine(path, "livestate.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
+                    using (var writer = new StreamWriter(fs))
                     {
                         xmlSerializer.Serialize(writer, this);
                     }
-                    
                     break;
             }
             

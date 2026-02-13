@@ -6,10 +6,10 @@
     </Design.PreviewWith>
     
     <Styles.Resources>
-        <Color x:Key="PrimaryColor">#B849FF</Color>
-        <Color x:Key="SecondaryColor">#210029</Color>
-        <Color x:Key="ButtonColor">#B849FF</Color>
-        <Color x:Key="HoverButtonColor">#6F3DAA</Color>
+        <Color x:Key="PrimaryColor">Green</Color>
+        <Color x:Key="SecondaryColor">Black</Color>
+        <Color x:Key="ButtonColor">Green</Color>
+        <Color x:Key="HoverButtonColor">DarkGreen</Color>
         <Color x:Key="TextColor">White</Color>
         
         <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />

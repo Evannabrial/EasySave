@@ -296,6 +296,10 @@ public class JobManager
     public JobStatus GetStatusOfJob(Guid idJob)
     {
         Job job = LJobs.FirstOrDefault(j => j.Id == idJob);
+        
+        string pathFromConfig = ConfigManager.LogPath;
+        // LOG DE DEBUG
+        Console.WriteLine($"Manager reading from: {pathFromConfig}");
 
         if (job == null)
         {
@@ -308,7 +312,7 @@ public class JobManager
         switch (LogType)
         {
             case LogType.JSON:
-                string filePath = ConfigReader.Root["PathLog"] + "\\" + "livestate.json";
+                string filePath = ConfigManager.Root["PathLog"] + "\\" + "livestate.json";
                 
                 if (!File.Exists(filePath))
                 {
@@ -339,32 +343,26 @@ public class JobManager
                 return null;
             
             case LogType.XML:
-                string filePathXml = Path.Combine(ConfigReader.Root["PathLog"], "livestate.xml");
-                if (!File.Exists(filePathXml))
-                {
-                    break;
-                }
-                
-                if (File.Exists(filePathXml))
-                {
-                    // 2. Initialisation du sérialiseur pour le type LiveLog
-                    XmlSerializer serializer = new XmlSerializer(typeof(LiveLog));
+                string filePathXml = Path.Combine(ConfigManager.Root["PathLog"], "livestate.xml");
+                if (!File.Exists(filePathXml)) break;
 
-                    // 3. Lecture et désérialisation via un FileStream
-                    using (FileStream fs = new FileStream(filePathXml, FileMode.Open))
+                try 
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(LiveLog));
+                    // Lecture partagée
+                    using (var fs = new FileStream(filePathXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
                         LiveLog liveLogXml = (LiveLog)serializer.Deserialize(fs);
 
-                        // 4. Utilisation des données
-                        progress = liveLogXml.Progress;
-                        status = liveLogXml.State switch 
-                        { 
-                            "ON" => "En cours", 
-                            "OFF" => "Prêt", 
-                            _ => "Prêt" 
-                        };
+                        if (liveLogXml.Name == job.Name)
+                        {
+                            progress = liveLogXml.Progress;
+                            status = liveLogXml.State switch { "ON" => "En cours", "OFF" => "Terminé", _ => "Prêt" };
+                            return new JobStatus(idJob, status, progress);
+                        }
                     }
                 }
+                catch { return null; }
                 break;
         }
         

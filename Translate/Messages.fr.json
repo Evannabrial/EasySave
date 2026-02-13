@@ -45,5 +45,6 @@
   "ActionsMessage" : "Actions", 
   "IdleMessage" : "Inactif", 
   "DeleteJobMessage": "Supprimer cette tâche ?", 
-  "NoJobMessage" : "Aucune tâche configurée"
+  "NoJobMessage" : "Aucune tâche configurée",
+  "SaveButtonMessage" : "Appliquer"
 }

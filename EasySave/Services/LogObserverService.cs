@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using EasySaveLibrary;
 
 namespace EasySave.Services;
@@ -9,22 +10,26 @@ public class LogObserverService
     private FileSystemWatcher _watcher;
     public event Action OnLogChanged;
 
-    public LogObserverService(string extension)
+    public LogObserverService()
     {
-        string path = ConfigReader.Root["PathLog"];
-        if (!Directory.Exists(path) || !File.Exists(path + "\\livestate." + extension))
+        StartWatcher();
+    }
+
+    public void StartWatcher()
+    {
+        if (_watcher != null)
         {
-            return;
+            _watcher.EnableRaisingEvents = false;
+            _watcher.Dispose();
         }
 
-        _watcher = new FileSystemWatcher(path , "livestate." + extension);
-        // Dans LogObserverService.cs
-        _watcher.NotifyFilter = NotifyFilters.LastWrite 
-                                | NotifyFilters.Size 
-                                | NotifyFilters.Attributes; // Ajoute Attributes
+        string path = ConfigManager.LogPath;
+        if (!Directory.Exists(path)) return;
 
+        _watcher = new FileSystemWatcher(path, "livestate.*");
+        _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.Attributes;
         _watcher.Changed += (s, e) => OnLogChanged?.Invoke();
-        _watcher.Created += (s, e) => OnLogChanged?.Invoke(); // Ajoute la création
+        _watcher.Created += (s, e) => OnLogChanged?.Invoke();
         _watcher.EnableRaisingEvents = true;
     }
 }
