@@ -46,5 +46,10 @@
   "IdleMessage" : "Inactif", 
   "DeleteJobMessage": "Supprimer cette tâche ?", 
   "NoJobMessage" : "Aucune tâche configurée",
-"AddJobMessage" : "Ajouter une tâche"
+"AddJobMessage" : "Ajouter une tâche",
+    "YesMessage" : "Oui",
+    "TargetPathMessage" : "Chemin de destination",
+    "SaveTypeMessage" : "Type de sauvegarde",
+    "CancelMessage" : "Annuler",
+    "SaveMessage" : "Enregistrer"
 }
