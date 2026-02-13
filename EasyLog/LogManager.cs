@@ -4,6 +4,7 @@ namespace EasyLog;
 
 public class LogManager
 {
+    private readonly string _baseLogPath;
     private LogType _typeSave;
 
     public LogType TypeSave
@@ -12,8 +13,9 @@ public class LogManager
         set => _typeSave = value;
     }
 
-    public LogManager()
+    public LogManager(string baseLogPath)
     {
+        _baseLogPath = baseLogPath;
     }
 
 
@@ -42,8 +44,7 @@ public class LogManager
         
         Log log = new DailyLog(name, action, sourcePath, targetPath, size, execTime, TypeSave);
         
-        string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        return log.WriteLog(Path.Combine(programDataPath, "EasySave", "Logs"));
+        return log.WriteLog(Path.Combine(_baseLogPath));
     }
     
     
@@ -66,20 +67,6 @@ public class LogManager
         Log log = new LiveLog(name, action, state, nbFile, progress, nbFileLeft, sizeFileLeft, sourcePath, targetPath, TypeSave);
         var p = AppDomain.CurrentDomain;
         
-        string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-
-        // Créer le dossier s'il n'existe pas
-        if (!Directory.Exists(Path.Combine(programDataPath, "EasySave")))
-        {
-            Directory.CreateDirectory(Path.Combine(programDataPath, "EasySave"));
-        }
-        
-        // Créer le dossier s'il n'existe pas
-        if (!Directory.Exists(Path.Combine(programDataPath, "EasySave", "Logs")))
-        {
-            Directory.CreateDirectory(Path.Combine(programDataPath, "EasySave", "Logs"));
-        }
-        
-        return log.WriteLog(Path.Combine(programDataPath, "EasySave", "Logs"));
+        return log.WriteLog(Path.Combine(_baseLogPath));
     }
 }

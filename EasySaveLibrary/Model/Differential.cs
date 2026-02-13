@@ -14,7 +14,7 @@ public class Differential : ITypeSave
     private LogManager logManager;
     public Differential()
     {
-        logManager = new LogManager();
+        logManager = new LogManager(ConfigManager.Root["PathLog"]);
     }
     
     /// <summary>

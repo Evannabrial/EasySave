@@ -89,12 +89,13 @@ public class DailyLog : Log
                 
                 case LogType.XML:
                     XmlSerializer xmlSerializer = new(typeof(DailyLog));
+                    string fullPath = Path.Combine(path, this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml");
 
-                    using (var writer = new StreamWriter(path + "\\" +  this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml"))
+                    using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                    using (var writer = new StreamWriter(fs))
                     {
                         xmlSerializer.Serialize(writer, this);
                     }
-                    
                     break;
             }
         }

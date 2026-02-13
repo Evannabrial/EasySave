@@ -145,6 +145,11 @@ public class JobsViewModel : ViewModelBase
             }
         });
 
+        LogService.Observer.OnLogChanged += () => 
+        {
+            Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus);
+        };
+
         // Ferme le popup sans sauvegarder
         CloseFormCommand = new RelayCommandService(_ => {
             IsFormVisible = false;
@@ -157,9 +162,10 @@ public class JobsViewModel : ViewModelBase
 
         // --- Fin Commandes Formulaire ---
 
-        _observer = new LogObserverService(_jobManager.LogType.ToString().ToLower());
+        _observer = new LogObserverService();
         _observer.OnLogChanged += () => 
         {
+            // On demande au Dispatcher d'Avalonia d'exécuter la mise à jour
             Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus);
         };
         
@@ -170,6 +176,7 @@ public class JobsViewModel : ViewModelBase
             JobDto jobDto = new JobDto().ToDto(j);
             var currentStatus = _jobManager.GetStatusOfJob(j.Id);
     
+            // On ne met à jour le statut que si on a trouvé un log correspondant
             if (currentStatus != null)
             {
                 jobDto.SetStatus(currentStatus);
@@ -248,6 +255,7 @@ public class JobsViewModel : ViewModelBase
 
     private void RunSingleJobSave(JobDto jobDto)
     {
+        LogService.Observer.StartWatcher();
         int index = Jobs.IndexOf(jobDto); 
 
         Task.Run(() => 

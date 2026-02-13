@@ -13,7 +13,7 @@ public class Full : ITypeSave
     
     public Full()
     {
-        logManager = new LogManager();
+        logManager = new LogManager(ConfigManager.LogPath);
     }
     
      /// <summary>
@@ -28,6 +28,7 @@ public class Full : ITypeSave
      /// </returns>
      public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
      { 
+         logManager = new LogManager(ConfigManager.LogPath);
          logManager.TypeSave = logType;
         
         bool isFile = File.Exists(job.Source);

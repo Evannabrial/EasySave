@@ -51,5 +51,6 @@
     "TargetPathMessage" : "Chemin de destination",
     "SaveTypeMessage" : "Type de sauvegarde",
     "CancelMessage" : "Annuler",
-    "SaveMessage" : "Enregistrer"
+    "SaveMessage" : "Enregistrer",
+  "SaveButtonMessage" : "Appliquer"
 }
