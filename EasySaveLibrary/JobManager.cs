@@ -2,6 +2,7 @@ using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using EasyLog;
 
 namespace EasySaveLibrary;
@@ -290,5 +291,83 @@ public class JobManager
 
         // Write to file
         File.WriteAllText(filePath, jsonString);
+    }
+
+    public JobStatus GetStatusOfJob(Guid idJob)
+    {
+        Job job = LJobs.FirstOrDefault(j => j.Id == idJob);
+
+        if (job == null)
+        {
+            return null;
+        }
+
+        double progress = 0;
+        string status = "Prêt";
+        
+        switch (LogType)
+        {
+            case LogType.JSON:
+                string filePath = ConfigReader.Root["PathLog"] + "\\" + "livestate.json";
+                
+                if (!File.Exists(filePath))
+                {
+                    break;
+                }
+                try 
+                {
+                    // On ouvre le fichier en mode Lecture, mais on autorise les autres à Écrire (ReadWrite)
+                    using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var sr = new StreamReader(fs))
+                    {
+                        string jsonString = sr.ReadToEnd();
+                        if (string.IsNullOrWhiteSpace(jsonString)) return null;
+
+                        LiveLog liveLogJson = JsonSerializer.Deserialize<LiveLog>(jsonString);
+            
+                        if (liveLogJson.Name == job.Name) 
+                        {
+                            return new JobStatus(idJob, liveLogJson.State == "ON" ? "En cours" : "Terminé", liveLogJson.Progress);
+                        }
+                    }
+                }
+                catch (IOException) 
+                {
+                    // Si le fichier est vraiment bloqué, on ignore silencieusement ce cycle de rafraîchissement
+                    return null; 
+                }
+                return null;
+            
+            case LogType.XML:
+                string filePathXml = Path.Combine(ConfigReader.Root["PathLog"], "livestate.xml");
+                if (!File.Exists(filePathXml))
+                {
+                    break;
+                }
+                
+                if (File.Exists(filePathXml))
+                {
+                    // 2. Initialisation du sérialiseur pour le type LiveLog
+                    XmlSerializer serializer = new XmlSerializer(typeof(LiveLog));
+
+                    // 3. Lecture et désérialisation via un FileStream
+                    using (FileStream fs = new FileStream(filePathXml, FileMode.Open))
+                    {
+                        LiveLog liveLogXml = (LiveLog)serializer.Deserialize(fs);
+
+                        // 4. Utilisation des données
+                        progress = liveLogXml.Progress;
+                        status = liveLogXml.State switch 
+                        { 
+                            "ON" => "En cours", 
+                            "OFF" => "Prêt", 
+                            _ => "Prêt" 
+                        };
+                    }
+                }
+                break;
+        }
+        
+        return new JobStatus(idJob, status, progress);
     }
 }

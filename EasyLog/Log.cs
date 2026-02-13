@@ -4,17 +4,10 @@ namespace EasyLog;
 
 public abstract class Log
 {
-    private Guid _id;
     private DateTime _dateTime;
     private string _name;
     private string _action;
     private LogType _type;
-
-    public Guid Id
-    {
-        get => _id;
-        set => _id = value;
-    }
 
     public DateTime DateTime
     {

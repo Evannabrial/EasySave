@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace EasyLog;
 
 public class LogManager

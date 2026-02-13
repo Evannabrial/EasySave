@@ -113,6 +113,7 @@ public class Full : ITypeSave
         
         while (queue.Count > 0)
         {
+            System.Threading.Thread.Sleep(100); // 100ms de pause entre chaque fichier
             string actual = queue.Dequeue();
             
             if (Directory.Exists(actual))
@@ -199,13 +200,14 @@ public class Full : ITypeSave
             name: job.Name,
             sourcePath: job.Source,
             targetPath: job.Target,
-            action: "Copy of a File",
+            action: "Job Finished",
             state: "OFF",
-            progress: 0,
-            nbFile: 0,
+            progress: 100,
+            nbFile: nbFile,
             nbFileLeft: 0,
             sizeFileLeft: 0
         );
+
         job.LastTimeRun = DateTime.Now;
         return 0;
     }

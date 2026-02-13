@@ -5,10 +5,17 @@ namespace EasyLog;
 
 public class DailyLog : Log
 {
+    private Guid _id;
     private string _sourcePath;
     private string _targetPath;
     private long _size;
     private double _execTime;
+
+    public Guid Id
+    {
+        get => _id;
+        set => _id = value;
+    }
 
     public string SourcePath
     {
