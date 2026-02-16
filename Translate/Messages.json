@@ -52,5 +52,8 @@
   "TargetPathMessage": "Target Path",
   "SaveTypeMessage": "Save Type",
   "CancelMessage": "Cancel",
-  "SaveMessage": "Save"
+  "SaveMessage": "Save",
+  "ProcessMessage": "Process",
+  "ProcessExplainMessage": "Block save if a process is running.",
+  "ProcessInputMessage": "Process separate by comma :"
 }

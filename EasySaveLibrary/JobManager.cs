@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 using System.Text.Json;
@@ -14,6 +15,7 @@ public class JobManager
     private LogType _logType;
     private bool _enableEncryption;
     private string _encryptionExtensions = "";
+    private string _listeProcess = "";
 
     public List<Job> LJobs
     {
@@ -43,6 +45,12 @@ public class JobManager
     {
         get => _encryptionExtensions;
         set => _encryptionExtensions = value ?? "";
+    }
+
+    public string ListeProcess
+    {
+        get => _listeProcess;
+        set => _listeProcess = value ?? "";
     }
 
     public JobManager(ILanguage language, LogType logType)
@@ -111,6 +119,16 @@ public class JobManager
     /// </returns>
     public int StartMultipleSave(string userChoice)
     {
+        Process[] lProcessRunning = Process.GetProcesses();
+        string[] lProcessBlock = ListeProcess.Split(',');
+
+        foreach (string processName in lProcessBlock)
+        {
+            if (lProcessRunning.Any(p => p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase)))            {
+                return 0;
+            }
+        }
+        
         // If the userChoice is null
         if (userChoice == null)
         {

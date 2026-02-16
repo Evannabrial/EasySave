@@ -16,6 +16,7 @@ public class SettingsViewModel : ViewModelBase
     private readonly JobManager _jobManager;
     private Dictionary<string, string> _dictText;
     private string _logPath;
+    private string _listeProcess;
     private int _selectedFormatIndex;
     private LogType _actualLogType;
 
@@ -79,10 +80,17 @@ public class SettingsViewModel : ViewModelBase
         set => _actualLogType = value;
     }
 
+    public string ListeProcess
+    {
+        get => _listeProcess;
+        set => _listeProcess = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
     public SettingsViewModel(JobManager jobManager)
     {
         _jobManager = jobManager;
         DictText = jobManager.Language.GetTranslations();
+        ListeProcess = jobManager.ListeProcess;
         
         SelectedFormatIndex = (_jobManager.LogType == LogType.XML) ? 1 : 0;
 
@@ -123,6 +131,7 @@ public class SettingsViewModel : ViewModelBase
     private void ApplySavesFunction()
     {
         _jobManager.LogType = ActualLogType;
+        _jobManager.ListeProcess = ListeProcess;
         if (Directory.Exists(LogPath))
         {
             ConfigManager.ConfigWritter(LogPath);

@@ -52,5 +52,10 @@
     "SaveTypeMessage" : "Type de sauvegarde",
     "CancelMessage" : "Annuler",
     "SaveMessage" : "Enregistrer",
-  "SaveButtonMessage" : "Appliquer"
+  "SaveButtonMessage" : "Appliquer",  
+  "ProcessMessage": "Processus",
+  "ProcessExplainMessage": "Bloquée la sauvegarde si un processus est lancé.",
+  "ProcessInputMessage": "Processus séparé par une virgule :"
+
+
 }
