@@ -37,7 +37,7 @@
 "JobsMessage" : "Tâches", 
   "StatusMessage" : "Statut", 
   "RunJobsMessage" : "Lancer les tâches sélectionnées", 
-  "JobNameMessage" : "Nom de la tâche", 
+  "JobNameMessage" : "Nom", 
   "SourceMessage" : "Source", 
   "DestinationMessage" : "Destination", 
   "TypeMessage" : "Type", 

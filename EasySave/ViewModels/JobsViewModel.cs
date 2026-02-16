@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using EasySave.DTO;
 using EasySave.Services;
@@ -79,22 +81,29 @@ public class JobsViewModel : ViewModelBase
         set => _jobs = value;
     }
     
+    public Dictionary<string, string> DictText
+    {
+        get => _dictText;
+        set 
+        { 
+            _dictText = value; 
+            OnPropertyChanged();
+        }    
+    }
+    
     public bool ShowMultiSelectButton => Jobs.Count(j => j.IsSelected) >= 2;
     
     public ICommand RunDeleteJob { get; }
     public ICommand RunStartSingleSave { get; }
+    public ICommand OpenFilePickerSourceCommand { get; }
+    public ICommand OpenFilePickerTargetCommand { get; }
+
     
     // Commandes pour le Formulaire
     public ICommand OpenAddJobCommand { get; }
     public ICommand OpenEditJobCommand { get; }
     public ICommand CloseFormCommand { get; }
     public ICommand SaveFormCommand { get; }
-
-    public Dictionary<string, string> DictText
-    {
-        get => _dictText;
-        set => _dictText = value ;
-    }
 
     public JobsViewModel(JobManager jobManager)
     {
@@ -108,6 +117,14 @@ public class JobsViewModel : ViewModelBase
         
         RunStartSingleSave = new RelayCommandService(param => {
             if (param is JobDto dto) RunSingleJobSave(dto);
+        });
+        
+        OpenFilePickerSourceCommand = new RelayCommandService(param => {
+            OpenFilePickerSourceFunction();
+        });
+        
+        OpenFilePickerTargetCommand = new RelayCommandService(param => {
+            OpenFilePickerTargetFunction();
         });
 
         // --- Initialisation des commandes du Formulaire ---
@@ -245,7 +262,7 @@ public class JobsViewModel : ViewModelBase
                 if (e.PropertyName == nameof(JobDto.IsSelected))
                     OnPropertyChanged(nameof(ShowMultiSelectButton));
             };
-
+            _jobManager.SaveJobs();
             Jobs.Add(newDto);
         }
 
@@ -293,6 +310,46 @@ public class JobsViewModel : ViewModelBase
                 jobDto.Progress = (int)status.Progress;
                 jobDto.Status = status.Status;
             }
+        }
+    }
+    
+    private async void OpenFilePickerTargetFunction()
+    {
+        var topLevel = TopLevel.GetTopLevel(App.MainWindow); // Assure-toi d'avoir une référence à ta fenêtre
+
+        if (topLevel == null) return;
+
+        // Ouvre le sélecteur de dossiers
+        var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Sélectionner le dossier de logs",
+            AllowMultiple = false
+        });
+
+        if (folders.Count > 0)
+        {
+            // On récupère le chemin local du dossier
+            FormTarget = folders[0].Path.LocalPath;
+        }
+    }
+    
+    private async void OpenFilePickerSourceFunction()
+    {
+        var topLevel = TopLevel.GetTopLevel(App.MainWindow); // Assure-toi d'avoir une référence à ta fenêtre
+
+        if (topLevel == null) return;
+
+        // Ouvre le sélecteur de dossiers
+        var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Sélectionner le dossier de source",
+            AllowMultiple = false
+        });
+
+        if (folders.Count > 0)
+        {
+            // On récupère le chemin local du dossier
+            FormSource = folders[0].Path.LocalPath;
         }
     }
 }

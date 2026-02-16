@@ -61,6 +61,16 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _jobManager.Language = newLanguage;
         DictText = _jobManager.Language.GetTranslations();
+        
+        if (CurrentPage is JobsViewModel jobsVm)
+        {
+            jobsVm.DictText = _jobManager.Language.GetTranslations();
+        }
+
+        if (CurrentPage is SettingsViewModel settingsVm)
+        {
+            settingsVm.DictText = _jobManager.Language.GetTranslations();
+        }
     }
     
     public MainWindowViewModel(JobManager jobManager)

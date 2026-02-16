@@ -28,7 +28,7 @@ public class SettingsViewModel : ViewModelBase
     public Dictionary<string, string> DictText
     {
         get => _dictText;
-        set => _dictText = value ;
+        set => SetProperty(ref _dictText, value);
     }
     
     public string LogPath

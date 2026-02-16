@@ -93,8 +93,7 @@ public class Full : ITypeSave
             }
             catch (Exception e)
             {
-                // Console.WriteLine(e);
-                return 2;
+                Console.WriteLine(e);
             }
             return 0;
         }
@@ -145,8 +144,7 @@ public class Full : ITypeSave
                         }
                         catch (Exception e)
                         {
-                            // Console.WriteLine(e);
-                            return 3;
+                            Console.WriteLine(e);
                         }
                     }
                     else
@@ -191,7 +189,6 @@ public class Full : ITypeSave
                         catch (Exception e)
                         {
                             Console.WriteLine(e);
-                            return 2;
                         }
                     }
                 }

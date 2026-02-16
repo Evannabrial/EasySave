@@ -39,7 +39,7 @@
   "RunJobsMessage": "Run Selected Jobs",
   "JobNameMessage": "Job Name",
   "SourceMessage": "Source",
-  "DestinationMessage": "Destination",
+  "DestinationMessage": "Target",
   "TypeMessage": "Type",
   "ProgressMessage": "Progress",
   "ActionsMessage": "Actions",

@@ -10,6 +10,7 @@ public class DailyLog : Log
     private string _targetPath;
     private long _size;
     private double _execTime;
+    private static readonly object _writeLock = new object();
 
     public Guid Id
     {
@@ -71,32 +72,37 @@ public class DailyLog : Log
     {
         try
         {
-            switch (Type)
+            lock (_writeLock)
             {
-                case LogType.JSON:
-                    JsonSerializerOptions options = new()
-                    {
-                        WriteIndented = true
-                    };
+                switch (Type)
+                {
+                    case LogType.JSON:
+                        JsonSerializerOptions options = new()
+                        {
+                            WriteIndented = true
+                        };
 
-                    JsonSerializerOptions optionsCopy = new(options);
-            
-                    string jsonObject = JsonSerializer.Serialize(this, options);
-                    File.AppendAllLines(
-                        path + "\\" +  this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".json", 
-                        [jsonObject]);
-                    break;
-                
-                case LogType.XML:
-                    XmlSerializer xmlSerializer = new(typeof(DailyLog));
-                    string fullPath = Path.Combine(path, this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml");
+                        JsonSerializerOptions optionsCopy = new(options);
 
-                    using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read))
-                    using (var writer = new StreamWriter(fs))
-                    {
-                        xmlSerializer.Serialize(writer, this);
-                    }
-                    break;
+                        string jsonObject = JsonSerializer.Serialize(this, options);
+                        File.AppendAllLines(
+                            path + "\\" + this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".json",
+                            [jsonObject]);
+                        break;
+
+                    case LogType.XML:
+                        XmlSerializer xmlSerializer = new(typeof(DailyLog));
+                        string fullPath = Path.Combine(path,
+                            this.Name + "-" + DateTime.ToString("yyyyMMddHHmm") + ".xml");
+
+                        using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                        using (var writer = new StreamWriter(fs))
+                        {
+                            xmlSerializer.Serialize(writer, this);
+                        }
+
+                        break;
+                }
             }
         }
         catch (Exception e)

@@ -27,31 +27,52 @@ public class JobDto : INotifyPropertyChanged
     public string Name
     {
         get => _name;
-        set => _name = value ?? throw new ArgumentNullException(nameof(value));
+        set
+        {
+            _name = value ?? throw new ArgumentNullException(nameof(value));
+            OnPropertyChanged();
+        } 
     }
 
     public string Source
     {
         get => _source;
-        set => _source = value ?? throw new ArgumentNullException(nameof(value));
+        set
+        {
+            _source = value ?? throw new ArgumentNullException(nameof(value));
+            OnPropertyChanged();
+        } 
     }
 
     public string Target
     {
         get => _target;
-        set => _target = value ?? throw new ArgumentNullException(nameof(value));
+        set
+        {
+            _target = value ?? throw new ArgumentNullException(nameof(value));
+            OnPropertyChanged();
+        } 
     }
 
     public DateTime? LastTimeRun
     {
         get => _lastTimeRun;
-        set => _lastTimeRun = value;
+        set
+        {
+            _lastTimeRun = value;
+            OnPropertyChanged();
+        } 
     }
 
     public string Save
     {
         get => _save;
-        set => _save = value ?? throw new ArgumentNullException(nameof(value));
+        set
+        {
+            _save = value ?? throw new ArgumentNullException(nameof(value));
+            OnPropertyChanged();
+        }
+        
     }
 
     public bool IsSelected

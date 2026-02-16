@@ -161,12 +161,30 @@
 
                     <StackPanel>
                         <TextBlock Text="{Binding DictText[SourcePathMessage]}" Foreground="White" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding FormSource}" Watermark="C:\Source\Path" HorizontalAlignment="Stretch" />
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBox Grid.Column="0" 
+                                     Text="{Binding FormSource}" 
+                                     Watermark="C:\Source\Path" 
+                                     HorizontalAlignment="Stretch" 
+                                     Margin="0,0,5,0"/> <Button Grid.Column="1" 
+                                                                Command="{Binding OpenFilePickerSourceCommand}"
+                                                                Content="..."/>
+                        </Grid>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="{Binding DictText[TargetPathMessage]}" Foreground="White" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding FormTarget}" Watermark="D:\Target\Path" HorizontalAlignment="Stretch" />
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBox Grid.Column="0" 
+                                     Text="{Binding FormTarget}" 
+                                     Watermark="D:\Target\Path" 
+                                     HorizontalAlignment="Stretch"
+                                     Margin="0,0,5,0"/>
+            
+                            <Button Grid.Column="1" 
+                                    Command="{Binding OpenFilePickerTargetCommand}"
+                                    Content="..."/>
+                        </Grid>
                     </StackPanel>
 
                     <StackPanel>
