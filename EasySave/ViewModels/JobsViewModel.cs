@@ -241,8 +241,8 @@ public class JobsViewModel : ViewModelBase
 
                 // Mise à jour de l'UI (DTO)
                 _currentEditingDto.Name = FormName;
-                _currentEditingDto.Source = FormSource;
-                _currentEditingDto.Target = FormTarget;
+                _currentEditingDto.Source = FormSource.TrimEnd('\\');
+                _currentEditingDto.Target = FormTarget.TrimEnd('\\');
                 _currentEditingDto.Save = SelectedSaveType;
             }
         }
@@ -251,7 +251,7 @@ public class JobsViewModel : ViewModelBase
             // --- MODE AJOUT ---
             
             // Ajout dans le Manager
-            Job newJob = _jobManager.AddJob(FormName, FormSource, FormTarget, typeSave);
+            Job newJob = _jobManager.AddJob(FormName.TrimEnd('\\'), FormSource.TrimEnd('\\'), FormTarget, typeSave);
             _jobManager.SaveJobs(); // Sauvegarde JSON
 
             // Création du DTO pour l'UI
