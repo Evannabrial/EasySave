@@ -52,5 +52,10 @@
     "SaveTypeMessage" : "Type de sauvegarde",
     "CancelMessage" : "Annuler",
     "SaveMessage" : "Enregistrer",
-  "SaveButtonMessage" : "Appliquer"
+  "SaveButtonMessage" : "Appliquer",
+  "JobAddedMessage": "Tâche ajoutée avec succès",
+  "JobModifiedMessage": "Tâche modifiée avec succès",
+  "JobDeletedMessage": "Tâche supprimée avec succès",
+  "JobDoneMessage": "Sauvegarde terminée",
+  "SettingsAppliedMessage": "Paramètres appliqués"
 }

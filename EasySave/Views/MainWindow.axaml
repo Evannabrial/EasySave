@@ -16,8 +16,10 @@
     </Design.DataContext>
 
 
-    <Grid RowDefinitions="Auto, *">
-        <Border Grid.Row="0"
+    <Grid>
+        <!-- Contenu principal -->
+        <Grid RowDefinitions="Auto, *">
+            <Border Grid.Row="0"
                 Background="{StaticResource PrimaryColor}"
                 Height="50">
             <Grid ColumnDefinitions="*, Auto">
@@ -89,5 +91,28 @@
                 <ContentControl Content="{Binding CurrentPage}" />
             </Grid>
         </Grid>
+        </Grid>
+        
+        <!-- Toast Notification -->
+        <Border IsVisible="{Binding Notifications.IsVisible}"
+                Background="#2ecc71"
+                CornerRadius="8"
+                Padding="20,12"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,30"
+                BoxShadow="0 4 12 0 #40000000">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="✓" 
+                           Foreground="White"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Notifications.CurrentNotification.Message}"
+                           Foreground="White"
+                           FontSize="14"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

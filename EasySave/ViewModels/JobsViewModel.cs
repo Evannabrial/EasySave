@@ -227,6 +227,9 @@ public class JobsViewModel : ViewModelBase
                 _currentEditingDto.Source = FormSource;
                 _currentEditingDto.Target = FormTarget;
                 _currentEditingDto.Save = SelectedSaveType;
+                
+                // Notification modification
+                NotificationService.Instance.Show(DictText.ContainsKey("JobModifiedMessage") ? DictText["JobModifiedMessage"] : "Job modifié");
             }
         }
         else
@@ -247,6 +250,9 @@ public class JobsViewModel : ViewModelBase
             };
 
             Jobs.Add(newDto);
+            
+            // Notification ajout
+            NotificationService.Instance.Show(DictText.ContainsKey("JobAddedMessage") ? DictText["JobAddedMessage"] : "Job ajouté");
         }
 
         // Fermer le formulaire
@@ -264,6 +270,8 @@ public class JobsViewModel : ViewModelBase
             
             Dispatcher.UIThread.InvokeAsync(() => {
                 RefreshJobsStatus();
+                // Notification job terminé
+                NotificationService.Instance.Show(DictText.ContainsKey("JobDoneMessage") ? DictText["JobDoneMessage"] : "Sauvegarde terminée");
             });
         });
     }
@@ -280,6 +288,9 @@ public class JobsViewModel : ViewModelBase
             _jobManager.SaveJobs(); // Penser à sauvegarder la suppression dans le JSON aussi
             Jobs.Remove(dto);
             OnPropertyChanged(nameof(ShowMultiSelectButton));
+            
+            // Notification suppression
+            NotificationService.Instance.Show(DictText.ContainsKey("JobDeletedMessage") ? DictText["JobDeletedMessage"] : "Job supprimé");
         }
     }
     

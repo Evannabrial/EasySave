@@ -52,5 +52,10 @@
   "TargetPathMessage": "Target Path",
   "SaveTypeMessage": "Save Type",
   "CancelMessage": "Cancel",
-  "SaveMessage": "Save"
+  "SaveMessage": "Save",
+  "JobAddedMessage": "Job added successfully",
+  "JobModifiedMessage": "Job modified successfully",
+  "JobDeletedMessage": "Job deleted successfully",
+  "JobDoneMessage": "Backup completed",
+  "SettingsAppliedMessage": "Settings applied"
 }

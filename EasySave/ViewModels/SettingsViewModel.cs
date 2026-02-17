@@ -128,6 +128,9 @@ public class SettingsViewModel : ViewModelBase
             ConfigManager.ConfigWritter(LogPath);
             
             LogService.Observer.StartWatcher();
+            
+            // Notification settings appliqués
+            NotificationService.Instance.Show(DictText.ContainsKey("SettingsAppliedMessage") ? DictText["SettingsAppliedMessage"] : "Paramètres appliqués");
         }
     }
 }

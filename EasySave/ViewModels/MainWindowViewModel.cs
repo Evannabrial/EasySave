@@ -26,6 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public void NavJobs() => CurrentPage = new JobsViewModel(_jobManager);
     public void NavStatus() => CurrentPage = new StatusViewModel(_jobManager);
     public void NavSettings() => CurrentPage = new SettingsViewModel(_jobManager);
+    public NotificationService Notifications => NotificationService.Instance;
     
     public MainWindowViewModel()
     {
@@ -61,6 +62,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _jobManager.Language = newLanguage;
         DictText = _jobManager.Language.GetTranslations();
+        
+        // Notification de changement de langue
+        string message = languageIndex == 0 ? "Langue : Français" : "Language: English";
+        NotificationService.Instance.Show(message);
     }
     
     public MainWindowViewModel(JobManager jobManager)
