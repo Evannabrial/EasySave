@@ -93,7 +93,6 @@
         </Grid>
         </Grid>
         
-        <!-- Toast Notification -->
         <Border IsVisible="{Binding Notifications.IsVisible}"
                 Background="#2ecc71"
                 CornerRadius="8"

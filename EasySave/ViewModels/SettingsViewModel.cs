@@ -129,7 +129,6 @@ public class SettingsViewModel : ViewModelBase
             
             LogService.Observer.StartWatcher();
             
-            // Notification settings appliqués
             NotificationService.Instance.Show(DictText.ContainsKey("SettingsAppliedMessage") ? DictText["SettingsAppliedMessage"] : "Paramètres appliqués");
         }
     }

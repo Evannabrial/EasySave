@@ -63,7 +63,6 @@ public partial class MainWindowViewModel : ViewModelBase
         _jobManager.Language = newLanguage;
         DictText = _jobManager.Language.GetTranslations();
         
-        // Notification de changement de langue
         string message = languageIndex == 0 ? "Langue : Français" : "Language: English";
         NotificationService.Instance.Show(message);
     }

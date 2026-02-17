@@ -1,4 +1,3 @@
-// Services/NotificationService.cs
 using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Timer = System.Timers.Timer;
