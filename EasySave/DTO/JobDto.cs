@@ -7,16 +7,16 @@ namespace EasySave.DTO;
 
 public class JobDto : INotifyPropertyChanged
 {
-    private string _id;
-    private string _name;
-    private string _source;
-    private string _target;
-    private DateTime? _lastTimeRun;
-    private string _save;
-    private bool _isSelected;
-    private double _progress;
-    private string _status;
     private string _colorStatus;
+    private string _id;
+    private bool _isSelected;
+    private DateTime? _lastTimeRun;
+    private string _name;
+    private double _progress;
+    private string _save;
+    private string _source;
+    private string _status;
+    private string _target;
 
     public string Id
     {
@@ -31,7 +31,7 @@ public class JobDto : INotifyPropertyChanged
         {
             _name = value ?? throw new ArgumentNullException(nameof(value));
             OnPropertyChanged();
-        } 
+        }
     }
 
     public string Source
@@ -41,7 +41,7 @@ public class JobDto : INotifyPropertyChanged
         {
             _source = value ?? throw new ArgumentNullException(nameof(value));
             OnPropertyChanged();
-        } 
+        }
     }
 
     public string Target
@@ -51,7 +51,7 @@ public class JobDto : INotifyPropertyChanged
         {
             _target = value ?? throw new ArgumentNullException(nameof(value));
             OnPropertyChanged();
-        } 
+        }
     }
 
     public DateTime? LastTimeRun
@@ -61,7 +61,7 @@ public class JobDto : INotifyPropertyChanged
         {
             _lastTimeRun = value;
             OnPropertyChanged();
-        } 
+        }
     }
 
     public string Save
@@ -72,13 +72,12 @@ public class JobDto : INotifyPropertyChanged
             _save = value ?? throw new ArgumentNullException(nameof(value));
             OnPropertyChanged();
         }
-        
     }
 
     public bool IsSelected
     {
         get => _isSelected;
-        set 
+        set
         {
             _isSelected = value;
             // Important : Appeler OnPropertyChanged ici pour que l'UI réagisse
@@ -89,7 +88,11 @@ public class JobDto : INotifyPropertyChanged
     public double Progress
     {
         get => _progress;
-        set { _progress = value; OnPropertyChanged(); }
+        set
+        {
+            _progress = value;
+            OnPropertyChanged();
+        }
     }
 
     public string Status
@@ -103,7 +106,7 @@ public class JobDto : INotifyPropertyChanged
             OnPropertyChanged(nameof(ColorStatus));
         }
     }
-    
+
     public bool IsRunning => Status == "En cours";
 
     public string ColorStatus
@@ -113,9 +116,9 @@ public class JobDto : INotifyPropertyChanged
             return Status switch
             {
                 "En cours" => "Blue",
-                "Terminé"  => "#28a745", // Vert succès
-                "Prêt"     => "Green",
-                _          => "Gray"
+                "Terminé" => "#28a745", // Vert succès
+                "Prêt" => "Green",
+                _ => "Gray"
             };
         }
     }
@@ -126,7 +129,7 @@ public class JobDto : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    
+
     public JobDto ToDto(Job job)
     {
         Id = job.Id.ToString();
@@ -136,7 +139,7 @@ public class JobDto : INotifyPropertyChanged
         LastTimeRun = job.LastTimeRun;
         Save = job.Save.GetType().Name;
         Progress = 0;
-        Status = "Prêt"; 
+        Status = "Prêt";
         return this;
     }
 
@@ -144,7 +147,7 @@ public class JobDto : INotifyPropertyChanged
     {
         Progress = status.Progress;
         Status = status.Status;
-        
+
         return this;
     }
 }

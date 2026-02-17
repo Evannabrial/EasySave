@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using EasyLog;
-using EasySave.DTO;
 using EasySave.Services;
 using EasySaveLibrary;
 
@@ -13,15 +12,26 @@ namespace EasySave.ViewModels;
 
 public class SettingsViewModel : ViewModelBase
 {
-    private readonly JobManager _jobManager;
     private Dictionary<string, string> _dictText;
-    private string _logPath;
     private string _listeProcess;
+    private string _logPath;
     private int _selectedFormatIndex;
-    private LogType _actualLogType;
 
-    public JobManager JobManager => _jobManager;
-    
+    public SettingsViewModel(JobManager jobManager)
+    {
+        JobManager = jobManager;
+        DictText = jobManager.Language.GetTranslations();
+        ListeProcess = jobManager.ListeProcess;
+
+        SelectedFormatIndex = JobManager.LogType == LogType.XML ? 1 : 0;
+
+        OpenFilePickerCommand = new RelayCommandService(param => { OpenFilePickerFunction(); });
+
+        ApplySavesCommand = new RelayCommandService(param => { ApplySavesFunction(); });
+    }
+
+    public JobManager JobManager { get; }
+
     public ICommand OpenFilePickerCommand { get; }
     public ICommand ApplySavesCommand { get; }
 
@@ -31,23 +41,27 @@ public class SettingsViewModel : ViewModelBase
         get => _dictText;
         set => SetProperty(ref _dictText, value);
     }
-    
+
     public string LogPath
     {
         get => _logPath;
-        set { _logPath = value; OnPropertyChanged(); }
+        set
+        {
+            _logPath = value;
+            OnPropertyChanged();
+        }
     }
-    
+
     public int SelectedFormatIndex
     {
         get => _selectedFormatIndex;
-        set 
+        set
         {
             if (_selectedFormatIndex != value)
             {
                 _selectedFormatIndex = value;
                 OnPropertyChanged();
-            
+
                 // Logique de mise à jour immédiate
                 UpdateLogFormat(value);
             }
@@ -56,29 +70,25 @@ public class SettingsViewModel : ViewModelBase
 
     public bool EnableEncryption
     {
-        get => _jobManager.EnableEncryption;
+        get => JobManager.EnableEncryption;
         set
         {
-            _jobManager.EnableEncryption = value;
+            JobManager.EnableEncryption = value;
             OnPropertyChanged();
         }
     }
 
     public string EncryptionExtensions
     {
-        get => _jobManager.EncryptionExtensions;
+        get => JobManager.EncryptionExtensions;
         set
         {
-            _jobManager.EncryptionExtensions = value;
+            JobManager.EncryptionExtensions = value;
             OnPropertyChanged();
         }
     }
 
-    public LogType ActualLogType
-    {
-        get => _actualLogType;
-        set => _actualLogType = value;
-    }
+    public LogType ActualLogType { get; set; }
 
     public string ListeProcess
     {
@@ -86,23 +96,6 @@ public class SettingsViewModel : ViewModelBase
         set => _listeProcess = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public SettingsViewModel(JobManager jobManager)
-    {
-        _jobManager = jobManager;
-        DictText = jobManager.Language.GetTranslations();
-        ListeProcess = jobManager.ListeProcess;
-        
-        SelectedFormatIndex = (_jobManager.LogType == LogType.XML) ? 1 : 0;
-
-        OpenFilePickerCommand = new RelayCommandService(param => {
-                OpenFilePickerFunction();
-        });
-        
-        ApplySavesCommand = new RelayCommandService(param => {
-            ApplySavesFunction();
-        });
-    }
-    
     private async void OpenFilePickerFunction()
     {
         var topLevel = TopLevel.GetTopLevel(App.MainWindow); // Assure-toi d'avoir une référence à ta fenêtre
@@ -117,25 +110,23 @@ public class SettingsViewModel : ViewModelBase
         });
 
         if (folders.Count > 0)
-        {
             // On récupère le chemin local du dossier
             LogPath = folders[0].Path.LocalPath;
-        }
     }
 
     private void UpdateLogFormat(int index)
     {
-        ActualLogType = (index == 1) ? LogType.XML : LogType.JSON;
+        ActualLogType = index == 1 ? LogType.XML : LogType.JSON;
     }
-    
+
     private void ApplySavesFunction()
     {
-        _jobManager.LogType = ActualLogType;
-        _jobManager.ListeProcess = ListeProcess;
+        JobManager.LogType = ActualLogType;
+        JobManager.ListeProcess = ListeProcess;
         if (Directory.Exists(LogPath))
         {
             ConfigManager.ConfigWritter(LogPath);
-            
+
             LogService.Observer.StartWatcher();
         }
     }

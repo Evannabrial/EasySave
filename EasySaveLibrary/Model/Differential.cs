@@ -27,7 +27,8 @@ public class Differential : ITypeSave
     /// 2 => Erreur copie du fichier
     /// 3 => Erreur création du dossier
     /// </returns>
-    public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
+    public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, bool enableEncryption = false, 
+        string encryptionExtensions = "")
     {
         logManager.TypeSave = logType;
         
@@ -45,7 +46,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job, logType, enableEncryption, encryptionExtensions);
+            return new Full().StartSave(job, logType, pauseEvent, enableEncryption, encryptionExtensions);
         }
         
         bool isFile = File.Exists(job.Source);
@@ -79,6 +80,7 @@ public class Differential : ITypeSave
             try
             {
                 string nameFile = Regex.Match(job.Source, @"[^\\]+$").Value;
+                pauseEvent.WaitOne();
                 if (File.GetLastWriteTime(job.Source) > File.GetLastWriteTime(pathLastSave))
                 {
                     Stopwatch startTimeDir = Stopwatch.StartNew();
@@ -171,8 +173,9 @@ public class Differential : ITypeSave
         
         while (queue.Count > 0)
         {
+            pauseEvent.WaitOne();
             string actual = queue.Dequeue();
-            
+
             if (Directory.Exists(actual))
             {
                 foreach (string el in Directory.EnumerateFileSystemEntries(actual))

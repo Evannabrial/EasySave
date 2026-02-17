@@ -26,7 +26,8 @@ public class Full : ITypeSave
      /// 2 => Erreur copie du fichier
      /// 3 => Erreur création du dossier
      /// </returns>
-     public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
+     public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, bool enableEncryption = false, 
+         string encryptionExtensions = "")
      { 
          logManager = new LogManager(ConfigManager.LogPath);
          logManager.TypeSave = logType;
@@ -56,6 +57,7 @@ public class Full : ITypeSave
             try
             {
                 string nameFile = Regex.Match(job.Source, @"[^\\]+$").Value;
+                pauseEvent.WaitOne();
                 
                 logManager.WriteNewLog(
                     name: job.Name,
@@ -114,8 +116,9 @@ public class Full : ITypeSave
         
         while (queue.Count > 0)
         {
+            pauseEvent.WaitOne();
             string actual = queue.Dequeue();
-            
+
             if (Directory.Exists(actual))
             {
                 foreach (string el in Directory.EnumerateFileSystemEntries(actual))
