@@ -88,6 +88,16 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
+    public string EncryptionKey
+    {
+        get => JobManager.EncryptionKey;
+        set
+        {
+            JobManager.EncryptionKey = value;
+            OnPropertyChanged();
+        }
+    }
+
     public LogType ActualLogType { get; set; }
 
     public string ListeProcess
@@ -123,6 +133,15 @@ public class SettingsViewModel : ViewModelBase
     {
         JobManager.LogType = ActualLogType;
         JobManager.ListeProcess = ListeProcess;
+
+        // Validate encryption key is provided when encryption is enabled
+        if (EnableEncryption && string.IsNullOrWhiteSpace(EncryptionKey))
+        {
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("ErrorEncryptionKeyRequired") ? DictText["ErrorEncryptionKeyRequired"] : "Le mot de passe de chiffrement est obligatoire",
+                ToastType.Error);
+            return;
+        }
         
         if (!Directory.Exists(LogPath) && !string.IsNullOrEmpty(LogPath))
         {

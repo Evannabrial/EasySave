@@ -137,7 +137,14 @@
                         </Grid>
 
                         <StackPanel IsVisible="{Binding #EncryptionToggle.IsChecked}">
-                            <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}" />
+                            <TextBlock Classes="Label" Text="{Binding DictText[EncryptionKeyMessage]}" />
+                            <TextBox Watermark="{Binding DictText[EncryptionKeyPlaceholder]}"
+                                     Text="{Binding EncryptionKey}"
+                                     PasswordChar="•"
+                                     HorizontalAlignment="Stretch" />
+
+                            <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}"
+                                       Margin="0,15,0,5" />
                             <TextBox Watermark="e.g.: .txt, .docx, .pdf"
                                      Text="{Binding EncryptionExtensions}"
                                      HorizontalAlignment="Stretch" />

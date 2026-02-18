@@ -45,8 +45,8 @@
   "ActionsMessage": "Actions",
   "IdleMessage": "Idle",
   "DeleteJobMessage": "Delete this job ?",
-  "NoJobMessage" : "No job configured",
-  "SaveButtonMessage" : "Apply",
+  "NoJobMessage": "No job configured",
+  "SaveButtonMessage": "Apply",
   "AddJobMessage": "Add a job",
   "YesMessage": "Yes",
   "TargetPathMessage": "Target Path",
@@ -65,5 +65,8 @@
   "ErrorLogPathNotFound": "The specified log path does not exist",
   "ErrorSettingsSave": "Error while saving settings",
   "LanguageChangedMessage": "Language changed",
-  "ErrorInvalidInput": "Invalid input, please try again."
+  "ErrorInvalidInput": "Invalid input, please try again.",
+  "EncryptionKeyMessage": "Encryption password (required):",
+  "EncryptionKeyPlaceholder": "Enter your encryption password",
+  "ErrorEncryptionKeyRequired": "Encryption password is required when encryption is enabled"
 }
