@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -24,6 +25,7 @@ public class JobsViewModel : ViewModelBase
     private string _formTarget;
     private string _formTitle;
     private bool _isEditMode;
+    private bool _isUpdateScheduled = false;
     // --- Propriétés pour le Formulaire (Pop-up) ---
     private bool _isFormVisible;
     private string _selectedSaveType;
@@ -85,6 +87,26 @@ public class JobsViewModel : ViewModelBase
         set
         {
             _dictText = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    public bool IsFormVisible
+    {
+        get => _isFormVisible;
+        set
+        {
+            _isFormVisible = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string FormTitle
+    {
+        get => _formTitle;
+        set
+        {
+            _formTitle = value;
             OnPropertyChanged();
         }
     }
@@ -180,7 +202,7 @@ public class JobsViewModel : ViewModelBase
             }
         });
 
-        LogService.Observer.OnLogChanged += () => { Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus); };
+        // LogService.Observer.OnLogChanged += () => { Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus); };
 
         // Ferme le popup sans sauvegarder
         CloseFormCommand = new RelayCommandService(_ => { IsFormVisible = false; });
@@ -190,12 +212,7 @@ public class JobsViewModel : ViewModelBase
 
         // --- Fin Commandes Formulaire ---
 
-        _observer = new LogObserverService();
-        _observer.OnLogChanged += () =>
-        {
-            // On demande au Dispatcher d'Avalonia d'exécuter la mise à jour
-            Dispatcher.UIThread.InvokeAsync(RefreshJobsStatus);
-        };
+        LogService.Observer.OnLogChanged += ScheduleRefresh;
 
         var jobDtos = new ObservableCollection<JobDto>();
 
@@ -219,25 +236,79 @@ public class JobsViewModel : ViewModelBase
                     OnPropertyChanged(nameof(ShowMultiSelectButton));
             };
     }
-
-    public bool IsFormVisible
+    
+    // On change la méthode pour qu'elle prépare le travail en arrière-plan
+    private void ScheduleRefresh()
     {
-        get => _isFormVisible;
-        set
-        {
-            _isFormVisible = value;
-            OnPropertyChanged();
-        }
-    }
+        if (_isUpdateScheduled) return;
+        _isUpdateScheduled = true;
 
-    public string FormTitle
-    {
-        get => _formTitle;
-        set
+        // On attend 100ms pour ne pas spammer (Throttling)
+        Task.Delay(100).ContinueWith(async _ =>
         {
-            _formTitle = value;
-            OnPropertyChanged();
-        }
+            try
+            {
+                // Etape 1 : On capture la liste des IDs sur le thread UI (très rapide)
+                // On fait ça pour ne pas toucher à la collection 'Jobs' depuis un autre thread
+                var jobIds = new List<string>();
+                await Dispatcher.UIThread.InvokeAsync(() => 
+                {
+                    jobIds = Jobs.Select(j => j.Id).ToList();
+                });
+
+                // Etape 2 : LE TRAVAIL LOURD (Lecture Disque)
+                // On lance ça sur un thread séparé (Task.Run). L'UI reste fluide pendant ce temps.
+                var updates = await Task.Run(() =>
+                {
+                    var listUpdates = new List<(string Id, JobStatus Status)>();
+                    
+                    foreach (var id in jobIds)
+                    {
+                        // C'est ICI que ça bloquait ton interface avant (lecture fichier)
+                        // Maintenant c'est fait en cachette
+                        var status = JobManager.GetStatusOfJob(Guid.Parse(id));
+                        if (status != null)
+                        {
+                            if (JobManager.IsJobPaused(Guid.Parse(id)))
+                            {
+                                status.Status = "En Pause";
+                            }
+                            
+                            listUpdates.Add((id, status));
+                        }
+                    }
+                    return listUpdates;
+                });
+
+                // Etape 3 : MISE A JOUR UI
+                // On revient sur le thread principal juste pour appliquer les valeurs
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    foreach (var update in updates)
+                    {
+                        var jobDto = Jobs.FirstOrDefault(j => j.Id == update.Id);
+                        if (jobDto != null)
+                        {
+                            jobDto.Progress = (int)update.Status.Progress;
+                            // On ne change le status que s'il est différent pour éviter des clignotements
+                            if(jobDto.Status != update.Status.Status)
+                            {
+                                jobDto.Status = update.Status.Status;
+                            }
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                // En cas d'erreur de lecture, on ignore pour cette frame
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                _isUpdateScheduled = false;
+            }
+        });
     }
 
     private void ProcessSaveForm()
@@ -303,7 +374,7 @@ public class JobsViewModel : ViewModelBase
 
         JobManager.StartMultipleSave(index.ToString());
 
-        Dispatcher.UIThread.InvokeAsync(() => { RefreshJobsStatus(); });
+        // Dispatcher.UIThread.InvokeAsync(() => { RefreshJobsStatus(); });
     }
 
     private void RunDeleteJobFunction(JobDto dto)
@@ -323,15 +394,15 @@ public class JobsViewModel : ViewModelBase
 
     private void RefreshJobsStatus()
     {
-        foreach (var jobDto in Jobs)
-        {
-            var status = JobManager.GetStatusOfJob(Guid.Parse(jobDto.Id));
-            if (status != null)
-            {
-                jobDto.Progress = (int)status.Progress;
-                jobDto.Status = status.Status;
-            }
-        }
+        // foreach (var jobDto in Jobs)
+        // {
+        //     var status = JobManager.GetStatusOfJob(Guid.Parse(jobDto.Id));
+        //     if (status != null)
+        //     {
+        //         jobDto.Progress = (int)status.Progress;
+        //         jobDto.Status = status.Status;
+        //     }
+        // }
     }
 
     private async void OpenFilePickerTargetFunction()
@@ -384,6 +455,6 @@ public class JobsViewModel : ViewModelBase
 
         JobManager.StartMultipleSave(userChoice);
 
-        Dispatcher.UIThread.InvokeAsync(() => { RefreshJobsStatus(); });
+        // Dispatcher.UIThread.InvokeAsync(() => { RefreshJobsStatus(); });
     }
 }

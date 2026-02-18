@@ -105,19 +105,27 @@
                                             <Button Background="Transparent" Padding="4"
                                                     CommandParameter="{Binding}"
                                                     Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunStartSingleSave}"
-                                                    IsVisible="{Binding !IsRunning}">
-                                                <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24"
-                                                     Height="24">
+                                                    IsVisible="{Binding IsIdle}">
+                                                <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: green; }</Svg.Css>
                                                 </Svg>
                                             </Button>
 
+                                            <Button Background="Transparent" Padding="4"
+                                                    CommandParameter="{Binding}"
+                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).ResumeJobCommand}"
+                                                    IsVisible="{Binding IsPaused}">
+                                                <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
+                                                    <Svg.Css>path { fill: orange; }</Svg.Css>
+                                                </Svg>
+                                            </Button>
+
                                             <Button IsVisible="{Binding IsRunning}" VerticalAlignment="Center"
-                                                        HorizontalAlignment="Center"
-                                                        Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).PauseJobCommand}"
-                                                        CommandParameter="{Binding}">
-                                                <Svg Path="avares://EasySave/Assets/pause-solid-full.svg" Width="24"
-                                                     Height="24" Classes="spinner">
+                                                    HorizontalAlignment="Center"
+                                                    Background="Transparent" Padding="4"
+                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).PauseJobCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Svg Path="avares://EasySave/Assets/pause-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: #007ACC; }</Svg.Css>
                                                 </Svg>
                                             </Button>
@@ -125,18 +133,15 @@
                                             <Button Background="Transparent" Padding="4"
                                                     Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).OpenEditJobCommand}"
                                                     CommandParameter="{Binding}">
-                                                <Svg Path="avares://EasySave/Assets/pen-solid-full.svg" Width="24"
-                                                     Height="24">
+                                                <Svg Path="avares://EasySave/Assets/pen-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: #B849FF; }</Svg.Css>
                                                 </Svg>
                                             </Button>
 
                                             <Button Background="Transparent" Padding="4">
-                                                <Svg Path="avares://EasySave/Assets/trash-solid-full.svg" Width="24"
-                                                     Height="24">
+                                                <Svg Path="avares://EasySave/Assets/trash-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: red; }</Svg.Css>
                                                 </Svg>
-
                                                 <Button.Flyout>
                                                     <Flyout Placement="Top">
                                                         <StackPanel Spacing="10" MinWidth="150">
@@ -162,7 +167,6 @@
                         </ListBox>
                     </Grid>
                 </Border>
-
                 <Border IsVisible="{Binding !Jobs.Count}"
                         Background="{StaticResource PrimaryColor}"
                         CornerRadius="8"

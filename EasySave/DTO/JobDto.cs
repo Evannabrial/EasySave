@@ -103,11 +103,20 @@ public class JobDto : INotifyPropertyChanged
             _status = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsRunning));
+            OnPropertyChanged(nameof(IsPaused));
+            OnPropertyChanged(nameof(IsIdle));
             OnPropertyChanged(nameof(ColorStatus));
         }
     }
 
     public bool IsRunning => Status == "En cours";
+    // L'état "En cours" (Affiche le bouton Pause)
+
+// L'état "En Pause" (Affiche le bouton Reprendre)
+    public bool IsPaused => Status == "En Pause";
+
+// L'état "Rien du tout" (Affiche le bouton Démarrer une nouvelle save)
+    public bool IsIdle => !IsRunning && !IsPaused;
 
     public string ColorStatus
     {
@@ -116,6 +125,7 @@ public class JobDto : INotifyPropertyChanged
             return Status switch
             {
                 "En cours" => "Blue",
+                "En Pause" => "Orange",
                 "Terminé" => "#28a745", // Vert succès
                 "Prêt" => "Green",
                 _ => "Gray"

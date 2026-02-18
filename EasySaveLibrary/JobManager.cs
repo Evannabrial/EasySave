@@ -403,4 +403,19 @@ public class JobManager
             }
         }
     }
+    
+    public bool IsJobPaused(Guid jobId)
+    {
+        lock (_lockEvents)
+        {
+            if (_jobPauseEvents.ContainsKey(jobId))
+            {
+                // WaitOne(0) permet de tester l'état sans bloquer le thread.
+                // Si ça retourne true : Le feu est VERT (Set) -> Donc pas en pause.
+                // Si ça retourne false : Le feu est ROUGE (Reset) -> Donc EN PAUSE.
+                return !_jobPauseEvents[jobId].WaitOne(0);
+            }
+            return false;
+        }
+    }
 }

@@ -123,6 +123,7 @@ public class Full : ITypeSave
             {
                 foreach (string el in Directory.EnumerateFileSystemEntries(actual))
                 {
+                    pauseEvent.WaitOne();
                     string pathToCreate = el.Split(job.Source)[1];
                     if (Directory.Exists(el) &&  !marked.Contains(el))
                     {
