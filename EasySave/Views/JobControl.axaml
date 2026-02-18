@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:models="clr-namespace:EasySaveLibrary.Model;assembly=EasySaveLibrary"
              xmlns:vm="clr-namespace:EasySave.ViewModels"
              xmlns:dto="clr-namespace:EasySave.DTO"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
@@ -10,18 +9,19 @@
              x:Class="EasySave.Views.JobControl">
 
     <Panel>
-        
+
         <Grid RowDefinitions="50, *" Margin="24 12">
-            
+
             <Grid ColumnDefinitions="Auto, *, Auto, Auto" Grid.Row="0" VerticalAlignment="Center">
                 <TextBlock Grid.Column="0" FontSize="32">Job Management</TextBlock>
-                
+
                 <Button Grid.Column="2" Content="{Binding DictText[RunJobsMessage]}" Margin="0,0,24,0"
                         Background="DarkGreen"
                         Foreground="White"
-                        IsVisible="{Binding ShowMultiSelectButton}" />
-                
-                <Button Grid.Column="3" 
+                        IsVisible="{Binding ShowMultiSelectButton}"
+                        Command="{Binding RunMultipleSaveCommand}" />
+
+                <Button Grid.Column="3"
                         Background="{StaticResource PrimaryColor}"
                         Foreground="{StaticResource TextColor}"
                         Command="{Binding OpenAddJobCommand}"
@@ -38,65 +38,98 @@
                         <Border Grid.Row="0" Padding="15,10" Background="{StaticResource SecondaryColor}"
                                 CornerRadius="12 12 0 0" BorderBrush="{StaticResource PrimaryColor}">
                             <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130" ColumnSpacing="3">
-                                <TextBlock Grid.Column="1" Text="{Binding DictText[JobNameMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" Text="{Binding DictText[TypeMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="3" Text="{Binding DictText[SourceMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="4" Text="{Binding DictText[DestinationMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="5" Text="{Binding DictText[StatusMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="6" Text="{Binding DictText[ProgressMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="7" Text="{Binding DictText[ActionsMessage]}" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{Binding DictText[JobNameMessage]}" FontWeight="Bold"
+                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="{Binding DictText[TypeMessage]}" FontWeight="Bold"
+                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="3" Text="{Binding DictText[SourceMessage]}" FontWeight="Bold"
+                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="4" Text="{Binding DictText[DestinationMessage]}"
+                                           FontWeight="Bold" Foreground="{StaticResource TextColor}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="5" Text="{Binding DictText[StatusMessage]}" FontWeight="Bold"
+                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="6" Text="{Binding DictText[ProgressMessage]}" FontWeight="Bold"
+                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="7" Text="{Binding DictText[ActionsMessage]}" FontWeight="Bold"
+                                           Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" />
                             </Grid>
                         </Border>
 
-                        <ListBox ItemsSource="{Binding Jobs}" Grid.Row="1" 
-                                 Background="{StaticResource SecondaryColor}" 
+                        <ListBox ItemsSource="{Binding Jobs}" Grid.Row="1"
+                                 Background="{StaticResource SecondaryColor}"
                                  CornerRadius="0 0 12 12" Padding="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="dto:JobDto">
                                     <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130"
                                           Background="Transparent" ColumnSpacing="3">
 
-                                        <CheckBox Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                  Margin="0" IsChecked="{Binding IsSelected}" >
+                                        <CheckBox Grid.Column="0" VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"
+                                                  Margin="0" IsChecked="{Binding IsSelected}">
                                             <CheckBox.Resources>
-                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="{StaticResource PrimaryColor}" />
-                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" Color="{StaticResource HoverButtonColor}" />
-                                                <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{StaticResource SecondaryColor}" />
-                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{StaticResource PrimaryColor}" />
                                             </CheckBox.Resources>
                                         </CheckBox>
 
-                                        <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Save}" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" />
-                                        <TextBlock Grid.Column="3" Text="{Binding Source}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}" ToolTip.Tip="{Binding Source}" />
-                                        <TextBlock Grid.Column="4" Text="{Binding Target}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextColor}" ToolTip.Tip="{Binding Target}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{StaticResource TextColor}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Save}" VerticalAlignment="Center"
+                                                   Foreground="{StaticResource TextColor}" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Source}" VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{StaticResource TextColor}"
+                                                   ToolTip.Tip="{Binding Source}" />
+                                        <TextBlock Grid.Column="4" Text="{Binding Target}" VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Foreground="{StaticResource TextColor}"
+                                                   ToolTip.Tip="{Binding Target}" />
 
-                                        <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6"
+                                                    VerticalAlignment="Center">
                                             <Ellipse Width="8" Height="8" Fill="{Binding ColorStatus}" />
-                                            <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontSize="12" Foreground="{StaticResource TextColor}" />
+                                            <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontSize="12"
+                                                       Foreground="{StaticResource TextColor}" />
                                         </StackPanel>
 
-                                        <Grid Grid.Column="6" ColumnDefinitions="*, Auto" ColumnSpacing="8" VerticalAlignment="Center">
-                                            <ProgressBar Value="{Binding Progress}" Height="10" CornerRadius="5" Background="#33FFFFFF"></ProgressBar>
-                                            <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat={}{0}%}" FontSize="11" Foreground="{StaticResource TextColor}" />
+                                        <Grid Grid.Column="6" ColumnDefinitions="*, Auto" ColumnSpacing="8"
+                                              VerticalAlignment="Center">
+                                            <ProgressBar Value="{Binding Progress}" Height="10" CornerRadius="5"
+                                                         Background="#33FFFFFF" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat={}{0}%}"
+                                                       FontSize="11" Foreground="{StaticResource TextColor}" />
                                         </Grid>
 
-                                        <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button Background="Transparent" Padding="4" 
+                                        <StackPanel Grid.Column="7" Orientation="Horizontal"
+                                                    HorizontalAlignment="Center">
+                                            <Button Background="Transparent" Padding="4"
                                                     CommandParameter="{Binding}"
                                                     Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunStartSingleSave}"
-                                                    IsVisible="{Binding !IsRunning}">
+                                                    IsVisible="{Binding IsIdle}">
                                                 <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: green; }</Svg.Css>
                                                 </Svg>
                                             </Button>
 
-                                            <StackPanel IsVisible="{Binding IsRunning}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <Svg Path="avares://EasySave/Assets/spinner-solid-full.svg" Width="24" Height="24" Classes="spinner">
+                                            <Button Background="Transparent" Padding="4"
+                                                    CommandParameter="{Binding}"
+                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).ResumeJobCommand}"
+                                                    IsVisible="{Binding IsPaused}">
+                                                <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
+                                                    <Svg.Css>path { fill: orange; }</Svg.Css>
+                                                </Svg>
+                                            </Button>
+
+                                            <Button IsVisible="{Binding IsRunning}" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Background="Transparent" Padding="4"
+                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).PauseJobCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Svg Path="avares://EasySave/Assets/pause-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: #007ACC; }</Svg.Css>
                                                 </Svg>
-                                            </StackPanel>
-                                            
+                                            </Button>
+
                                             <Button Background="Transparent" Padding="4"
                                                     Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).OpenEditJobCommand}"
                                                     CommandParameter="{Binding}">
@@ -104,21 +137,24 @@
                                                     <Svg.Css>path { fill: #B849FF; }</Svg.Css>
                                                 </Svg>
                                             </Button>
-                                            
+
                                             <Button Background="Transparent" Padding="4">
                                                 <Svg Path="avares://EasySave/Assets/trash-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: red; }</Svg.Css>
                                                 </Svg>
-        
                                                 <Button.Flyout>
                                                     <Flyout Placement="Top">
-                                                        <StackPanel Spacing="10" MinWidth="150" >
-                                                            <TextBlock Text="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).DictText[DeleteJobMessage]}" FontWeight="Bold" HorizontalAlignment="Center" />
-                                                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                                                                <Button Content="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).DictText[YesMessage]}"
-                                                                        Background="Red" Foreground="White"
-                                                                        Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunDeleteJob}"
-                                                                        CommandParameter="{Binding}" />
+                                                        <StackPanel Spacing="10" MinWidth="150">
+                                                            <TextBlock
+                                                                Text="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).DictText[DeleteJobMessage]}"
+                                                                FontWeight="Bold" HorizontalAlignment="Center" />
+                                                            <StackPanel Orientation="Horizontal" Spacing="10"
+                                                                        HorizontalAlignment="Center">
+                                                                <Button
+                                                                    Content="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).DictText[YesMessage]}"
+                                                                    Background="Red" Foreground="White"
+                                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunDeleteJob}"
+                                                                    CommandParameter="{Binding}" />
                                                             </StackPanel>
                                                         </StackPanel>
                                                     </Flyout>
@@ -131,7 +167,6 @@
                         </ListBox>
                     </Grid>
                 </Border>
-
                 <Border IsVisible="{Binding !Jobs.Count}"
                         Background="{StaticResource PrimaryColor}"
                         CornerRadius="8"
@@ -142,7 +177,7 @@
         </Grid>
 
         <Grid IsVisible="{Binding IsFormVisible}" Background="#AA000000">
-            <Border Background="{StaticResource SecondaryColor}" 
+            <Border Background="{StaticResource SecondaryColor}"
                     BorderBrush="{StaticResource PrimaryColor}"
                     BorderThickness="2"
                     CornerRadius="10"
@@ -150,79 +185,83 @@
                     Width="500"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-                
+
                 <StackPanel Spacing="15">
-                    <TextBlock Text="{Binding FormTitle}" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                    
+                    <TextBlock Text="{Binding FormTitle}" FontSize="24" FontWeight="Bold" Foreground="White"
+                               HorizontalAlignment="Center" />
+
                     <StackPanel>
-                        <TextBlock Text="{Binding DictText[JobNameMessage]}" Foreground="White" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding DictText[JobNameMessage]}" Foreground="White" Margin="0,0,0,5" />
                         <TextBox Text="{Binding FormName}" Watermark="Job Name" HorizontalAlignment="Stretch" />
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Text="{Binding DictText[SourcePathMessage]}" Foreground="White" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding DictText[SourcePathMessage]}" Foreground="White" Margin="0,0,0,5" />
                         <Grid ColumnDefinitions="*, Auto">
-                            <TextBox Grid.Column="0" 
-                                     Text="{Binding FormSource}" 
-                                     Watermark="C:\Source\Path" 
-                                     HorizontalAlignment="Stretch" 
-                                     Margin="0,0,5,0"/> <Button Grid.Column="1" 
-                                                                Command="{Binding OpenFilePickerSourceCommand}"
-                                                                Content="..."/>
-                        </Grid>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <TextBlock Text="{Binding DictText[TargetPathMessage]}" Foreground="White" Margin="0,0,0,5"/>
-                        <Grid ColumnDefinitions="*, Auto">
-                            <TextBox Grid.Column="0" 
-                                     Text="{Binding FormTarget}" 
-                                     Watermark="D:\Target\Path" 
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FormSource}"
+                                     Watermark="C:\Source\Path"
                                      HorizontalAlignment="Stretch"
-                                     Margin="0,0,5,0"/>
-            
-                            <Button Grid.Column="1" 
-                                    Command="{Binding OpenFilePickerTargetCommand}"
-                                    Content="..."/>
+                                     Margin="0,0,5,0" />
+                            <Button Grid.Column="1"
+                                    Command="{Binding OpenFilePickerSourceCommand}"
+                                    Content="..." />
                         </Grid>
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Text="{Binding DictText[SaveTypeMessage]}" Foreground="White" Margin="0,0,0,5"/>
-                        <ComboBox ItemsSource="{Binding SaveTypes}" 
-                                  SelectedItem="{Binding SelectedSaveType}" 
-                                  HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="{Binding DictText[TargetPathMessage]}" Foreground="White" Margin="0,0,0,5" />
+                        <Grid ColumnDefinitions="*, Auto">
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FormTarget}"
+                                     Watermark="D:\Target\Path"
+                                     HorizontalAlignment="Stretch"
+                                     Margin="0,0,5,0" />
+
+                            <Button Grid.Column="1"
+                                    Command="{Binding OpenFilePickerTargetCommand}"
+                                    Content="..." />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="{Binding DictText[SaveTypeMessage]}" Foreground="White" Margin="0,0,0,5" />
+                        <ComboBox ItemsSource="{Binding SaveTypes}"
+                                  SelectedItem="{Binding SelectedSaveType}"
+                                  HorizontalAlignment="Stretch" />
                     </StackPanel>
 
                     <Grid ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,10,0,0">
-                        <Button Grid.Column="0" Content="{Binding DictText[CancelMessage]}" 
-                                Command="{Binding CloseFormCommand}" 
+                        <Button Grid.Column="0" Content="{Binding DictText[CancelMessage]}"
+                                Command="{Binding CloseFormCommand}"
                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                Background="Gray" Foreground="White"/>
-                        
-                        <Button Grid.Column="1" Content="{Binding DictText[SaveMessage]}" 
-                                Command="{Binding SaveFormCommand}" 
+                                Background="Gray" Foreground="White" />
+
+                        <Button Grid.Column="1" Content="{Binding DictText[SaveMessage]}"
+                                Command="{Binding SaveFormCommand}"
                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                Background="{StaticResource PrimaryColor}" Foreground="White"/>
+                                Background="{StaticResource PrimaryColor}" Foreground="White" />
                     </Grid>
                 </StackPanel>
             </Border>
         </Grid>
 
     </Panel>
-    
+
+    <!--
     <UserControl.Styles>
         <Style Selector="Svg.spinner">
             <Style.Animations>
                 <Animation Duration="0:0:2" IterationCount="Infinite">
                     <KeyFrame KeyTime="0:0:0">
-                        <Setter Property="RotateTransform.Angle" Value="0"/>
+                        <Setter Property="RotateTransform.Angle" Value="0" />
                     </KeyFrame>
                     <KeyFrame KeyTime="0:0:2">
-                        <Setter Property="RotateTransform.Angle" Value="360"/>
+                        <Setter Property="RotateTransform.Angle" Value="360" />
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
         </Style>
     </UserControl.Styles>
+    -->
 </UserControl>

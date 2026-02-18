@@ -27,7 +27,8 @@ public class Differential : ITypeSave
     /// 2 => Erreur copie du fichier
     /// 3 => Erreur création du dossier
     /// </returns>
-    public int StartSave(Job job, LogType logType, bool enableEncryption = false, string encryptionExtensions = "")
+    public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, bool enableEncryption = false, 
+        string encryptionExtensions = "")
     {
         logManager.TypeSave = logType;
         
@@ -45,7 +46,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job, logType, enableEncryption, encryptionExtensions);
+            return new Full().StartSave(job, logType, pauseEvent, enableEncryption, encryptionExtensions);
         }
         
         bool isFile = File.Exists(job.Source);
@@ -79,6 +80,7 @@ public class Differential : ITypeSave
             try
             {
                 string nameFile = Regex.Match(job.Source, @"[^\\]+$").Value;
+                pauseEvent.WaitOne();
                 if (File.GetLastWriteTime(job.Source) > File.GetLastWriteTime(pathLastSave))
                 {
                     Stopwatch startTimeDir = Stopwatch.StartNew();
@@ -171,8 +173,9 @@ public class Differential : ITypeSave
         
         while (queue.Count > 0)
         {
+            pauseEvent.WaitOne();
             string actual = queue.Dequeue();
-            
+
             if (Directory.Exists(actual))
             {
                 foreach (string el in Directory.EnumerateFileSystemEntries(actual))
@@ -281,52 +284,41 @@ public class Differential : ITypeSave
             sizeFileLeft: 0
         );
 
-        // CryptoSoft encryption if enabled
+        // Encrypt the backup files using the CryptoSoft server.
+        // EasySave sends a request to CryptoSoft via a Named Pipe,
+        // CryptoSoft encrypts the files and sends back the result.
         if (enableEncryption)
         {
             try
             {
-                // Generate a random 16-byte key and encode it in Base64
+                // Generate a random 16-byte encryption key (Base64 encoded)
                 string key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-                // Display the key so the user can save it for later decryption
-                Console.WriteLine($"Encryption key for '{job.Name}' : {key}");
 
-                // Build the path to the CryptoSoft executable (expected in the same directory)
-                string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft.exe");
-
-                // Build the command-line arguments: encrypt <targetDir> <key> [extensions]
-                string arguments = $"encrypt \"{target}\" \"{key}\"";
-                // If specific extensions are set, only those file types will be encrypted
-                if (!string.IsNullOrWhiteSpace(encryptionExtensions))
+                // Build the encryption request with the target path and key
+                var request = new CryptoSoft.PipeRequest
                 {
-                    arguments += $" \"{encryptionExtensions}\"";
-                }
-
-                // Launch CryptoSoft as an external process
-                var process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = cryptoSoftPath,
-                        Arguments = arguments,
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
+                    Action = "encrypt",
+                    Source = target,
+                    Key = key,
+                    Extensions = string.IsNullOrWhiteSpace(encryptionExtensions) ? null : encryptionExtensions
                 };
 
-                process.Start();
-                // Read the output (contains the encryption time on the last line)
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+                // Open a Named Pipe connection to the CryptoSoft server
+                using var pipe = new System.IO.Pipes.NamedPipeClientStream(
+                    ".", CryptoSoft.PipeProtocol.PipeName, System.IO.Pipes.PipeDirection.InOut);
+                pipe.Connect(CryptoSoft.PipeProtocol.ClientTimeoutMs);
 
-                if (process.ExitCode == 0)
+                // Send the request and wait for CryptoSoft to respond
+                CryptoSoft.PipeProtocol.Send(pipe, request);
+                var response = CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
+
+                // If encryption succeeded, parse the time and write it to the log
+                if (response != null && response.ExitCode == 0)
                 {
-                    // Parse the encryption time (in ms) from the last non-empty line of CryptoSoft output
+                    // The last non-empty line of the output contains the time in ms
                     double encryptTimeMs = double.Parse(
-                        output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
+                        response.Output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
                     );
-                    // Log the encryption result
                     logManager.WriteNewLog(
                         name: job.Name,
                         sourcePath: target,
@@ -342,7 +334,7 @@ public class Differential : ITypeSave
             }
             catch (Exception)
             {
-                return 4; // Encryption failed
+                return 4; // Could not connect to CryptoSoft server
             }
         }
 
