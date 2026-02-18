@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
+using System.Diagnostics;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -16,6 +17,10 @@ public partial class App : Application
 {
     public JobManager JobManager => JobManagerService.Instance.JobManager;
     public static Window MainWindow { get; set; }
+
+    // CryptoSoft server process (mono-instance, started at app launch)
+    private Process? _cryptoSoftServer;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -33,9 +38,63 @@ public partial class App : Application
                 DataContext = new MainWindowViewModel(JobManager),
             };
             MainWindow = desktop.MainWindow;
+
+            // Start CryptoSoft server in background
+            StartCryptoSoftServer();
+
+            // Stop server when EasySave closes
+            desktop.ShutdownRequested += (_, _) => StopCryptoSoftServer();
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// Starts CryptoSoft.exe in server mode (--server).
+    /// The server listens on a Named Pipe for encryption requests.
+    /// </summary>
+    private void StartCryptoSoftServer()
+    {
+        try
+        {
+            string path = System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft.exe");
+
+            _cryptoSoftServer = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = path,
+                    Arguments = "--server",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                }
+            };
+
+            _cryptoSoftServer.Start();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Failed to start CryptoSoft server: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Stops the CryptoSoft server when EasySave shuts down.
+    /// </summary>
+    private void StopCryptoSoftServer()
+    {
+        try
+        {
+            if (_cryptoSoftServer is { HasExited: false })
+            {
+                _cryptoSoftServer.Kill();
+                _cryptoSoftServer.WaitForExit(2000);
+            }
+        }
+        catch { /* Server already stopped */ }
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
