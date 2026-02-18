@@ -10,6 +10,7 @@ public class Full : ITypeSave
 {
     public string DisplayName => "Full";
     private LogManager logManager;
+    private bool hasLogBlockWritte;
     
     public Full()
     {
@@ -26,8 +27,8 @@ public class Full : ITypeSave
      /// 2 => Erreur copie du fichier
      /// 3 => Erreur création du dossier
      /// </returns>
-     public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, bool enableEncryption = false, 
-         string encryptionExtensions = "")
+     public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, CancellationToken token,
+         string[] listBlockProcess, bool enableEncryption = false, string encryptionExtensions = "")
      { 
          logManager = new LogManager(ConfigManager.LogPath);
          logManager.TypeSave = logType;
@@ -58,6 +59,42 @@ public class Full : ITypeSave
             {
                 string nameFile = Regex.Match(job.Source, @"[^\\]+$").Value;
                 pauseEvent.WaitOne();
+                while (IsBusinessSoftwareRunning(listBlockProcess.ToList()))
+                {
+                    // Si on annule pendant le blocage logiciel
+                    if (token.IsCancellationRequested) return -1;
+                    if (!hasLogBlockWritte)
+                    {
+                        logManager.WriteNewLog(
+                            name: job.Name,
+                            sourcePath: job.Source,
+                            targetPath: target,
+                            action: "Program block the save",
+                            state: "Blocked",
+                            progress: 0,
+                            nbFile: 0,
+                            nbFileLeft: 0,
+                            sizeFileLeft: 0
+                        );
+                    }
+                    // On attend 1 seconde avant de revérifier pour ne pas surcharger le CPU
+                    Thread.Sleep(1000); 
+                }
+                if (token.IsCancellationRequested)
+                {
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target + "\\" + nameFile,
+                        action: "Cancel by user",
+                        state: "Cancelled",
+                        progress: 0,
+                        nbFile: 0,
+                        nbFileLeft: 0,
+                        sizeFileLeft: 0
+                    );
+                    return -1;
+                }
                 
                 logManager.WriteNewLog(
                     name: job.Name,
@@ -117,6 +154,43 @@ public class Full : ITypeSave
         while (queue.Count > 0)
         {
             pauseEvent.WaitOne();
+            while (IsBusinessSoftwareRunning(listBlockProcess.ToList()))
+            {
+                // Si on annule pendant le blocage logiciel
+                if (token.IsCancellationRequested) return -1;
+                if (!hasLogBlockWritte)
+                {
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target,
+                        action: "Program block the save",
+                        state: "BLOCKED",
+                        progress: (nbFileManaged / (double)nbFile) * 100,
+                        nbFile: nbFile,
+                        nbFileLeft: nbFile - nbFileManaged,
+                        sizeFileLeft: size / (nbFileManaged + 1)
+                    );
+                }
+                // On attend 1 seconde avant de revérifier pour ne pas surcharger le CPU
+                Thread.Sleep(1000); 
+            }
+            
+            if (token.IsCancellationRequested)
+            {
+                logManager.WriteNewLog(
+                    name: job.Name,
+                    sourcePath: job.Source,
+                    targetPath: target,
+                    action: "Cancel by user",
+                    state: "Cancelled",
+                    progress: 0,
+                    nbFile: 0,
+                    nbFileLeft: 0,
+                    sizeFileLeft: 0
+                );
+                return -1;
+            }
             string actual = queue.Dequeue();
 
             if (Directory.Exists(actual))
@@ -124,6 +198,44 @@ public class Full : ITypeSave
                 foreach (string el in Directory.EnumerateFileSystemEntries(actual))
                 {
                     pauseEvent.WaitOne();
+                    while (IsBusinessSoftwareRunning(listBlockProcess.ToList()))
+                    {
+                        // Si on annule pendant le blocage logiciel
+                        if (token.IsCancellationRequested) return -1;
+                        if (!hasLogBlockWritte)
+                        {
+                            logManager.WriteNewLog(
+                                name: job.Name,
+                                sourcePath: job.Source,
+                                targetPath: target,
+                                action: "Program block the save",
+                                state: "BLOCKED",
+                                progress: (nbFileManaged / (double)nbFile) * 100,
+                                nbFile: nbFile,
+                                nbFileLeft: nbFile - nbFileManaged,
+                                sizeFileLeft: size / (nbFileManaged + 1)
+                            );
+                        }
+                        // On attend 1 seconde avant de revérifier pour ne pas surcharger le CPU
+                        Thread.Sleep(1000); 
+                    }
+                    
+                    if (token.IsCancellationRequested)
+                    {
+                        logManager.WriteNewLog(
+                            name: job.Name,
+                            sourcePath: job.Source,
+                            targetPath: target + "\\",
+                            action: "Cancel by user",
+                            state: "Cancelled",
+                            progress: 0,
+                            nbFile: 0,
+                            nbFileLeft: 0,
+                            sizeFileLeft: 0
+                        );
+                        return -1;
+                    }
+                    
                     string pathToCreate = el.Split(job.Source)[1];
                     if (Directory.Exists(el) &&  !marked.Contains(el))
                     {
@@ -268,4 +380,15 @@ public class Full : ITypeSave
 
         return 0;
     }
+     
+     private bool IsBusinessSoftwareRunning(List<string> targetProcessNames)
+     {
+         if (targetProcessNames == null || targetProcessNames.Count == 0) return false;
+        
+         // On récupère tous les processus actuels
+         var currentProcesses = Process.GetProcesses();
+        
+         // On regarde si l'un d'eux correspond à notre liste noire
+         return currentProcesses.Any(p => targetProcessNames.Contains(p.ProcessName, StringComparer.OrdinalIgnoreCase));
+     }
 }
