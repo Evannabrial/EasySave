@@ -64,5 +64,6 @@
   "ErrorLogPathEmpty": "Please select a log path",
   "ErrorLogPathNotFound": "The specified log path does not exist",
   "ErrorSettingsSave": "Error while saving settings",
-  "LanguageChangedMessage": "Language changed"
+  "LanguageChangedMessage": "Language changed",
+  "ErrorInvalidInput": "Invalid input, please try again."
 }

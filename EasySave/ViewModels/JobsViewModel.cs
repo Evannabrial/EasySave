@@ -220,7 +220,9 @@ public class JobsViewModel : ViewModelBase
             string.IsNullOrWhiteSpace(FormSource) || 
             string.IsNullOrWhiteSpace(FormTarget))
         {
-            // Ici on pourrait afficher une erreur, pour l'instant on ne fait rien
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("ErrorInvalidInput") ? DictText["ErrorInvalidInput"] : "Entrée invalide, veuillez réessayer.",
+                ToastType.Error);
             return;
         }
 

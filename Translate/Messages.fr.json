@@ -64,5 +64,6 @@
   "ErrorLogPathEmpty": "Veuillez sélectionner un chemin de logs",
   "ErrorLogPathNotFound": "Le chemin de logs spécifié n'existe pas",
   "ErrorSettingsSave": "Erreur lors de la sauvegarde des paramètres",
-  "LanguageChangedMessage": "Langue modifiée"
+  "LanguageChangedMessage": "Langue modifiée",
+  "ErrorInvalidInput": "Entrée invalide, veuillez réessayer."
 }
