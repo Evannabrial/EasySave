@@ -281,16 +281,15 @@ public class Differential : ITypeSave
             sizeFileLeft: 0
         );
 
-        // CryptoSoft encryption if enabled — send request to CryptoSoft server via Named Pipe
+        // Encrypt files using CryptoSoft server (via Named Pipe)
         if (enableEncryption)
         {
             try
             {
-                // Generate a random 16-byte key
+                // Generate a random encryption key
                 string key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-                Console.WriteLine($"Encryption key for '{job.Name}' : {key}");
 
-                // Build the pipe request
+                // Build the request to send to CryptoSoft server
                 var request = new CryptoSoft.PipeRequest
                 {
                     Action = "encrypt",
@@ -299,27 +298,18 @@ public class Differential : ITypeSave
                     Extensions = string.IsNullOrWhiteSpace(encryptionExtensions) ? null : encryptionExtensions
                 };
 
-                Console.WriteLine($"[CryptoSoft] Connecting to server pipe...");
-
-                // Connect to CryptoSoft server via Named Pipe
+                // Connect to the CryptoSoft server pipe
                 using var pipe = new System.IO.Pipes.NamedPipeClientStream(
                     ".", CryptoSoft.PipeProtocol.PipeName, System.IO.Pipes.PipeDirection.InOut);
                 pipe.Connect(CryptoSoft.PipeProtocol.ClientTimeoutMs);
 
-                Console.WriteLine($"[CryptoSoft] Connected! Sending request: {request.Action} {request.Source}");
-
-                // Send request and wait for response
+                // Send request and receive response
                 CryptoSoft.PipeProtocol.Send(pipe, request);
-
-                Console.WriteLine($"[CryptoSoft] Request sent, waiting for response...");
-
                 var response = CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
 
+                // Log the encryption time if successful
                 if (response != null && response.ExitCode == 0)
                 {
-                    Console.WriteLine($"[CryptoSoft] Success! Output: {response.Output.Trim()}");
-
-                    // Parse encryption time from the last non-empty line
                     double encryptTimeMs = double.Parse(
                         response.Output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
                     );
@@ -333,14 +323,12 @@ public class Differential : ITypeSave
                 }
                 else
                 {
-                    Console.WriteLine($"[CryptoSoft] ERROR! ExitCode={response?.ExitCode}, Error={response?.Error}");
-                    return 4;
+                    return 4; // Encryption failed
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"[CryptoSoft] EXCEPTION: {ex.Message}");
-                return 4;
+                return 4; // Connection to CryptoSoft server failed
             }
         }
 

@@ -1,37 +1,11 @@
 ﻿using System.IO.Pipes;
 using CryptoSoft;
 
-// ===========================================
-// ENTRY POINT: Server mode or CLI mode
-// ===========================================
+// CryptoSoft runs as a Named Pipe server (started by EasySave)
+RunServer();
+return 0;
 
-// Server mode: CryptoSoft runs as a Named Pipe server (mono-instance)
-// EasySave starts this with: CryptoSoft.exe --server
-if (args.Length > 0 && args[0] == "--server")
-{
-    RunServer();
-    return 0;
-}
-
-// CLI mode: normal command-line usage (kept for backward compatibility)
-if (args.Length < 3)
-{
-    PrintUsage();
-    return 1;
-}
-
-var result = ExecuteCommand(args[0], args[1], args[2], args.Length >= 4 ? args[3] : null);
-Console.Write(result.Output);
-if (!string.IsNullOrEmpty(result.Error))
-    Console.Error.Write(result.Error);
-return result.ExitCode;
-
-// ===========================================
-// CORE LOGIC: Runs an encrypt/decrypt command
-// ===========================================
-
-// Executes an encryption or decryption command
-// Used by both CLI mode and the server to handle requests
+// Runs an encrypt or decrypt command and returns the result as a PipeResponse
 static PipeResponse ExecuteCommand(string action, string source, string key, string? extensions)
 {
     var output = new StringWriter();
@@ -50,7 +24,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
     {
         if (Directory.Exists(source))
         {
-            // Directory mode
+            // Encrypt or decrypt all files in the directory
             if (action == "encrypt")
             {
                 var (totalMs, count) = Encryptor.EncryptDirectory(source, key, extensions);
@@ -66,10 +40,10 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
         }
         else if (File.Exists(source))
         {
-            // Single file mode
+            // Encrypt or decrypt a single file
             if (action == "encrypt")
             {
-                // Check extension filter
+                // Skip file if its extension is not in the allowed list
                 if (extensions != null)
                 {
                     string ext = Path.GetExtension(source);
@@ -93,6 +67,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
             }
             else
             {
+                // Remove .enc extension for the decrypted output file
                 string decryptedFile = source.EndsWith(".enc")
                     ? source.Substring(0, source.Length - 4)
                     : source;
@@ -118,29 +93,22 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
     return new PipeResponse { ExitCode = exitCode, Output = output.ToString(), Error = error.ToString() };
 }
 
-// ===========================================
-// SERVER: Named Pipe with one thread per client
-// ===========================================
-
-// Runs the Named Pipe server
-// Each client connection spawns a new thread for parallel processing
-// The server runs until EasySave kills it on shutdown
+// Named Pipe server: waits for client connections in a loop,
+// each request is handled in a separate thread for parallel processing.
+// The server runs forever until EasySave kills it on shutdown.
 static void RunServer()
 {
-    Console.WriteLine("CryptoSoft server started.");
-
     while (true)
     {
-        // Create a new pipe instance for the next client
+        // Create a new pipe and wait for a client to connect
         var pipe = new NamedPipeServerStream(
             PipeProtocol.PipeName,
             PipeDirection.InOut,
             NamedPipeServerStream.MaxAllowedServerInstances);
 
-        // Wait for a client (blocks until someone connects)
         pipe.WaitForConnection();
 
-        // Read the request from the client
+        // Read the client's request
         var request = PipeProtocol.Receive<PipeRequest>(pipe);
         if (request == null)
         {
@@ -148,43 +116,20 @@ static void RunServer()
             continue;
         }
 
-        // Handle in a new thread (parallel encryption)
+        // Handle the request in a new thread so we can accept more clients
         var currentPipe = pipe;
         new Thread(() =>
         {
             try
             {
-                Console.WriteLine($"[Thread {Thread.CurrentThread.ManagedThreadId}] {request.Action} {request.Source}");
-
-                // Run the encrypt/decrypt command
                 var response = ExecuteCommand(request.Action, request.Source, request.Key, request.Extensions);
-
-                // Send result back to client
                 PipeProtocol.Send(currentPipe, response);
-
-                Console.WriteLine($"[Thread {Thread.CurrentThread.ManagedThreadId}] Done (exit={response.ExitCode})");
             }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"[Thread {Thread.CurrentThread.ManagedThreadId}] Error: {ex.Message}");
-            }
+            catch { }
             finally
             {
                 currentPipe.Dispose();
             }
         }).Start();
     }
-}
-
-// ===========================================
-// USAGE
-// ===========================================
-
-static void PrintUsage()
-{
-    Console.WriteLine("CryptoSoft – AES-256 File Encryption Tool");
-    Console.WriteLine();
-    Console.WriteLine("  CLI:    CryptoSoft encrypt <source> <key> [extensions]");
-    Console.WriteLine("          CryptoSoft decrypt <source> <key> [extensions]");
-    Console.WriteLine("  Server: CryptoSoft --server");
 }

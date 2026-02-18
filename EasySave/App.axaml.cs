@@ -63,7 +63,6 @@ public partial class App : Application
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = path,
-                    Arguments = "--server",
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
@@ -72,12 +71,8 @@ public partial class App : Application
             };
 
             _cryptoSoftServer.Start();
-            Console.WriteLine($"[CryptoSoft] Server started (PID: {_cryptoSoftServer.Id}, Path: {path})");
         }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Failed to start CryptoSoft server: {ex.Message}");
-        }
+        catch { }
     }
 
     // Stops the CryptoSoft server when EasySave shuts down
