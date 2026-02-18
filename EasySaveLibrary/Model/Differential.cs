@@ -28,7 +28,7 @@ public class Differential : ITypeSave
     /// 3 => Erreur création du dossier
     /// </returns>
     public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, bool enableEncryption = false, 
-        string encryptionExtensions = "")
+        string encryptionExtensions = "", string encryptionKey = "")
     {
         logManager.TypeSave = logType;
         
@@ -46,7 +46,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job, logType, pauseEvent, enableEncryption, encryptionExtensions);
+            return new Full().StartSave(job, logType, pauseEvent, enableEncryption, encryptionExtensions, encryptionKey);
         }
         
         bool isFile = File.Exists(job.Source);
@@ -291,8 +291,8 @@ public class Differential : ITypeSave
         {
             try
             {
-                // Generate a random 16-byte encryption key (Base64 encoded)
-                string key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+                // Use the user-provided encryption key
+                string key = encryptionKey;
 
                 // Build the encryption request with the target path and key
                 var request = new CryptoSoft.PipeRequest

@@ -47,6 +47,8 @@ public class JobManager
         set => _encryptionExtensions = value ?? "";
     }
 
+    public string EncryptionKey { get; set; } = "";
+
     public string ListeProcess
     {
         get => _listeProcess;
@@ -185,7 +187,7 @@ public class JobManager
                 {
                     try 
                     {
-                        job.Save.StartSave(job, LogType, pauseEvent, EnableEncryption, EncryptionExtensions);
+                        job.Save.StartSave(job, LogType, pauseEvent, EnableEncryption, EncryptionExtensions, EncryptionKey);
                     }
                     finally
                     {

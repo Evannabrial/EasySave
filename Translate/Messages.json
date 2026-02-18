@@ -69,5 +69,8 @@
   "FileSizeDescriptionMessage": "Select the maximum file size you can save :",
   "FileSizeMessage": "Maximum file Size :",
   "SizeMessage": "Size (MB) :",
-  "FileTooLargeMessage": "File too large: {0} ({1:F2} MB)"
+  "FileTooLargeMessage": "File too large: {0} ({1:F2} MB)",
+  "EncryptionKeyMessage": "Encryption password (required):",
+  "EncryptionKeyPlaceholder": "Enter your encryption password",
+  "ErrorEncryptionKeyRequired": "Encryption password is required when encryption is enabled"
 }
