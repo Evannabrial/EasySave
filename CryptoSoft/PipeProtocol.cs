@@ -2,25 +2,26 @@ using System.Text.Json;
 
 namespace CryptoSoft;
 
-// Shared constants and helpers for Named Pipe communication
+// Helper class for Named Pipe communication between EasySave (client) and CryptoSoft (server).
+// Provides methods to serialize and deserialize JSON messages through a pipe stream.
 public static class PipeProtocol
 {
-    // Name of the Named Pipe (like an address for local communication)
+    // Name of the Named Pipe, used by both client and server to find each other
     public const string PipeName = "CryptoSoftPipe";
 
-    // How long a client waits to connect to the server (ms)
+    // Maximum time (in ms) the client waits to connect to the server
     public const int ClientTimeoutMs = 10000;
 
-    // Sends a JSON message through a stream (pipe)
+    // Serializes a message to JSON and writes it to the pipe stream
     public static void Send<T>(Stream stream, T message)
     {
         string json = JsonSerializer.Serialize(message);
         var writer = new StreamWriter(stream, leaveOpen: true);
-        writer.WriteLine(json);
+        writer.WriteLine(json); // Write JSON as a single line
         writer.Flush();
     }
 
-    // Reads a JSON message from a stream (pipe)
+    // Reads a single line from the pipe stream and deserializes it from JSON
     public static T? Receive<T>(Stream stream)
     {
         var reader = new StreamReader(stream, leaveOpen: true);
@@ -30,19 +31,19 @@ public static class PipeProtocol
     }
 }
 
-// Request sent by EasySave to CryptoSoft server
+// Model for a request sent by EasySave to the CryptoSoft server
 public class PipeRequest
 {
     public string Action { get; set; } = "";      // "encrypt" or "decrypt"
-    public string Source { get; set; } = "";       // File or directory path
-    public string Key { get; set; } = "";          // Encryption key
-    public string? Extensions { get; set; }        // Optional extension filter
+    public string Source { get; set; } = "";       // File or directory path to process
+    public string Key { get; set; } = "";          // Encryption/decryption key (Base64)
+    public string? Extensions { get; set; }        // Optional: comma-separated list of file extensions to filter
 }
 
-// Response sent by CryptoSoft server back to EasySave
+// Model for a response sent by the CryptoSoft server back to EasySave
 public class PipeResponse
 {
-    public int ExitCode { get; set; }              // 0 = success
-    public string Output { get; set; } = "";       // Standard output
-    public string Error { get; set; } = "";        // Error output
+    public int ExitCode { get; set; }              // 0 = success, non-zero = error
+    public string Output { get; set; } = "";       // Standard output (e.g. encryption time)
+    public string Error { get; set; } = "";        // Error message if something went wrong
 }

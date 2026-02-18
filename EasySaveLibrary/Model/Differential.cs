@@ -281,15 +281,17 @@ public class Differential : ITypeSave
             sizeFileLeft: 0
         );
 
-        // Encrypt files using CryptoSoft server (via Named Pipe)
+        // Encrypt the backup files using the CryptoSoft server.
+        // EasySave sends a request to CryptoSoft via a Named Pipe,
+        // CryptoSoft encrypts the files and sends back the result.
         if (enableEncryption)
         {
             try
             {
-                // Generate a random encryption key
+                // Generate a random 16-byte encryption key (Base64 encoded)
                 string key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
 
-                // Build the request to send to CryptoSoft server
+                // Build the encryption request with the target path and key
                 var request = new CryptoSoft.PipeRequest
                 {
                     Action = "encrypt",
@@ -298,18 +300,19 @@ public class Differential : ITypeSave
                     Extensions = string.IsNullOrWhiteSpace(encryptionExtensions) ? null : encryptionExtensions
                 };
 
-                // Connect to the CryptoSoft server pipe
+                // Open a Named Pipe connection to the CryptoSoft server
                 using var pipe = new System.IO.Pipes.NamedPipeClientStream(
                     ".", CryptoSoft.PipeProtocol.PipeName, System.IO.Pipes.PipeDirection.InOut);
                 pipe.Connect(CryptoSoft.PipeProtocol.ClientTimeoutMs);
 
-                // Send request and receive response
+                // Send the request and wait for CryptoSoft to respond
                 CryptoSoft.PipeProtocol.Send(pipe, request);
                 var response = CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
 
-                // Log the encryption time if successful
+                // If encryption succeeded, parse the time and write it to the log
                 if (response != null && response.ExitCode == 0)
                 {
+                    // The last non-empty line of the output contains the time in ms
                     double encryptTimeMs = double.Parse(
                         response.Output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
                     );
@@ -323,12 +326,12 @@ public class Differential : ITypeSave
                 }
                 else
                 {
-                    return 4; // Encryption failed
+                    return 4; // CryptoSoft returned an error
                 }
             }
             catch (Exception)
             {
-                return 4; // Connection to CryptoSoft server failed
+                return 4; // Could not connect to CryptoSoft server
             }
         }
 

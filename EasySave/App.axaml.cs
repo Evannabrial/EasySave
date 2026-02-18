@@ -19,7 +19,9 @@ public partial class App : Application
     public JobManager JobManager => JobManagerService.Instance.JobManager;
     public static Window MainWindow { get; set; }
 
-    // CryptoSoft server process (mono-instance, started at app launch)
+    // Reference to the CryptoSoft server process.
+    // CryptoSoft is launched once when EasySave starts (mono-instance)
+    // and communicates with EasySave via Named Pipes.
     private Process? _cryptoSoftServer;
 
     public override void Initialize()
@@ -50,14 +52,18 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    // Starts CryptoSoft.exe in server mode (--server)
+    // Starts CryptoSoft.exe as a Named Pipe server in the background.
+    // CryptoSoft will listen for encryption/decryption requests from EasySave.
+    // The path is resolved relative to the EasySave executable directory.
     private void StartCryptoSoftServer()
     {
         try
         {
+            // Find CryptoSoft.exe in the same directory as EasySave.exe
             string path = System.IO.Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft.exe");
 
+            // Start CryptoSoft as a hidden background process (no window)
             _cryptoSoftServer = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -75,18 +81,20 @@ public partial class App : Application
         catch { }
     }
 
-    // Stops the CryptoSoft server when EasySave shuts down
+    // Stops the CryptoSoft server process when EasySave shuts down.
+    // This ensures no orphan processes remain after closing the app.
     private void StopCryptoSoftServer()
     {
         try
         {
+            // Kill the process if it is still running
             if (_cryptoSoftServer is { HasExited: false })
             {
                 _cryptoSoftServer.Kill();
-                _cryptoSoftServer.WaitForExit(2000);
+                _cryptoSoftServer.WaitForExit(2000); // Wait max 2 seconds
             }
         }
-        catch { /* Server already stopped */ }
+        catch { }
     }
 
     private void DisableAvaloniaDataAnnotationValidation()

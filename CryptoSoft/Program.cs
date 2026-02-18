@@ -1,19 +1,24 @@
 ﻿using System.IO.Pipes;
 using CryptoSoft;
 
-// CryptoSoft runs as a Named Pipe server (started by EasySave)
+// Entry point: CryptoSoft always runs as a Named Pipe server.
+// It is started by EasySave and listens for encryption/decryption requests.
 RunServer();
 return 0;
 
-// Runs an encrypt or decrypt command and returns the result as a PipeResponse
+// Executes an encrypt or decrypt command on a file or directory.
+// Returns a PipeResponse with the result (exit code, output, error).
+// This method is called by the server for each client request.
 static PipeResponse ExecuteCommand(string action, string source, string key, string? extensions)
 {
+    // StringWriters to capture output and error messages
     var output = new StringWriter();
     var error = new StringWriter();
     int exitCode = 0;
 
     action = action.ToLowerInvariant();
 
+    // Validate the action (must be "encrypt" or "decrypt")
     if (action != "encrypt" && action != "decrypt")
     {
         error.WriteLine($"Unknown action: {action}");
@@ -24,7 +29,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
     {
         if (Directory.Exists(source))
         {
-            // Encrypt or decrypt all files in the directory
+            // Source is a directory: encrypt or decrypt all files inside it
             if (action == "encrypt")
             {
                 var (totalMs, count) = Encryptor.EncryptDirectory(source, key, extensions);
@@ -40,10 +45,10 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
         }
         else if (File.Exists(source))
         {
-            // Encrypt or decrypt a single file
+            // Source is a single file
             if (action == "encrypt")
             {
-                // Skip file if its extension is not in the allowed list
+                // If an extension filter is provided, check if the file matches
                 if (extensions != null)
                 {
                     string ext = Path.GetExtension(source);
@@ -52,6 +57,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
                         .Select(e => e.StartsWith('.') ? e : "." + e)
                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+                    // Skip file if extension is not in the allowed list
                     if (!allowed.Contains(ext))
                     {
                         error.WriteLine($"Extension '{ext}' is not in the allowed list. File skipped.");
@@ -59,6 +65,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
                     }
                 }
 
+                // Encrypt the file and replace the original with the .enc version
                 string encryptedFile = source + ".enc";
                 double ms = Encryptor.EncryptFile(source, encryptedFile, key);
                 File.Delete(source);
@@ -67,7 +74,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
             }
             else
             {
-                // Remove .enc extension for the decrypted output file
+                // Decrypt the file: remove .enc extension for the output name
                 string decryptedFile = source.EndsWith(".enc")
                     ? source.Substring(0, source.Length - 4)
                     : source;
@@ -80,6 +87,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
         }
         else
         {
+            // Source path does not exist
             error.WriteLine($"Path not found: {source}");
             exitCode = 1;
         }
@@ -93,14 +101,18 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
     return new PipeResponse { ExitCode = exitCode, Output = output.ToString(), Error = error.ToString() };
 }
 
-// Named Pipe server: waits for client connections in a loop,
-// each request is handled in a separate thread for parallel processing.
+// Named Pipe server.
+// Runs an infinite loop that:
+// 1. Creates a pipe and waits for a client (EasySave) to connect
+// 2. Reads the encryption/decryption request from the client
+// 3. Spawns a new thread to handle the request (allows parallel processing)
+// 4. Goes back to step 1 to accept the next client
 // The server runs forever until EasySave kills it on shutdown.
 static void RunServer()
 {
     while (true)
     {
-        // Create a new pipe and wait for a client to connect
+        // Create a new Named Pipe instance and wait for a client to connect
         var pipe = new NamedPipeServerStream(
             PipeProtocol.PipeName,
             PipeDirection.InOut,
@@ -108,7 +120,7 @@ static void RunServer()
 
         pipe.WaitForConnection();
 
-        // Read the client's request
+        // Read the request sent by the client
         var request = PipeProtocol.Receive<PipeRequest>(pipe);
         if (request == null)
         {
@@ -116,18 +128,21 @@ static void RunServer()
             continue;
         }
 
-        // Handle the request in a new thread so we can accept more clients
+        // Process the request in a separate thread for parallel execution.
+        // We capture the pipe reference so each thread uses its own pipe.
         var currentPipe = pipe;
         new Thread(() =>
         {
             try
             {
+                // Execute the encrypt/decrypt command and send the result back
                 var response = ExecuteCommand(request.Action, request.Source, request.Key, request.Extensions);
                 PipeProtocol.Send(currentPipe, response);
             }
             catch { }
             finally
             {
+                // Always close the pipe after the response is sent
                 currentPipe.Dispose();
             }
         }).Start();
