@@ -52,12 +52,9 @@
     "SaveTypeMessage" : "Type de sauvegarde",
     "CancelMessage" : "Annuler",
     "SaveMessage" : "Enregistrer",
-  "SaveButtonMessage" : "Appliquer",  
   "ProcessMessage": "Processus",
   "ProcessExplainMessage": "Bloquée la sauvegarde si un processus est lancé.",
-  "ProcessInputMessage": "Processus séparé par une virgule :"
-
-
+  "ProcessInputMessage": "Processus séparé par une virgule :",
   "SaveButtonMessage" : "Appliquer",
   "JobAddedMessage": "Tâche ajoutée avec succès",
   "JobModifiedMessage": "Tâche modifiée avec succès",
