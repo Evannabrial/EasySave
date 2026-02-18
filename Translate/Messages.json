@@ -56,4 +56,14 @@
   "ProcessMessage": "Process",
   "ProcessExplainMessage": "Block save if a process is running.",
   "ProcessInputMessage": "Process separate by comma :"
+  "SaveMessage": "Save",
+  "JobAddedMessage": "Job added successfully",
+  "JobModifiedMessage": "Job modified successfully",
+  "JobDeletedMessage": "Job deleted successfully",
+  "JobDoneMessage": "Backup completed",
+  "SettingsAppliedMessage": "Settings applied",
+  "ErrorLogPathEmpty": "Please select a log path",
+  "ErrorLogPathNotFound": "The specified log path does not exist",
+  "ErrorSettingsSave": "Error while saving settings",
+  "LanguageChangedMessage": "Language changed"
 }

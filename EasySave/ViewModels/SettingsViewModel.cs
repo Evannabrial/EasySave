@@ -133,10 +133,30 @@ public class SettingsViewModel : ViewModelBase
         _jobManager.LogType = ActualLogType;
         _jobManager.ListeProcess = ListeProcess;
         if (Directory.Exists(LogPath))
+        
+        
+        if (!Directory.Exists(LogPath) && !string.IsNullOrEmpty(LogPath))
+        {
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("ErrorLogPathNotFound") ? DictText["ErrorLogPathNotFound"] : "Le chemin de logs spécifié n'existe pas",
+                ToastType.Error);
+            return;
+        }
+        
+        try
         {
             ConfigManager.ConfigWritter(LogPath);
-            
             LogService.Observer.StartWatcher();
+            
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("SettingsAppliedMessage") ? DictText["SettingsAppliedMessage"] : "Paramètres appliqués",
+                ToastType.Success);
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("ErrorSettingsSave") ? DictText["ErrorSettingsSave"] : $"Erreur lors de la sauvegarde : {ex.Message}",
+                ToastType.Error);
         }
     }
 }
