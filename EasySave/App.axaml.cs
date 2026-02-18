@@ -72,6 +72,7 @@ public partial class App : Application
             };
 
             _cryptoSoftServer.Start();
+            Console.WriteLine($"[CryptoSoft] Server started (PID: {_cryptoSoftServer.Id}, Path: {path})");
         }
         catch (Exception ex)
         {

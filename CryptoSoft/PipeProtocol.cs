@@ -8,9 +8,6 @@ public static class PipeProtocol
     // Name of the Named Pipe (like an address for local communication)
     public const string PipeName = "CryptoSoftPipe";
 
-    // How long the server waits for a new client before shutting down (ms)
-    public const int ServerTimeoutMs = 5000;
-
     // How long a client waits to connect to the server (ms)
     public const int ClientTimeoutMs = 10000;
 

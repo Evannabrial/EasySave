@@ -124,7 +124,7 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
 
 // Runs the Named Pipe server
 // Each client connection spawns a new thread for parallel processing
-// The server stops after 5 seconds of no new connections
+// The server runs until EasySave kills it on shutdown
 static void RunServer()
 {
     Console.WriteLine("CryptoSoft server started.");
@@ -137,19 +137,8 @@ static void RunServer()
             PipeDirection.InOut,
             NamedPipeServerStream.MaxAllowedServerInstances);
 
-        // Wait for a client with timeout (auto-shutdown if idle)
-        var cts = new CancellationTokenSource(PipeProtocol.ServerTimeoutMs);
-        try
-        {
-            pipe.WaitForConnectionAsync(cts.Token).Wait();
-        }
-        catch
-        {
-            // Timeout: no client connected, shut down
-            pipe.Dispose();
-            Console.WriteLine("Server idle, shutting down.");
-            break;
-        }
+        // Wait for a client (blocks until someone connects)
+        pipe.WaitForConnection();
 
         // Read the request from the client
         var request = PipeProtocol.Receive<PipeRequest>(pipe);
