@@ -105,7 +105,7 @@
                                             <Button Background="Transparent" Padding="4"
                                                     CommandParameter="{Binding}"
                                                     Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).RunStartSingleSave}"
-                                                    IsVisible="{Binding IsIdle}">
+                                                    IsVisible="{Binding IsPlayDisplay}">
                                                 <Svg Path="avares://EasySave/Assets/play-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: green; }</Svg.Css>
                                                 </Svg>
@@ -127,6 +127,16 @@
                                                     CommandParameter="{Binding}">
                                                 <Svg Path="avares://EasySave/Assets/pause-solid-full.svg" Width="24" Height="24">
                                                     <Svg.Css>path { fill: #007ACC; }</Svg.Css>
+                                                </Svg>
+                                            </Button>
+                                            
+                                            <Button IsVisible="{Binding IsActive}" VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Background="Transparent" Padding="4"
+                                                    Command="{Binding $parent[UserControl].((vm:JobsViewModel)DataContext).CancelJobCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Svg Path="avares://EasySave/Assets/square-solid-full.svg" Width="24" Height="24">
+                                                    <Svg.Css>path { fill: #FF1317; }</Svg.Css>
                                                 </Svg>
                                             </Button>
 

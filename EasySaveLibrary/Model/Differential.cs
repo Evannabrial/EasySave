@@ -12,6 +12,7 @@ public class Differential : ITypeSave
 {
     public string DisplayName => "Differential";
     private LogManager logManager;
+    private bool hasLogBlockWritte = false;
     public Differential()
     {
         logManager = new LogManager(ConfigManager.Root["PathLog"]);
@@ -27,8 +28,8 @@ public class Differential : ITypeSave
     /// 2 => Erreur copie du fichier
     /// 3 => Erreur création du dossier
     /// </returns>
-    public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, bool enableEncryption = false, 
-        string encryptionExtensions = "")
+    public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, CancellationToken token,
+        string[] listBlockProcess, bool enableEncryption = false, string encryptionExtensions = "")
     {
         logManager.TypeSave = logType;
         
@@ -46,7 +47,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job, logType, pauseEvent, enableEncryption, encryptionExtensions);
+            return new Full().StartSave(job, logType, pauseEvent, token, listBlockProcess, enableEncryption, encryptionExtensions);
         }
         
         bool isFile = File.Exists(job.Source);
@@ -81,6 +82,42 @@ public class Differential : ITypeSave
             {
                 string nameFile = Regex.Match(job.Source, @"[^\\]+$").Value;
                 pauseEvent.WaitOne();
+                while (IsBusinessSoftwareRunning(listBlockProcess.ToList()))
+                {
+                    // Si on annule pendant le blocage logiciel
+                    if (token.IsCancellationRequested) return -1;
+                    if (!hasLogBlockWritte)
+                    {
+                        logManager.WriteNewLog(
+                            name: job.Name,
+                            sourcePath: job.Source,
+                            targetPath: target,
+                            action: "Program block the save",
+                            state: "Blocked",
+                            progress: 0,
+                            nbFile: 0,
+                            nbFileLeft: 0,
+                            sizeFileLeft: 0
+                        );
+                    }
+                    // On attend 1 seconde avant de revérifier pour ne pas surcharger le CPU
+                    Thread.Sleep(1000); 
+                }
+                if (token.IsCancellationRequested)
+                {
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target + "\\" + nameFile,
+                        action: "Cancel by user",
+                        state: "Cancelled",
+                        progress: 0,
+                        nbFile: 0,
+                        nbFileLeft: 0,
+                        sizeFileLeft: 0
+                    );
+                    return -1;
+                }
                 if (File.GetLastWriteTime(job.Source) > File.GetLastWriteTime(pathLastSave))
                 {
                     Stopwatch startTimeDir = Stopwatch.StartNew();
@@ -174,12 +211,86 @@ public class Differential : ITypeSave
         while (queue.Count > 0)
         {
             pauseEvent.WaitOne();
+            while (IsBusinessSoftwareRunning(listBlockProcess.ToList()))
+            {
+                // Si on annule pendant le blocage logiciel
+                if (token.IsCancellationRequested) return -1;
+                if (!hasLogBlockWritte)
+                {
+                    logManager.WriteNewLog(
+                        name: job.Name,
+                        sourcePath: job.Source,
+                        targetPath: target,
+                        action: "Program block the save",
+                        state: "BLOCKED",
+                        progress: (nbFileManaged / (double)nbFile) * 100,
+                        nbFile: nbFile,
+                        nbFileLeft: nbFile - nbFileManaged,
+                        sizeFileLeft: size / (nbFileManaged + 1)
+                    );
+                }
+                // On attend 1 seconde avant de revérifier pour ne pas surcharger le CPU
+                Thread.Sleep(1000); 
+            }
+            
+            if (token.IsCancellationRequested)
+            {
+                logManager.WriteNewLog(
+                    name: job.Name,
+                    sourcePath: job.Source,
+                    targetPath: target + "\\",
+                    action: "Cancel by user",
+                    state: "Cancelled",
+                    progress: 0,
+                    nbFile: 0,
+                    nbFileLeft: 0,
+                    sizeFileLeft: 0
+                );
+                return -1;
+            }
             string actual = queue.Dequeue();
 
             if (Directory.Exists(actual))
             {
                 foreach (string el in Directory.EnumerateFileSystemEntries(actual))
                 {
+                    while (IsBusinessSoftwareRunning(listBlockProcess.ToList()))
+                    {
+                        // Si on annule pendant le blocage logiciel
+                        if (token.IsCancellationRequested) return -1;
+                        if (!hasLogBlockWritte)
+                        {
+                            logManager.WriteNewLog(
+                                name: job.Name,
+                                sourcePath: job.Source,
+                                targetPath: target,
+                                action: "Program block the save",
+                                state: "BLOCKED",
+                                progress: (nbFileManaged / (double)nbFile) * 100,
+                                nbFile: nbFile,
+                                nbFileLeft: nbFile - nbFileManaged,
+                                sizeFileLeft: size / (nbFileManaged + 1)
+                            );
+                        }
+                        // On attend 1 seconde avant de revérifier pour ne pas surcharger le CPU
+                        Thread.Sleep(1000); 
+                    }
+                    pauseEvent.WaitOne();
+                    if (token.IsCancellationRequested)
+                    {
+                        logManager.WriteNewLog(
+                            name: job.Name,
+                            sourcePath: job.Source,
+                            targetPath: target + "\\",
+                            action: "Cancel by user",
+                            state: "Cancelled",
+                            progress: 0,
+                            nbFile: 0,
+                            nbFileLeft: 0,
+                            sizeFileLeft: 0
+                        );
+                        return -1;
+                    }
                     string pathToCreate = el.Split(job.Source)[1];
                     if (Directory.Exists(el) &&  !marked.Contains(el))
                     {
@@ -350,5 +461,16 @@ public class Differential : ITypeSave
         }
 
         return 0;
+    }
+    
+    private bool IsBusinessSoftwareRunning(List<string> targetProcessNames)
+    {
+        if (targetProcessNames == null || targetProcessNames.Count == 0) return false;
+        
+        // On récupère tous les processus actuels
+        var currentProcesses = Process.GetProcesses();
+        
+        // On regarde si l'un d'eux correspond à notre liste noire
+        return currentProcesses.Any(p => targetProcessNames.Contains(p.ProcessName, StringComparer.OrdinalIgnoreCase));
     }
 }
