@@ -34,4 +34,14 @@
         </Style.Resources>
     </Style>
     
+    <Style Selector="Slider">
+        <Style.Resources>
+            <SolidColorBrush x:Key="SliderTrackFill" Color="{StaticResource PrimaryColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackground" Color="{StaticResource PrimaryColor}" />
+            <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="{StaticResource HoverButtonColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="{StaticResource HoverButtonColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="{StaticResource HoverButtonColor}" />
+        </Style.Resources>
+    </Style>
+    
 </Styles>

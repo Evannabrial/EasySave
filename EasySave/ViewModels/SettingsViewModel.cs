@@ -8,6 +8,7 @@ using EasyLog;
 using EasySave.DTO;
 using EasySave.Services;
 using EasySaveLibrary;
+using ReactiveUI;
 
 namespace EasySave.ViewModels;
 
@@ -19,6 +20,7 @@ public class SettingsViewModel : ViewModelBase
     private string _listeProcess;
     private int _selectedFormatIndex;
     private LogType _actualLogType;
+    private double _fileSizeGb;
 
     public JobManager JobManager => _jobManager;
     
@@ -26,6 +28,11 @@ public class SettingsViewModel : ViewModelBase
     public ICommand ApplySavesCommand { get; }
 
 
+    public double FileSizeMo
+    {
+        get => _fileSizeGb;
+        set => SetProperty(ref _fileSizeGb, value);
+    }
     public Dictionary<string, string> DictText
     {
         get => _dictText;
@@ -91,6 +98,8 @@ public class SettingsViewModel : ViewModelBase
         _jobManager = jobManager;
         DictText = jobManager.Language.GetTranslations();
         ListeProcess = jobManager.ListeProcess;
+        LogPath = ConfigManager.LogPath ?? "";
+        FileSizeMo = ConfigManager.FileSizeMo;
         
         SelectedFormatIndex = (_jobManager.LogType == LogType.XML) ? 1 : 0;
 
@@ -132,8 +141,6 @@ public class SettingsViewModel : ViewModelBase
     {
         _jobManager.LogType = ActualLogType;
         _jobManager.ListeProcess = ListeProcess;
-        if (Directory.Exists(LogPath))
-        
         
         if (!Directory.Exists(LogPath) && !string.IsNullOrEmpty(LogPath))
         {
@@ -145,7 +152,8 @@ public class SettingsViewModel : ViewModelBase
         
         try
         {
-            ConfigManager.ConfigWritter(LogPath);
+            // FileSizeMo est déjà en Mo, on le passe directement
+            ConfigManager.ConfigWritter(LogPath, FileSizeMo);
             LogService.Observer.StartWatcher();
             
             NotificationService.Instance.Show(

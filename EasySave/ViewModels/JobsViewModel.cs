@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -279,6 +280,31 @@ public class JobsViewModel : ViewModelBase
 
     private void RunSingleJobSave(JobDto jobDto)
     {
+        // Récupérer la limite de taille depuis la config (en Mo)
+        double maxSizeMo = ConfigManager.FileSizeMo;
+        
+        // Trouver le job model correspondant
+        Job jobModel = _jobManager.LJobs.FirstOrDefault(j => j.Id.ToString() == jobDto.Id);
+        
+        // Vérifier si un fichier dépasse la limite (seulement si maxSizeMo > 0)
+        if (jobModel != null && maxSizeMo > 0)
+        {
+            var oversizedFile = GetOversizedFile(jobModel.Source, maxSizeMo);
+            if (oversizedFile != null)
+            {
+                double fileSizeMo = oversizedFile.Length / 1024.0 / 1024.0;
+                string message = string.Format(
+                    DictText.ContainsKey("FileTooLargeMessage") 
+                        ? DictText["FileTooLargeMessage"] 
+                        : "Fichier trop volumineux : {0} ({1:F2} Mo)",
+                    oversizedFile.Name,
+                    fileSizeMo);
+                
+                NotificationService.Instance.Show(message, ToastType.Error);
+                return;
+            }
+        }
+        
         LogService.Observer.StartWatcher();
         int index = Jobs.IndexOf(jobDto); 
 
@@ -291,6 +317,39 @@ public class JobsViewModel : ViewModelBase
                 NotificationService.Instance.Show(DictText.ContainsKey("JobDoneMessage") ? DictText["JobDoneMessage"] : "Sauvegarde terminée");
             });
         });
+    }
+    
+    /// <summary>
+    /// Vérifie si un fichier dans le dossier source dépasse la taille maximale autorisée
+    /// </summary>
+    /// <param name="sourcePath">Chemin du dossier source</param>
+    /// <param name="maxSizeMo">Taille maximale en Mo</param>
+    /// <returns>FileInfo du fichier trop volumineux, ou null si tous les fichiers sont OK</returns>
+    private FileInfo? GetOversizedFile(string sourcePath, double maxSizeMo)
+    {
+        if (string.IsNullOrEmpty(sourcePath) || !Directory.Exists(sourcePath)) 
+            return null;
+        
+        long maxSizeBytes = (long)(maxSizeMo * 1024 * 1024);
+        
+        try
+        {
+            var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                var fileInfo = new FileInfo(file);
+                if (fileInfo.Length > maxSizeBytes)
+                {
+                    return fileInfo;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // Ignorer les erreurs d'accès aux fichiers
+        }
+        
+        return null;
     }
     
     private void RunDeleteJobFunction(JobDto dto)

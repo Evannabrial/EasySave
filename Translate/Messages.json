@@ -45,8 +45,8 @@
   "ActionsMessage": "Actions",
   "IdleMessage": "Idle",
   "DeleteJobMessage": "Delete this job ?",
-  "NoJobMessage" : "No job configured",
-  "SaveButtonMessage" : "Apply",
+  "NoJobMessage": "No job configured",
+  "SaveButtonMessage": "Apply",
   "AddJobMessage": "Add a job",
   "YesMessage": "Yes",
   "TargetPathMessage": "Target Path",
@@ -65,5 +65,9 @@
   "ErrorLogPathNotFound": "The specified log path does not exist",
   "ErrorSettingsSave": "Error while saving settings",
   "LanguageChangedMessage": "Language changed",
-  "ErrorInvalidInput": "Invalid input, please try again."
+  "ErrorInvalidInput": "Invalid input, please try again.",
+  "FileSizeDescriptionMessage": "Select the maximum file size you can save :",
+  "FileSizeMessage": "Maximum file Size :",
+  "SizeMessage": "Size (MB) :",
+  "FileTooLargeMessage": "File too large: {0} ({1:F2} MB)"
 }

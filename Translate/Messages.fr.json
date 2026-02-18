@@ -65,5 +65,9 @@
   "ErrorLogPathNotFound": "Le chemin de logs spécifié n'existe pas",
   "ErrorSettingsSave": "Erreur lors de la sauvegarde des paramètres",
   "LanguageChangedMessage": "Langue modifiée",
-  "ErrorInvalidInput": "Entrée invalide, veuillez réessayer."
+  "ErrorInvalidInput": "Entrée invalide, veuillez réessayer.",
+  "FileSizeDescriptionMessage": "Sélectionnez la taille maximale des fichier que vous pouvez sauvegarder :",
+  "FileSizeMessage": "Taille maximale des fichiers :",
+  "SizeMessage": "Taille (Mo) :",
+  "FileTooLargeMessage": "Fichier trop volumineux : {0} ({1:F2} Mo)"
 }
