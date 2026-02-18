@@ -57,5 +57,9 @@
   "JobModifiedMessage": "Tâche modifiée avec succès",
   "JobDeletedMessage": "Tâche supprimée avec succès",
   "JobDoneMessage": "Sauvegarde terminée",
-  "SettingsAppliedMessage": "Paramètres appliqués"
+  "SettingsAppliedMessage": "Paramètres appliqués",
+  "ErrorLogPathEmpty": "Veuillez sélectionner un chemin de logs",
+  "ErrorLogPathNotFound": "Le chemin de logs spécifié n'existe pas",
+  "ErrorSettingsSave": "Erreur lors de la sauvegarde des paramètres",
+  "LanguageChangedMessage": "Langue modifiée"
 }

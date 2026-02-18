@@ -64,7 +64,7 @@ public partial class MainWindowViewModel : ViewModelBase
         DictText = _jobManager.Language.GetTranslations();
         
         string message = languageIndex == 0 ? "Langue : Français" : "Language: English";
-        NotificationService.Instance.Show(message);
+        NotificationService.Instance.Show(message, ToastType.Info);
     }
     
     public MainWindowViewModel(JobManager jobManager)
