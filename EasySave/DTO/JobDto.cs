@@ -104,19 +104,24 @@ public class JobDto : INotifyPropertyChanged
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsRunning));
             OnPropertyChanged(nameof(IsPaused));
-            OnPropertyChanged(nameof(IsIdle));
+            OnPropertyChanged(nameof(IsNothing));
+            OnPropertyChanged(nameof(IsActive));
+            OnPropertyChanged(nameof(IsBlocked));
+            OnPropertyChanged(nameof(IsPlayDisplay));
             OnPropertyChanged(nameof(ColorStatus));
         }
     }
 
-    public bool IsRunning => Status == "En cours";
     // L'état "En cours" (Affiche le bouton Pause)
-
-// L'état "En Pause" (Affiche le bouton Reprendre)
+    public bool IsRunning => Status == "En cours";
+    // L'état "En Pause" (Affiche le bouton Reprendre)
     public bool IsPaused => Status == "En Pause";
-
-// L'état "Rien du tout" (Affiche le bouton Démarrer une nouvelle save)
-    public bool IsIdle => !IsRunning && !IsPaused;
+    public bool IsBlocked => Status == "Bloqué";
+    // L'état "Rien du tout" (Affiche le bouton Démarrer une nouvelle save)
+    public bool IsNothing => !IsRunning && !IsPaused;
+    public bool IsPlayDisplay => !IsRunning && !IsPaused && !IsBlocked;
+    // L'état "Actif" (Affiche le bouton Stop)
+    public bool IsActive => IsRunning || IsPaused || IsBlocked;    
 
     public string ColorStatus
     {
@@ -126,7 +131,9 @@ public class JobDto : INotifyPropertyChanged
             {
                 "En cours" => "Blue",
                 "En Pause" => "Orange",
+                "Bloqué" => "Red",
                 "Terminé" => "#28a745", // Vert succès
+                "Cancelled" => "Red",
                 "Prêt" => "Green",
                 _ => "Gray"
             };

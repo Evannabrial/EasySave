@@ -16,6 +16,7 @@ public class JobManager
     private List<Job> _lJobs;
     
     private Dictionary<Guid, ManualResetEvent> _jobPauseEvents = new Dictionary<Guid, ManualResetEvent>();
+    private Dictionary<Guid, CancellationTokenSource> _jobCancellationTokens = new Dictionary<Guid, CancellationTokenSource>();
     private readonly object _lockEvents = new object();
 
     public JobManager(ILanguage language, LogType logType)
@@ -174,6 +175,7 @@ public class JobManager
                 var result = 0;
                 
                 ManualResetEvent pauseEvent = new ManualResetEvent(true);
+                CancellationTokenSource cts = new CancellationTokenSource();
                 
                 lock(_lockEvents) 
                 {
@@ -181,18 +183,29 @@ public class JobManager
                         _jobPauseEvents[job.Id] = pauseEvent;
                     else 
                         _jobPauseEvents.Add(job.Id, pauseEvent);
+                    
+                    if (_jobCancellationTokens.ContainsKey(job.Id)) 
+                        _jobCancellationTokens[job.Id] = cts;
+                    else 
+                        _jobCancellationTokens.Add(job.Id, cts);
                 }
 
                 new Thread(() =>
                 {
                     try 
                     {
-                        job.Save.StartSave(job, LogType, pauseEvent, EnableEncryption, EncryptionExtensions, EncryptionKey);
+                        job.Save.StartSave(job, LogType, pauseEvent, cts.Token, lProcessBlock, EnableEncryption, 
+                            EncryptionExtensions, EncryptionKey);
                     }
                     finally
                     {
-                        lock(_lockEvents) { _jobPauseEvents.Remove(job.Id); }
+                        lock(_lockEvents) 
+                        { 
+                            _jobPauseEvents.Remove(job.Id);
+                            _jobCancellationTokens.Remove(job.Id);
+                        }
                         pauseEvent.Dispose();
+                        cts.Dispose();
                     }
                 }).Start();
 
@@ -338,7 +351,14 @@ public class JobManager
 
                     if (myJobState != null)
                     {
-                        status = myJobState.State == "ON" ? "En cours" : "Terminé";
+                        status = myJobState.State switch 
+                        {
+                            "ON" => "En cours",
+                            "OFF" => "Terminé",
+                            "BLOCKED" => "Bloqué",
+                            "Cancelled" => "Cancelled",
+                            _ => "Prêt"
+                        };
                         progress = myJobState.Progress;
                         return new JobStatus(idJob, status, progress);
                     }
@@ -353,26 +373,42 @@ public class JobManager
 
             case LogType.XML:
                 var filePathXml = Path.Combine(ConfigManager.Root["PathLog"], "livestate.xml");
-                if (!File.Exists(filePathXml)) break;
+            
+                // Si le fichier n'existe pas, on retourne l'état par défaut
+                if (!File.Exists(filePathXml)) return new JobStatus(idJob, status, progress);
 
                 try
                 {
-                    var serializer = new XmlSerializer(typeof(LiveLog));
-                    // Lecture partagée
+                    // 1. IMPORTANT : On indique au sérialiseur qu'on attend une LISTE de LiveLog
+                    var serializer = new XmlSerializer(typeof(List<LiveLog>));
+
+                    // Lecture partagée pour éviter les conflits d'accès
                     using (var fs = new FileStream(filePathXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        var liveLogXml = (LiveLog)serializer.Deserialize(fs);
+                        // 2. On désérialise en List<LiveLog>
+                        var globalStateXml = (List<LiveLog>)serializer.Deserialize(fs);
 
-                        if (liveLogXml.Name == job.Name)
+                        // 3. On cherche le log correspondant à NOTRE job via son nom
+                        var myJobState = globalStateXml?.FirstOrDefault(l => l.Name == job.Name);
+
+                        if (myJobState != null)
                         {
-                            progress = liveLogXml.Progress;
-                            status = liveLogXml.State switch { "ON" => "En cours", "OFF" => "Terminé", _ => "Prêt" };
+                            status = myJobState.State switch 
+                            {
+                                "ON" => "En cours",
+                                "OFF" => "Terminé",
+                                "BLOCKED" => "Bloqué",
+                                "CANCELLED" => "Cancelled",
+                                _ => "Prêt"
+                            };
+                            progress = myJobState.Progress;
                             return new JobStatus(idJob, status, progress);
                         }
                     }
                 }
                 catch
                 {
+                    // Si le fichier est vide ou corrompu pendant l'écriture, on ignore
                     return null;
                 }
 
@@ -402,6 +438,25 @@ public class JobManager
             if (_jobPauseEvents.ContainsKey(jobId))
             {
                 _jobPauseEvents[jobId].Set(); // Feu Vert
+            }
+        }
+    }
+    
+    public void StopJob(Guid jobId)
+    {
+        lock(_lockEvents)
+        {
+            if (_jobCancellationTokens.ContainsKey(jobId))
+            {
+                // 1. On demande l'annulation
+                _jobCancellationTokens[jobId].Cancel();
+                
+                // 2. CRUCIAL : Si le job était en pause, il est bloqué sur WaitOne().
+                // Il faut le débloquer pour qu'il puisse avancer et voir que le Token est annulé.
+                if (_jobPauseEvents.ContainsKey(jobId))
+                {
+                    _jobPauseEvents[jobId].Set(); // On force le feu vert
+                }
             }
         }
     }

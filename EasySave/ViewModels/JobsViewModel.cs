@@ -119,6 +119,7 @@ public class JobsViewModel : ViewModelBase
     public ICommand RunMultipleSaveCommand { get; }
     public ICommand PauseJobCommand { get; }
     public ICommand ResumeJobCommand { get; }
+    public ICommand CancelJobCommand { get; }
 
     // Commandes pour le Formulaire
     public ICommand OpenAddJobCommand { get; }
@@ -163,6 +164,18 @@ public class JobsViewModel : ViewModelBase
             {
                 JobManager.ResumeJob(Guid.Parse(dto.Id));
                 dto.Status = "En cours";
+            }
+        });
+        
+        CancelJobCommand = new RelayCommandService(param => {
+            if (param is JobDto dto)
+            {
+                // Appel au Manager
+                JobManager.StopJob(Guid.Parse(dto.Id));
+            
+                // Mise à jour visuelle immédiate
+                dto.Status = "Cancelled";
+                dto.Progress = 0;
             }
         });
 
@@ -290,6 +303,7 @@ public class JobsViewModel : ViewModelBase
                         var jobDto = Jobs.FirstOrDefault(j => j.Id == update.Id);
                         if (jobDto != null)
                         {
+                            
                             jobDto.Progress = (int)update.Status.Progress;
                             // On ne change le status que s'il est différent pour éviter des clignotements
                             if(jobDto.Status != update.Status.Status)
