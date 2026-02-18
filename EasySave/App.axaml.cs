@@ -49,10 +49,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    /// <summary>
-    /// Starts CryptoSoft.exe in server mode (--server).
-    /// The server listens on a Named Pipe for encryption requests.
-    /// </summary>
+    // Starts CryptoSoft.exe in server mode (--server)
     private void StartCryptoSoftServer()
     {
         try
@@ -81,9 +78,7 @@ public partial class App : Application
         }
     }
 
-    /// <summary>
-    /// Stops the CryptoSoft server when EasySave shuts down.
-    /// </summary>
+    // Stops the CryptoSoft server when EasySave shuts down
     private void StopCryptoSoftServer()
     {
         try

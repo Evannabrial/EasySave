@@ -30,10 +30,8 @@ return result.ExitCode;
 // CORE LOGIC: Runs an encrypt/decrypt command
 // ===========================================
 
-/// <summary>
-/// Executes an encryption or decryption command.
-/// Used by both CLI mode and the server to handle requests.
-/// </summary>
+// Executes an encryption or decryption command
+// Used by both CLI mode and the server to handle requests
 static PipeResponse ExecuteCommand(string action, string source, string key, string? extensions)
 {
     var output = new StringWriter();
@@ -124,11 +122,9 @@ static PipeResponse ExecuteCommand(string action, string source, string key, str
 // SERVER: Named Pipe with one thread per client
 // ===========================================
 
-/// <summary>
-/// Runs the Named Pipe server.
-/// Each client connection spawns a new thread for parallel processing.
-/// The server stops after 5 seconds of no new connections.
-/// </summary>
+// Runs the Named Pipe server
+// Each client connection spawns a new thread for parallel processing
+// The server stops after 5 seconds of no new connections
 static void RunServer()
 {
     Console.WriteLine("CryptoSoft server started.");

@@ -208,52 +208,39 @@ public class Full : ITypeSave
 
         job.LastTimeRun = DateTime.Now;
 
-        // CryptoSoft encryption if enabled
+        // CryptoSoft encryption if enabled — send request to CryptoSoft server via Named Pipe
         if (enableEncryption)
         {
             try
             {
-                // Generate a random 16-byte key and encode it in Base64
+                // Generate a random 16-byte key
                 string key = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-                // Display the key so the user can save it for later decryption
                 Console.WriteLine($"Encryption key for '{job.Name}' : {key}");
 
-                // Build the path to the CryptoSoft executable (expected in the same directory)
-                string cryptoSoftPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CryptoSoft.exe");
-
-                // Build the command-line arguments: encrypt <targetDir> <key> [extensions]
-                string arguments = $"encrypt \"{target}\" \"{key}\"";
-                // If specific extensions are set, only those file types will be encrypted
-                if (!string.IsNullOrWhiteSpace(encryptionExtensions))
+                // Build the pipe request
+                var request = new CryptoSoft.PipeRequest
                 {
-                    arguments += $" \"{encryptionExtensions}\"";
-                }
-
-                // Launch CryptoSoft as an external process
-                var process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = cryptoSoftPath,
-                        Arguments = arguments,
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
+                    Action = "encrypt",
+                    Source = target,
+                    Key = key,
+                    Extensions = string.IsNullOrWhiteSpace(encryptionExtensions) ? null : encryptionExtensions
                 };
 
-                process.Start();
-                // Read the output (contains the encryption time on the last line)
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+                // Connect to CryptoSoft server via Named Pipe
+                using var pipe = new System.IO.Pipes.NamedPipeClientStream(
+                    ".", CryptoSoft.PipeProtocol.PipeName, System.IO.Pipes.PipeDirection.InOut);
+                pipe.Connect(CryptoSoft.PipeProtocol.ClientTimeoutMs);
 
-                if (process.ExitCode == 0)
+                // Send request and wait for response
+                CryptoSoft.PipeProtocol.Send(pipe, request);
+                var response = CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
+
+                if (response != null && response.ExitCode == 0)
                 {
-                    // Parse the encryption time (in ms) from the last non-empty line of CryptoSoft output
+                    // Parse encryption time from the last non-empty line
                     double encryptTimeMs = double.Parse(
-                        output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
+                        response.Output.Split('\n').Last(l => !string.IsNullOrWhiteSpace(l))
                     );
-                    // Log the encryption result
                     logManager.WriteNewLog(
                         name: job.Name,
                         sourcePath: target,

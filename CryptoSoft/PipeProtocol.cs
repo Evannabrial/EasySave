@@ -2,9 +2,7 @@ using System.Text.Json;
 
 namespace CryptoSoft;
 
-/// <summary>
-/// Shared constants and helpers for Named Pipe communication.
-/// </summary>
+// Shared constants and helpers for Named Pipe communication
 public static class PipeProtocol
 {
     // Name of the Named Pipe (like an address for local communication)
@@ -16,9 +14,7 @@ public static class PipeProtocol
     // How long a client waits to connect to the server (ms)
     public const int ClientTimeoutMs = 10000;
 
-    /// <summary>
-    /// Sends a JSON message through a stream (pipe).
-    /// </summary>
+    // Sends a JSON message through a stream (pipe)
     public static void Send<T>(Stream stream, T message)
     {
         string json = JsonSerializer.Serialize(message);
@@ -27,9 +23,7 @@ public static class PipeProtocol
         writer.Flush();
     }
 
-    /// <summary>
-    /// Reads a JSON message from a stream (pipe).
-    /// </summary>
+    // Reads a JSON message from a stream (pipe)
     public static T? Receive<T>(Stream stream)
     {
         var reader = new StreamReader(stream, leaveOpen: true);
@@ -39,9 +33,7 @@ public static class PipeProtocol
     }
 }
 
-/// <summary>
-/// Request sent by EasySave to CryptoSoft server.
-/// </summary>
+// Request sent by EasySave to CryptoSoft server
 public class PipeRequest
 {
     public string Action { get; set; } = "";      // "encrypt" or "decrypt"
@@ -50,9 +42,7 @@ public class PipeRequest
     public string? Extensions { get; set; }        // Optional extension filter
 }
 
-/// <summary>
-/// Response sent by CryptoSoft server back to EasySave.
-/// </summary>
+// Response sent by CryptoSoft server back to EasySave
 public class PipeResponse
 {
     public int ExitCode { get; set; }              // 0 = success
