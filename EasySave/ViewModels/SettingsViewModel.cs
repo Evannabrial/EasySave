@@ -20,12 +20,13 @@ public class SettingsViewModel : ViewModelBase
     private int _selectedFormatIndex;
     private LogType _actualLogType;
     private double _fileSizeGb;
-
+    private string _extensionsPrio;
     
 
     public ICommand OpenFilePickerCommand { get; }
     public ICommand ApplySavesCommand { get; }
 
+    public LogType ActualLogType { get; set; }
 
     public double FileSizeMo
     {
@@ -93,14 +94,19 @@ public class SettingsViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
-
-    public LogType ActualLogType { get; set; }
-
+    
     public string ListeProcess
     {
         get => _listeProcess;
         set => _listeProcess = value ?? throw new ArgumentNullException(nameof(value));
     }
+
+    public string ExtensionsPrio
+    {
+        get => _extensionsPrio;
+        set => _extensionsPrio = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
 
     public SettingsViewModel(JobManager jobManager)
     {
@@ -123,7 +129,7 @@ public class SettingsViewModel : ViewModelBase
     
     private async void OpenFilePickerFunction()
     {
-        var topLevel = TopLevel.GetTopLevel(App.MainWindow); // Assure-toi d'avoir une référence à ta fenêtre
+        var topLevel = TopLevel.GetTopLevel(App.MainWindow);
 
         if (topLevel == null) return;
 

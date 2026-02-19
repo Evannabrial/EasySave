@@ -220,6 +220,26 @@
                     </StackPanel>
                 </Grid>
             </Border>
+            
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M14 2H6C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H18C19.11 22 20 21.11 20 20V8L14 2M11.3 19V14.5H8.8L13 7V11.5H15.5L11.3 19M13 9V3.5L18.5 9H13Z"                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[PriorityFileMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[PriorityFileExplainMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[PriorityFileInputMessage]}" />
+                        <TextBox Text="{Binding ExtensionsPrio }" />
+                    </StackPanel>
+                </Grid>
+            </Border>
 
             <Button Content="{Binding DictText[SaveButtonMessage]}"
                     Command="{Binding ApplySavesCommand}" />

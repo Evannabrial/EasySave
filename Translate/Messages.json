@@ -72,5 +72,8 @@
   "FileTooLargeMessage": "File too large: {0} ({1:F2} MB)",
   "EncryptionKeyMessage": "Encryption password (required):",
   "EncryptionKeyPlaceholder": "Enter your encryption password",
-  "ErrorEncryptionKeyRequired": "Encryption password is required when encryption is enabled"
+  "ErrorEncryptionKeyRequired": "Encryption password is required when encryption is enabled",
+  "PriorityFileMessage": "Priority files",
+  "PriorityFileExplainMessage": "Prioritized some files during backups",
+  "PriorityFileInputMessage": "Extensions to priorityze (separate by comma) :"
 }

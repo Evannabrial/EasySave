@@ -72,5 +72,8 @@
   "FileTooLargeMessage": "Fichier trop volumineux : {0} ({1:F2} Mo)",
   "EncryptionKeyMessage": "Mot de passe de chiffrement (obligatoire) :",
   "EncryptionKeyPlaceholder": "Entrez votre mot de passe de chiffrement",
-  "ErrorEncryptionKeyRequired": "Le mot de passe de chiffrement est obligatoire lorsque le chiffrement est activé"
+  "ErrorEncryptionKeyRequired": "Le mot de passe de chiffrement est obligatoire lorsque le chiffrement est activé",
+  "PriorityFileMessage": "Fichiers prioritaire",
+  "PriorityFileExplainMessage": "Priorisé certains fichiers lors de la sauvegarde",
+  "PriorityFileInputMessage": "Extensions à priorisé (séparées par une virgule):"
 }

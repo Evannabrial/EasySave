@@ -132,7 +132,7 @@ public class JobDto : INotifyPropertyChanged
                 "En cours" => "Blue",
                 "En Pause" => "Orange",
                 "Bloqué" => "Red",
-                "Terminé" => "#28a745", // Vert succès
+                "Terminé" => "Green",
                 "Cancelled" => "Red",
                 "Prêt" => "Green",
                 _ => "Gray"
