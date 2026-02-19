@@ -92,7 +92,9 @@ public class DecryptViewModel : ViewModelBase
             CryptoSoft.PipeProtocol.Send(pipe, request);
             var response = CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
 
-            if (response != null && response.ExitCode == 0)
+            if (response != null && response.ExitCode == 0 &&
+                string.IsNullOrWhiteSpace(response.Error) &&
+                !response.Output.Contains("0 file(s)"))
             {
                 NotificationService.Instance.Show(
                     DictText.GetValueOrDefault("DecryptSuccessMessage", "Decryption completed successfully!"),
@@ -103,7 +105,7 @@ public class DecryptViewModel : ViewModelBase
                 string errorMsg = response?.Error ?? "";
                 NotificationService.Instance.Show(
                     DictText.GetValueOrDefault("DecryptErrorMessage", "An error occurred during decryption.") +
-                    (string.IsNullOrEmpty(errorMsg) ? "" : $" ({errorMsg})"),
+                    (string.IsNullOrEmpty(errorMsg) ? "" : $" ({errorMsg.Trim()})"),
                     ToastType.Error);
             }
         }
