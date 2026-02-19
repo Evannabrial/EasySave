@@ -15,6 +15,7 @@ public class DecryptViewModel : ViewModelBase
     private Dictionary<string, string> _dictText;
     private string _sourcePath = "";
     private string _password = "";
+    private bool _isDecrypting;
 
     public DecryptViewModel(JobManager jobManager)
     {
@@ -46,6 +47,12 @@ public class DecryptViewModel : ViewModelBase
         set => SetProperty(ref _password, value);
     }
 
+    public bool IsDecrypting
+    {
+        get => _isDecrypting;
+        set => SetProperty(ref _isDecrypting, value);
+    }
+
     private async void OpenSourcePicker()
     {
         var topLevel = TopLevel.GetTopLevel(App.MainWindow);
@@ -72,6 +79,11 @@ public class DecryptViewModel : ViewModelBase
                 ToastType.Error);
             return;
         }
+
+        IsDecrypting = true;
+        NotificationService.Instance.Show(
+            DictText.GetValueOrDefault("DecryptInProgressMessage", "Decryption in progress..."),
+            ToastType.Info);
 
         try
         {
@@ -115,6 +127,10 @@ public class DecryptViewModel : ViewModelBase
             NotificationService.Instance.Show(
                 DictText.GetValueOrDefault("DecryptErrorCryptoSoft", "Could not connect to CryptoSoft server."),
                 ToastType.Error);
+        }
+        finally
+        {
+            IsDecrypting = false;
         }
     }
 }

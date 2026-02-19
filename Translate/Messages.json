@@ -85,5 +85,6 @@
   "DecryptOutputPlaceholder": "Select the output destination",
   "DecryptPasswordPlaceholder": "Enter your decryption password",
   "DecryptErrorFieldsRequired": "All fields are required.",
-  "DecryptErrorCryptoSoft": "Could not connect to CryptoSoft server."
+  "DecryptErrorCryptoSoft": "Could not connect to CryptoSoft server.",
+  "DecryptInProgressMessage": "Decryption in progress..."
 }

@@ -103,6 +103,7 @@
 
             <Button Content="{Binding DictText[DecryptButtonMessage]}"
                     Command="{Binding DecryptCommand}"
+                    IsEnabled="{Binding !IsDecrypting}"
                     HorizontalAlignment="Left"
                     Background="{DynamicResource ButtonColor}"
                     Foreground="{DynamicResource TextColor}"
