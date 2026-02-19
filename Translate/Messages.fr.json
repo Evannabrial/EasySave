@@ -35,7 +35,7 @@
   "FrenchMessage": "Français",
   "EnglishMessage": "Anglais",
   "JobsMessage": "Tâches",
-  "StatusMessage": "Statut",
+  "DecryptMessage": "Déchiffrer",
   "RunJobsMessage": "Lancer les tâches sélectionnées",
   "JobNameMessage": "Nom",
   "SourceMessage": "Source",
@@ -72,5 +72,18 @@
   "FileTooLargeMessage": "Fichier trop volumineux : {0} ({1:F2} Mo)",
   "EncryptionKeyMessage": "Mot de passe de chiffrement (obligatoire) :",
   "EncryptionKeyPlaceholder": "Entrez votre mot de passe de chiffrement",
-  "ErrorEncryptionKeyRequired": "Le mot de passe de chiffrement est obligatoire lorsque le chiffrement est activé"
+  "ErrorEncryptionKeyRequired": "Le mot de passe de chiffrement est obligatoire lorsque le chiffrement est activé",
+  "DecryptTitleMessage": "Déchiffrer",
+  "DecryptDescriptionMessage": "Déchiffrez les fichiers chiffrés avec CryptoSoft.",
+  "DecryptSourceMessage": "Chemin source chiffré :",
+  "DecryptOutputMessage": "Chemin de sortie déchiffré :",
+  "DecryptPasswordMessage": "Mot de passe de déchiffrement :",
+  "DecryptButtonMessage": "Déchiffrer",
+  "DecryptSuccessMessage": "Déchiffrement terminé avec succès !",
+  "DecryptErrorMessage": "Une erreur est survenue lors du déchiffrement.",
+  "DecryptSourcePlaceholder": "Sélectionnez le fichier ou dossier chiffré",
+  "DecryptOutputPlaceholder": "Sélectionnez la destination de sortie",
+  "DecryptPasswordPlaceholder": "Entrez votre mot de passe de déchiffrement",
+  "DecryptErrorFieldsRequired": "Tous les champs sont obligatoires.",
+  "DecryptErrorCryptoSoft": "Impossible de se connecter au serveur CryptoSoft."
 }

@@ -57,7 +57,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public void NavStatus()
     {
-        CurrentPage = new StatusViewModel(_jobManager);
+        CurrentPage = new DecryptViewModel(_jobManager);
     }
 
     public void NavSettings()
