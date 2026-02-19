@@ -68,5 +68,18 @@
   "ErrorInvalidInput": "Invalid input, please try again.",
   "EncryptionKeyMessage": "Encryption password (required):",
   "EncryptionKeyPlaceholder": "Enter your encryption password",
-  "ErrorEncryptionKeyRequired": "Encryption password is required when encryption is enabled"
+  "ErrorEncryptionKeyRequired": "Encryption password is required when encryption is enabled",
+  "DecryptTitleMessage": "Decrypt",
+  "DecryptDescriptionMessage": "Decrypt files that were encrypted with CryptoSoft.",
+  "DecryptSourceMessage": "Encrypted source path:",
+  "DecryptOutputMessage": "Decrypted output path:",
+  "DecryptPasswordMessage": "Decryption password:",
+  "DecryptButtonMessage": "Decrypt",
+  "DecryptSuccessMessage": "Decryption completed successfully!",
+  "DecryptErrorMessage": "An error occurred during decryption.",
+  "DecryptSourcePlaceholder": "Select the encrypted file or folder",
+  "DecryptOutputPlaceholder": "Select the output destination",
+  "DecryptPasswordPlaceholder": "Enter your decryption password",
+  "DecryptErrorFieldsRequired": "All fields are required.",
+  "DecryptErrorCryptoSoft": "Could not connect to CryptoSoft server."
 }

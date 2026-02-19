@@ -2,7 +2,112 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             xmlns:vm="clr-namespace:EasySave.ViewModels"
+             x:DataType="vm:DecryptViewModel"
              x:Class="EasySave.Views.DecryptControl">
-    Welcome to decrypt view!
+
+    <UserControl.Styles>
+        <Style Selector="Border.Card">
+            <Setter Property="Background">
+                <SolidColorBrush Color="{DynamicResource SecondaryColor}" />
+            </Setter>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="Margin" Value="0,0,0,20" />
+        </Style>
+
+        <Style Selector="Border.IconContainer">
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="0,0,20,0" />
+            <Setter Property="Background" Value="{DynamicResource HoverButtonBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.Title">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
+        </Style>
+
+        <Style Selector="TextBlock.Description">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
+            <Setter Property="Opacity" Value="0.6" />
+            <Setter Property="Margin" Value="0,4,0,15" />
+        </Style>
+
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="0,10,0,5" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel Margin="40" MaxWidth="800" HorizontalAlignment="Left">
+
+            <TextBlock Text="{Binding DictText[DecryptTitleMessage]}"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextColor}"
+                       Margin="0,0,0,10" />
+
+            <TextBlock Text="{Binding DictText[DecryptDescriptionMessage]}"
+                       FontSize="14"
+                       Foreground="{DynamicResource TextColor}"
+                       Opacity="0.6"
+                       Margin="0,0,0,30" />
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Spacing="5">
+
+                        <!-- Source Path -->
+                        <TextBlock Classes="Label" Text="{Binding DictText[DecryptSourceMessage]}" />
+                        <StackPanel Orientation="Horizontal" Spacing="15">
+                            <TextBox Watermark="{Binding DictText[DecryptSourcePlaceholder]}"
+                                     Text="{Binding SourcePath}"
+                                     HorizontalAlignment="Stretch"
+                                     Width="400" />
+                            <Button Command="{Binding OpenSourcePickerCommand}">
+                                ...
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Password -->
+                        <TextBlock Classes="Label" Text="{Binding DictText[DecryptPasswordMessage]}"
+                                   Margin="0,15,0,5" />
+                        <TextBox Watermark="{Binding DictText[DecryptPasswordPlaceholder]}"
+                                 Text="{Binding Password}"
+                                 PasswordChar="•"
+                                 HorizontalAlignment="Stretch" />
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Button Content="{Binding DictText[DecryptButtonMessage]}"
+                    Command="{Binding DecryptCommand}"
+                    HorizontalAlignment="Left"
+                    Background="{DynamicResource ButtonColor}"
+                    Foreground="{DynamicResource TextColor}"
+                    Padding="20,10" />
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
