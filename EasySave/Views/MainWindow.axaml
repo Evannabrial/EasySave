@@ -63,7 +63,7 @@
                                     Command="{Binding NavJobs}"
                                     HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
                                     Foreground="{StaticResource TextColor}" />
-                            <Button Content="{Binding DictText[StatusMessage]}"
+                            <Button Content="{Binding DictText[DecryptMessage]}"
                                     Command="{Binding NavStatus}"
                                     HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
                                     Foreground="{StaticResource TextColor}" />

@@ -2,11 +2,11 @@ using EasySaveLibrary;
 
 namespace EasySave.ViewModels;
 
-public class StatusViewModel : ViewModelBase
+public class DecryptViewModel : ViewModelBase
 {
     private readonly JobManager _jobManager;
     
-    public StatusViewModel(JobManager jobManager)
+    public DecryptViewModel(JobManager jobManager)
     {
         _jobManager = jobManager;
     }
