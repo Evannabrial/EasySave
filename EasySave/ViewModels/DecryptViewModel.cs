@@ -61,7 +61,7 @@ public class DecryptViewModel : ViewModelBase
             SourcePath = folders[0].Path.LocalPath;
     }
 
-    private void DecryptFunction()
+    private async void DecryptFunction()
     {
         // Validate all fields
         if (string.IsNullOrWhiteSpace(SourcePath) ||
@@ -75,22 +75,23 @@ public class DecryptViewModel : ViewModelBase
 
         try
         {
-            // Build the decryption request for CryptoSoft
-            var request = new CryptoSoft.PipeRequest
+            // Run the pipe communication on a background thread to avoid freezing the UI
+            var response = await System.Threading.Tasks.Task.Run(() =>
             {
-                Action = "decrypt",
-                Source = SourcePath,
-                Key = Password
-            };
+                var request = new CryptoSoft.PipeRequest
+                {
+                    Action = "decrypt",
+                    Source = SourcePath,
+                    Key = Password
+                };
 
-            // Connect to CryptoSoft Named Pipe server
-            using var pipe = new NamedPipeClientStream(
-                ".", CryptoSoft.PipeProtocol.PipeName, PipeDirection.InOut);
-            pipe.Connect(CryptoSoft.PipeProtocol.ClientTimeoutMs);
+                using var pipe = new NamedPipeClientStream(
+                    ".", CryptoSoft.PipeProtocol.PipeName, PipeDirection.InOut);
+                pipe.Connect(CryptoSoft.PipeProtocol.ClientTimeoutMs);
 
-            // Send request and receive response
-            CryptoSoft.PipeProtocol.Send(pipe, request);
-            var response = CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
+                CryptoSoft.PipeProtocol.Send(pipe, request);
+                return CryptoSoft.PipeProtocol.Receive<CryptoSoft.PipeResponse>(pipe);
+            });
 
             if (response != null && response.ExitCode == 0 &&
                 string.IsNullOrWhiteSpace(response.Error) &&
