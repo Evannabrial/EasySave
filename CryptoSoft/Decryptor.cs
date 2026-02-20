@@ -93,8 +93,12 @@ public static class Decryptor
         double totalTime = 0;
         int count = 0;
 
-        // Recursively iterate through all files in the directory and subdirectories
-        foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
+        // Snapshot the file list BEFORE iterating.
+        // Using GetFiles() (eager) instead of EnumerateFiles() (lazy) because
+        // we delete .enc files and create originals during the loop, which
+        // mutates the directory and causes the lazy enumerator to skip files.
+        string[] files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
+        foreach (string filePath in files)
         {
             // Only decrypt .enc files
             if (!filePath.EndsWith(".enc"))

@@ -99,8 +99,12 @@ public static class Encryptor
         double totalTime = 0;
         int count = 0;
 
-        // Recursively iterate through all files in the directory and subdirectories
-        foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
+        // Snapshot the file list BEFORE iterating.
+        // Using GetFiles() (eager) instead of EnumerateFiles() (lazy) because
+        // we delete originals and create .enc files during the loop, which
+        // mutates the directory and causes the lazy enumerator to skip files.
+        string[] files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
+        foreach (string filePath in files)
         {
             // If extensions filter is specified, skip files that don't match
             if (allowed.Count > 0)
