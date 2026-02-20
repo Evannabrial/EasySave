@@ -77,6 +77,12 @@ public partial class App : Application
             };
 
             _cryptoSoftServer.Start();
+            
+            // Drain stdout/stderr asynchronously to prevent OS pipe buffer deadlock.
+            // If nobody reads these streams, Console.Write in CryptoSoft will block
+            // once the ~4 KB buffer fills up, causing encryption to stall.
+            _cryptoSoftServer.BeginOutputReadLine();
+            _cryptoSoftServer.BeginErrorReadLine();
         }
         catch { }
     }

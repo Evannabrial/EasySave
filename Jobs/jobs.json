@@ -12,6 +12,14 @@
     "Name": "test2big",
     "Source": "C:\\Users\\arthu\\Downloads\\testestes",
     "Target": "C:\\Users\\arthu\\Downloads\\a",
+    "LastTimeRun": "2026-02-20T13:34:16.4308321+01:00",
+    "SaveType": "Full"
+  },
+  {
+    "Id": "ecad44a5-d6ba-4f68-ba7d-9c26611b3ee4",
+    "Name": "full big evann ce dog",
+    "Source": "C:\\Users\\arthu\\Downloads\\portfolio_site",
+    "Target": "C:\\Users\\arthu\\Downloads\\a",
     "LastTimeRun": null,
     "SaveType": "Full"
   }

@@ -130,12 +130,10 @@ public static class Decryptor
 
                 totalTime += elapsed;
                 count++;
-                Console.WriteLine($"  Decrypted: {filePath} → {decryptedFile} ({elapsed:F2} ms)");
             }
             catch (Exception ex)
             {
-                // On error, clean up the temp file and report the failure
-                Console.Error.WriteLine($"  Failed: {filePath} — {ex.Message}");
+                // On error, clean up the temp file
                 if (File.Exists(tempFile))
                     File.Delete(tempFile);
             }
