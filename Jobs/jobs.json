@@ -6,5 +6,13 @@
     "Target": "C:\\Users\\arthu\\Downloads\\fsdfdsqsdqsdq",
     "LastTimeRun": null,
     "SaveType": "Full"
+  },
+  {
+    "Id": "2917defa-1c81-48cc-80f9-b8c01cb52ffa",
+    "Name": "test2big",
+    "Source": "C:\\Users\\arthu\\Downloads\\testestes",
+    "Target": "C:\\Users\\arthu\\Downloads\\a",
+    "LastTimeRun": null,
+    "SaveType": "Full"
   }
 ]
