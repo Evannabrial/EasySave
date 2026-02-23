@@ -28,7 +28,7 @@ public class Differential : ITypeSave
     /// 2 => Erreur copie du fichier
     /// 3 => Erreur création du dossier
     /// </returns>
-    public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, CancellationToken token,
+    public int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, CancellationToken token, List<string> fileExtensions,
         string[] listBlockProcess, bool enableEncryption = false, string encryptionExtensions = "", string encryptionKey = "")
     {
         logManager.TypeSave = logType;
@@ -47,7 +47,7 @@ public class Differential : ITypeSave
         
         if (job.LastTimeRun == null && !isCompleteSaveExist)
         {
-            return new Full().StartSave(job, logType, pauseEvent, token, listBlockProcess, enableEncryption, 
+            return new Full().StartSave(job, logType, pauseEvent, token, fileExtensions, listBlockProcess, enableEncryption, 
                 encryptionExtensions, encryptionKey);
         }
         

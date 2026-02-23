@@ -9,6 +9,10 @@ public class LiveLog : Log
     private string _source;
     private string _state;
     private string _target;
+    private long _nbFile;
+    private double _progress;
+    private long _nbFileLeft;
+    private long _sizeFileLeft;
 
     public LiveLog()
     {
@@ -36,14 +40,6 @@ public class LiveLog : Log
         set => _state = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public long NbFile { get; set; }
-
-    public double Progress { get; set; }
-
-    public long NbFileLeft { get; set; }
-
-    public long SizeFileLeft { get; set; }
-
     public string Source
     {
         get => _source;
@@ -54,6 +50,30 @@ public class LiveLog : Log
     {
         get => _target;
         set => _target = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public long NbFile
+    {
+        get => _nbFile;
+        set => _nbFile = value;
+    }
+
+    public double Progress
+    {
+        get => _progress;
+        set => _progress = value;
+    }
+
+    public long NbFileLeft
+    {
+        get => _nbFileLeft;
+        set => _nbFileLeft = value;
+    }
+
+    public long SizeFileLeft
+    {
+        get => _sizeFileLeft;
+        set => _sizeFileLeft = value;
     }
 
     /// <summary>

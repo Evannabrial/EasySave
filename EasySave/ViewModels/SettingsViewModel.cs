@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -20,12 +21,13 @@ public class SettingsViewModel : ViewModelBase
     private int _selectedFormatIndex;
     private LogType _actualLogType;
     private double _fileSizeGb;
-
+    private string _extensionsPrio;
     
 
     public ICommand OpenFilePickerCommand { get; }
     public ICommand ApplySavesCommand { get; }
 
+    public LogType ActualLogType { get; set; }
 
     public double FileSizeMo
     {
@@ -93,14 +95,19 @@ public class SettingsViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
-
-    public LogType ActualLogType { get; set; }
-
+    
     public string ListeProcess
     {
         get => _listeProcess;
         set => _listeProcess = value ?? throw new ArgumentNullException(nameof(value));
     }
+
+    public string ExtensionsPrio
+    {
+        get => _extensionsPrio;
+        set => _extensionsPrio = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
 
     public SettingsViewModel(JobManager jobManager)
     {
@@ -109,6 +116,17 @@ public class SettingsViewModel : ViewModelBase
         ListeProcess = jobManager.ListeProcess;
         LogPath = ConfigManager.LogPath ?? "";
         FileSizeMo = ConfigManager.FileSizeMo;
+        
+        string extFile = "";
+        if (jobManager.PrioFilesExtension != null && jobManager.PrioFilesExtension.Count > 0)
+        {
+            foreach (string ext in jobManager.PrioFilesExtension)
+            {
+                extFile += ext + ",";
+            }
+        }
+        
+        ExtensionsPrio = extFile;
         
         SelectedFormatIndex = (_jobManager.LogType == LogType.XML) ? 1 : 0;
 
@@ -123,7 +141,7 @@ public class SettingsViewModel : ViewModelBase
     
     private async void OpenFilePickerFunction()
     {
-        var topLevel = TopLevel.GetTopLevel(App.MainWindow); // Assure-toi d'avoir une référence à ta fenêtre
+        var topLevel = TopLevel.GetTopLevel(App.MainWindow);
 
         if (topLevel == null) return;
 
@@ -148,7 +166,21 @@ public class SettingsViewModel : ViewModelBase
     {
         _jobManager.LogType = ActualLogType;
         _jobManager.ListeProcess = ListeProcess;
+        if (!string.IsNullOrWhiteSpace(ExtensionsPrio))
+        {
+            _jobManager.PrioFilesExtension = ExtensionsPrio
+                .Split(',')
+                .Select(ext => ext.Trim()) // Retire les espaces accidentels (ex: " txt " -> "txt")
+                .Where(ext => !string.IsNullOrEmpty(ext)) // Ignore les éléments vides (ex: "txt,")
+                .Select(ext => ext.StartsWith(".") ? ext : "." + ext) // Ajoute le point s'il manque
+                .ToList();
+        }
+        else
+        {
+            _jobManager.PrioFilesExtension = new List<string>();
+        }
 
+        
         // Validate encryption key is provided when encryption is enabled
         if (EnableEncryption && string.IsNullOrWhiteSpace(EncryptionKey))
         {
