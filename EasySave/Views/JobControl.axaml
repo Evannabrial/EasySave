@@ -6,6 +6,7 @@
              xmlns:dto="clr-namespace:EasySave.DTO"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:DataType="vm:JobsViewModel"
+             Background="{DynamicResource SecondaryColor}"
              x:Class="EasySave.Views.JobControl">
 
     <Panel>
@@ -13,7 +14,7 @@
         <Grid RowDefinitions="50, *" Margin="24 12">
 
             <Grid ColumnDefinitions="Auto, *, Auto, Auto" Grid.Row="0" VerticalAlignment="Center">
-                <TextBlock Grid.Column="0" FontSize="32">Job Management</TextBlock>
+                <TextBlock Grid.Column="0" FontSize="32" Foreground="{DynamicResource TextColor}">Job Management</TextBlock>
 
                 <Button Grid.Column="2" Content="{Binding DictText[RunJobsMessage]}" Margin="0,0,24,0"
                         Background="DarkGreen"
@@ -22,42 +23,42 @@
                         Command="{Binding RunMultipleSaveCommand}" />
 
                 <Button Grid.Column="3"
-                        Background="{StaticResource PrimaryColor}"
-                        Foreground="{StaticResource TextColor}"
+                        Background="{DynamicResource PrimaryColor}"
+                        Foreground="{DynamicResource ButtonTextBrush}"
                         Command="{Binding OpenAddJobCommand}"
                         Content="{Binding DictText[AddJobMessage]}" />
             </Grid>
 
             <Panel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Border IsVisible="{Binding Jobs.Count}"
-                        Background="{StaticResource PrimaryColor}"
+                        Background="{DynamicResource PrimaryColor}"
                         CornerRadius="8"
                         Padding="10">
                     <Grid RowDefinitions="Auto, *">
 
-                        <Border Grid.Row="0" Padding="15,10" Background="{StaticResource SecondaryColor}"
-                                CornerRadius="12 12 0 0" BorderBrush="{StaticResource PrimaryColor}">
+                        <Border Grid.Row="0" Padding="15,10" Background="{DynamicResource SecondaryColor}"
+                                CornerRadius="12 12 0 0" BorderBrush="{DynamicResource PrimaryColor}">
                             <Grid ColumnDefinitions="40, 100, 100, 150, 150, 150, 160, 130" ColumnSpacing="3">
                                 <TextBlock Grid.Column="1" Text="{Binding DictText[JobNameMessage]}" FontWeight="Bold"
-                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                           Foreground="{DynamicResource TextColor}" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="2" Text="{Binding DictText[TypeMessage]}" FontWeight="Bold"
-                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                           Foreground="{DynamicResource TextColor}" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="3" Text="{Binding DictText[SourceMessage]}" FontWeight="Bold"
-                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                           Foreground="{DynamicResource TextColor}" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="4" Text="{Binding DictText[DestinationMessage]}"
-                                           FontWeight="Bold" Foreground="{StaticResource TextColor}"
+                                           FontWeight="Bold" Foreground="{DynamicResource TextColor}"
                                            VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="5" Text="{Binding DictText[StatusMessage]}" FontWeight="Bold"
-                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                           Foreground="{DynamicResource TextColor}" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="6" Text="{Binding DictText[ProgressMessage]}" FontWeight="Bold"
-                                           Foreground="{StaticResource TextColor}" VerticalAlignment="Center" />
+                                           Foreground="{DynamicResource TextColor}" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="7" Text="{Binding DictText[ActionsMessage]}" FontWeight="Bold"
-                                           Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" />
+                                           Foreground="{DynamicResource TextColor}" HorizontalAlignment="Center" />
                             </Grid>
                         </Border>
 
                         <ListBox ItemsSource="{Binding Jobs}" Grid.Row="1"
-                                 Background="{StaticResource SecondaryColor}"
+                                 Background="{DynamicResource SecondaryColor}"
                                  CornerRadius="0 0 12 12" Padding="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="dto:JobDto">
@@ -73,23 +74,23 @@
 
                                         <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"
                                                    TextTrimming="CharacterEllipsis"
-                                                   Foreground="{StaticResource TextColor}" />
+                                                   Foreground="{DynamicResource TextColor}" />
                                         <TextBlock Grid.Column="2" Text="{Binding Save}" VerticalAlignment="Center"
-                                                   Foreground="{StaticResource TextColor}" />
+                                                   Foreground="{DynamicResource TextColor}" />
                                         <TextBlock Grid.Column="3" Text="{Binding Source}" VerticalAlignment="Center"
                                                    TextTrimming="CharacterEllipsis"
-                                                   Foreground="{StaticResource TextColor}"
+                                                   Foreground="{DynamicResource TextColor}"
                                                    ToolTip.Tip="{Binding Source}" />
                                         <TextBlock Grid.Column="4" Text="{Binding Target}" VerticalAlignment="Center"
                                                    TextTrimming="CharacterEllipsis"
-                                                   Foreground="{StaticResource TextColor}"
+                                                   Foreground="{DynamicResource TextColor}"
                                                    ToolTip.Tip="{Binding Target}" />
 
                                         <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6"
                                                     VerticalAlignment="Center">
                                             <Ellipse Width="8" Height="8" Fill="{Binding ColorStatus}" />
                                             <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontSize="12"
-                                                       Foreground="{StaticResource TextColor}" />
+                                                       Foreground="{DynamicResource TextColor}" />
                                         </StackPanel>
 
                                         <Grid Grid.Column="6" ColumnDefinitions="*, Auto" ColumnSpacing="8"
@@ -97,7 +98,7 @@
                                             <ProgressBar Value="{Binding Progress}" Height="10" CornerRadius="5"
                                                          Background="#33FFFFFF" />
                                             <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat={}{0}%}"
-                                                       FontSize="11" Foreground="{StaticResource TextColor}" />
+                                                       FontSize="11" Foreground="{DynamicResource TextColor}" />
                                         </Grid>
 
                                         <StackPanel Grid.Column="7" Orientation="Horizontal"
@@ -178,17 +179,17 @@
                     </Grid>
                 </Border>
                 <Border IsVisible="{Binding !Jobs.Count}"
-                        Background="{StaticResource PrimaryColor}"
+                        Background="{DynamicResource PrimaryColor}"
                         CornerRadius="8"
                         Padding="48">
-                    <TextBlock Text="{Binding DictText[NoJobMessage]}" Foreground="{StaticResource TextColor}" />
+                    <TextBlock Text="{Binding DictText[NoJobMessage]}" Foreground="{DynamicResource TextColor}" />
                 </Border>
             </Panel>
         </Grid>
 
         <Grid IsVisible="{Binding IsFormVisible}" Background="#AA000000">
-            <Border Background="{StaticResource SecondaryColor}"
-                    BorderBrush="{StaticResource PrimaryColor}"
+            <Border Background="{DynamicResource SecondaryColor}"
+                    BorderBrush="{DynamicResource PrimaryColor}"
                     BorderThickness="2"
                     CornerRadius="10"
                     Padding="20"
@@ -250,7 +251,7 @@
                         <Button Grid.Column="1" Content="{Binding DictText[SaveMessage]}"
                                 Command="{Binding SaveFormCommand}"
                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                Background="{StaticResource PrimaryColor}" Foreground="White" />
+                                Background="{DynamicResource PrimaryColor}" Foreground="{DynamicResource ButtonTextBrush}" />
                     </Grid>
                 </StackPanel>
             </Border>

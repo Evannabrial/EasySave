@@ -6,41 +6,43 @@
     </Design.PreviewWith>
     
     <Styles.Resources>
-        <Color x:Key="PrimaryColor">Green</Color>
-        <Color x:Key="SecondaryColor">Black</Color>
-        <Color x:Key="ButtonColor">Green</Color>
-        <Color x:Key="HoverButtonColor">DarkGreen</Color>
-        <Color x:Key="TextColor">White</Color>
+        <Color x:Key="PrimaryColor">#F5B800</Color>
+        <Color x:Key="SecondaryColor">#F5F5DC</Color>
+        <Color x:Key="ButtonColor">#F5B800</Color>
+        <Color x:Key="HoverButtonColor">#D4A000</Color>
+        <Color x:Key="TextColor">#000000</Color>
+        <Color x:Key="ButtonTextColor">#000000</Color>
         
-        <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
-        <SolidColorBrush x:Key="HoverButtonBrush" Color="{StaticResource HoverButtonColor}" />
+        <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}" />
+        <SolidColorBrush x:Key="HoverButtonBrush" Color="{DynamicResource HoverButtonColor}" />
+        <SolidColorBrush x:Key="ButtonTextBrush" Color="{DynamicResource ButtonTextColor}" />
     </Styles.Resources>
     
     <Style Selector="Button">
-        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonTextBrush}" />
     </Style>
 
     <Style Selector="Button:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource HoverButtonBrush}" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{DynamicResource HoverButtonBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ButtonTextBrush}" />
     </Style>
     
     <Style Selector="ProgressBar">
         <Setter Property="Background" Value="#33FFFFFF" />
-        <Setter Property="Foreground" Value="{StaticResource PrimaryColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}" />
         <Style.Resources>
-            <SolidColorBrush x:Key="ProgressBarIndicatorBrush" Color="{StaticResource PrimaryColor}" />
+            <SolidColorBrush x:Key="ProgressBarIndicatorBrush" Color="{DynamicResource PrimaryColor}" />
         </Style.Resources>
     </Style>
     
     <Style Selector="Slider">
         <Style.Resources>
-            <SolidColorBrush x:Key="SliderTrackFill" Color="{StaticResource PrimaryColor}" />
-            <SolidColorBrush x:Key="SliderThumbBackground" Color="{StaticResource PrimaryColor}" />
-            <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="{StaticResource HoverButtonColor}" />
-            <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="{StaticResource HoverButtonColor}" />
-            <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="{StaticResource HoverButtonColor}" />
+            <SolidColorBrush x:Key="SliderTrackFill" Color="{DynamicResource PrimaryColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackground" Color="{DynamicResource PrimaryColor}" />
+            <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="{DynamicResource HoverButtonColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="{DynamicResource HoverButtonColor}" />
+            <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="{DynamicResource HoverButtonColor}" />
         </Style.Resources>
     </Style>
     

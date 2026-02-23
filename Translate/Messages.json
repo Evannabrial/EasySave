@@ -89,5 +89,15 @@
   "DecryptPasswordPlaceholder": "Enter your decryption password",
   "DecryptErrorFieldsRequired": "All fields are required.",
   "DecryptErrorCryptoSoft": "Could not connect to CryptoSoft server.",
-  "DecryptInProgressMessage": "Decryption in progress..."
+  "DecryptInProgressMessage": "Decryption in progress...",
+  "ThemeMessage": "Theme",
+  "ThemeDescriptionMessage": "Customize the application colors.",
+  "SelectThemeMessage": "Select a theme:",
+  "CustomColorsMessage": "Custom colors (HEX format):",
+  "PrimaryColorMessage": "Primary color:",
+  "SecondaryColorMessage": "Background color:",
+  "ApplyColorsMessage": "Apply",
+  "PreviewMessage": "Preview:",
+  "ThemeAppliedMessage": "Theme applied",
+  "ErrorThemeInvalid": "Invalid color format"
 }
