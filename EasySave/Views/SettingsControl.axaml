@@ -174,7 +174,19 @@
                                           Grid.Column="1"
                                           OffContent="No"
                                           OnContent="Yes"
-                                          IsChecked="{Binding EnableEncryption}" />
+                                          Foreground="{DynamicResource PrimaryColor}"
+                                          IsChecked="{Binding EnableEncryption}" >
+                                <ToggleSwitch.Resources>
+                                    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{DynamicResource PrimaryColor}"/>
+                                    <SolidColorBrush x:Key="ToggleSwitchFillOff" Color="{DynamicResource TextColor}"/>
+                                    <SolidColorBrush x:Key="ToggleSwitchFillOffPointerOver" Color="{DynamicResource TextColor}"/>
+                                    <SolidColorBrush x:Key="ToggleSwitchKnobFillOff" Color="{DynamicResource PrimaryColor}"/>
+                                    <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPointerOver" Color="{DynamicResource PrimaryColor}"/>
+                                    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{DynamicResource PrimaryColor}"/> 
+                                    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{DynamicResource PrimaryColor}"/>
+                                    <SolidColorBrush x:Key="ToggleSwitchKnobFillOn" Color="{DynamicResource SecondaryColor}"/>
+                                </ToggleSwitch.Resources>
+                            </ToggleSwitch>
                         </Grid>
 
                         <StackPanel IsVisible="{Binding #EncryptionToggle.IsChecked}">

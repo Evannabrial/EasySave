@@ -69,6 +69,23 @@
                                                   HorizontalAlignment="Center"
                                                   Margin="0" IsChecked="{Binding IsSelected}">
                                             <CheckBox.Resources>
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{DynamicResource PrimaryColor}"/>
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{DynamicResource PrimaryColor}"/>
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{DynamicResource PrimaryColor}"/>
+        
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="{DynamicResource PrimaryColor}"/>
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{DynamicResource PrimaryColor}"/>
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="{DynamicResource PrimaryColor}"/>
+
+                                                <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{DynamicResource SecondaryColor}"/>
+                                                <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="{DynamicResource SecondaryColor}"/>
+                                                <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="{DynamicResource SecondaryColor}"/>
+
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="{DynamicResource TextColor}"/>
+        
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" Color="{DynamicResource PrimaryColor}"/>
+        
+                                                <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillUnchecked" Color="Transparent"/>
                                             </CheckBox.Resources>
                                         </CheckBox>
 
