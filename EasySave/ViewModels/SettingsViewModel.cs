@@ -108,7 +108,7 @@ public class SettingsViewModel : ViewModelBase
         DictText = jobManager.Language.GetTranslations();
         ListeProcess = jobManager.ListeProcess;
         LogPath = ConfigManager.LogPath ?? "";
-        FileSizeMo = ConfigManager.FileSizeMo;
+        FileSizeMo = ConfigManager.FileSizeKo;
         
         SelectedFormatIndex = (_jobManager.LogType == LogType.XML) ? 1 : 0;
 

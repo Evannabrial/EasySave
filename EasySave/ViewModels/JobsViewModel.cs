@@ -396,7 +396,7 @@ public class JobsViewModel : ViewModelBase
     private void RunSingleJobSave(JobDto jobDto)
     {
         // Récupérer la limite de taille depuis la config (en Mo)
-        double maxSizeMo = ConfigManager.FileSizeMo;
+        double maxSizeMo = ConfigManager.FileSizeKo;
         
         // Trouver le job model correspondant
         Job jobModel = JobManager.LJobs.FirstOrDefault(j => j.Id.ToString() == jobDto.Id);
