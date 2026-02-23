@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              xmlns:vm="clr-namespace:EasySave.ViewModels"
              x:DataType="vm:SettingsViewModel"
+             Background="{DynamicResource SecondaryColor}"
              x:Class="EasySave.Views.SettingsControl">
 
     <UserControl.Styles>
@@ -237,6 +238,88 @@
 
                         <TextBlock Classes="Label" Text="{Binding DictText[PriorityFileInputMessage]}" />
                         <TextBox Text="{Binding ExtensionsPrio }" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Section Thème de couleurs -->
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[ThemeMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[ThemeDescriptionMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[SelectThemeMessage]}" />
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding AvailableThemes}"
+                                  SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Width="20" Height="20" CornerRadius="4">
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{Binding PrimaryColor}" />
+                                            </Border.Background>
+                                        </Border>
+                                        <Border Width="20" Height="20" CornerRadius="4">
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{Binding SecondaryColor}" />
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        
+                        <TextBlock Classes="Label" Text="{Binding DictText[CustomColorsMessage]}" Margin="0,20,0,5" />
+                        <Grid ColumnDefinitions="*, *, Auto" RowDefinitions="Auto, Auto">
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="{Binding DictText[PrimaryColorMessage]}" 
+                                           FontSize="12" 
+                                           Foreground="{DynamicResource TextColor}" 
+                                           Opacity="0.7" />
+                                <TextBox Text="{Binding CustomPrimaryColor, Mode=TwoWay}" 
+                                         Watermark="#008000" />
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Text="{Binding DictText[SecondaryColorMessage]}" 
+                                           FontSize="12" 
+                                           Foreground="{DynamicResource TextColor}" 
+                                           Opacity="0.7" />
+                                <TextBox Text="{Binding CustomSecondaryColor, Mode=TwoWay}" 
+                                         Watermark="#000000" />
+                            </StackPanel>
+                            
+                            <Button Grid.Row="0" Grid.Column="2" 
+                                    Content="{Binding DictText[ApplyColorsMessage]}"
+                                    Command="{Binding ApplyCustomColorsCommand}"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0,0,0,0"/>
+                        </Grid>
+                        
+                        <!-- Aperçu du thème -->
+                        <TextBlock Classes="Label" Text="{Binding DictText[PreviewMessage]}" Margin="0,15,0,5" />
+                        <Border CornerRadius="8" Padding="15" Margin="0,5,0,0"
+                                Background="{Binding PreviewSecondaryBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <Border Width="40" Height="40" CornerRadius="8"
+                                        Background="{Binding PreviewPrimaryBrush}" />
+                                <TextBlock Text="Aperçu du thème" 
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding PreviewTextBrush}" />
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Grid>
             </Border>

@@ -50,6 +50,13 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+        
+        // Charger le thème depuis la configuration après que l'application soit initialisée
+        ThemeService.Instance.LoadThemeFromConfig(
+            ConfigManager.PrimaryColor,
+            ConfigManager.HoverColor,
+            ConfigManager.SecondaryColor,
+            ConfigManager.TextColor);
     }
 
     // Starts CryptoSoft.exe as a Named Pipe server in the background.

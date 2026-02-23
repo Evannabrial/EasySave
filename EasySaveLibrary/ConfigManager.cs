@@ -36,6 +36,43 @@ public class ConfigManager
             return double.TryParse(value, out var result) ? result : 0;
         }
     }
+    
+    // Propriétés des couleurs du thème
+    public static string? PrimaryColor
+    {
+        get
+        {
+            BuildRoot();
+            return Root["PrimaryColor"];
+        }
+    }
+    
+    public static string? HoverColor
+    {
+        get
+        {
+            BuildRoot();
+            return Root["HoverColor"];
+        }
+    }
+    
+    public static string? SecondaryColor
+    {
+        get
+        {
+            BuildRoot();
+            return Root["SecondaryColor"];
+        }
+    }
+    
+    public static string? TextColor
+    {
+        get
+        {
+            BuildRoot();
+            return Root["TextColor"];
+        }
+    }
 
     private static void BuildRoot()
     {
@@ -48,15 +85,27 @@ public class ConfigManager
     /// <summary>
     /// Met à jour le chemin des logs dans le fichier appsettings.json
     /// </summary>
-    public static void ConfigWritter(string newLogPath, double fileSizeKo = 0)
+    public static void ConfigWritter(string newLogPath, double fileSizeKo = 0, 
+        string? primaryColor = null, string? hoverColor = null, 
+        string? secondaryColor = null, string? textColor = null)
     {
+        // Couleurs par défaut (thème Classique beige/jaune)
+        const string defaultPrimary = "#F5B800";
+        const string defaultHover = "#D4A000";
+        const string defaultSecondary = "#F5F5DC";
+        const string defaultText = "#000000";
+        
         try
         {
             // 1. Créer l'objet avec la nouvelle valeur
             var settings = new AppSettingData 
             { 
                 PathLog = newLogPath,
-                FileSizeKo = fileSizeKo
+                FileSizeKo = fileSizeKo,
+                PrimaryColor = primaryColor ?? PrimaryColor ?? defaultPrimary,
+                HoverColor = hoverColor ?? HoverColor ?? defaultHover,
+                SecondaryColor = secondaryColor ?? SecondaryColor ?? defaultSecondary,
+                TextColor = textColor ?? TextColor ?? defaultText
             };
 
             // 2. Sérialiser en JSON (avec indentation pour la lisibilité)

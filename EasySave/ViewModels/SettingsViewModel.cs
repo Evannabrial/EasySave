@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using EasyLog;
 using EasySave.Services;
@@ -22,12 +24,113 @@ public class SettingsViewModel : ViewModelBase
     private LogType _actualLogType;
     private double _fileSizeGb;
     private string _extensionsPrio;
+    private int _selectedThemeIndex;
+    private string _customPrimaryColor;
+    private string _customSecondaryColor;
     
 
     public ICommand OpenFilePickerCommand { get; }
     public ICommand ApplySavesCommand { get; }
+    public ICommand ApplyCustomColorsCommand { get; }
 
     public LogType ActualLogType { get; set; }
+    
+    // Collection des thèmes disponibles
+    public ObservableCollection<ThemePreset> AvailableThemes { get; }
+
+    public int SelectedThemeIndex
+    {
+        get => _selectedThemeIndex;
+        set
+        {
+            if (_selectedThemeIndex != value)
+            {
+                _selectedThemeIndex = value;
+                OnPropertyChanged();
+                
+                // Appliquer le thème sélectionné immédiatement
+                if (value >= 0 && value < AvailableThemes.Count)
+                {
+                    var theme = AvailableThemes[value];
+                    ThemeService.Instance.ApplyTheme(theme);
+                    CustomPrimaryColor = theme.PrimaryColor;
+                    CustomSecondaryColor = theme.SecondaryColor;
+                }
+            }
+        }
+    }
+    
+    public string CustomPrimaryColor
+    {
+        get => _customPrimaryColor;
+        set
+        {
+            _customPrimaryColor = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(PreviewPrimaryBrush));
+        }
+    }
+    
+    public string CustomSecondaryColor
+    {
+        get => _customSecondaryColor;
+        set
+        {
+            _customSecondaryColor = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(PreviewSecondaryBrush));
+            OnPropertyChanged(nameof(PreviewTextBrush));
+        }
+    }
+    
+    // Propriétés Brush pour l'aperçu (lecture seule)
+    public IBrush PreviewPrimaryBrush
+    {
+        get
+        {
+            try
+            {
+                return new SolidColorBrush(Color.Parse(CustomPrimaryColor ?? "#F5B800"));
+            }
+            catch
+            {
+                return new SolidColorBrush(Color.Parse("#F5B800"));
+            }
+        }
+    }
+    
+    public IBrush PreviewSecondaryBrush
+    {
+        get
+        {
+            try
+            {
+                return new SolidColorBrush(Color.Parse(CustomSecondaryColor ?? "#F5F5DC"));
+            }
+            catch
+            {
+                return new SolidColorBrush(Color.Parse("#F5F5DC"));
+            }
+        }
+    }
+    
+    public IBrush PreviewTextBrush
+    {
+        get
+        {
+            try
+            {
+                var bgColor = Color.Parse(CustomSecondaryColor ?? "#F5F5DC");
+                // Calculer la luminosité pour déterminer si le texte doit être noir ou blanc
+                double luminance = (0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B) / 255;
+                return luminance > 0.5 ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Colors.White);
+            }
+            catch
+            {
+                return new SolidColorBrush(Colors.Black);
+            }
+        }
+    }
 
     public double FileSizeMo
     {
@@ -117,6 +220,14 @@ public class SettingsViewModel : ViewModelBase
         LogPath = ConfigManager.LogPath ?? "";
         FileSizeMo = ConfigManager.FileSizeKo;
         
+        // Initialisation des thèmes
+        AvailableThemes = new ObservableCollection<ThemePreset>(ThemeService.Instance.AvailableThemes);
+        CustomPrimaryColor = ThemeService.Instance.CurrentPrimaryColor;
+        CustomSecondaryColor = ThemeService.Instance.CurrentSecondaryColor;
+        
+        // Trouver le thème actuel dans la liste
+        _selectedThemeIndex = FindCurrentThemeIndex();
+        
         string extFile = "";
         if (jobManager.PrioFilesExtension != null && jobManager.PrioFilesExtension.Count > 0)
         {
@@ -137,6 +248,55 @@ public class SettingsViewModel : ViewModelBase
         ApplySavesCommand = new RelayCommandService(param => {
             ApplySavesFunction();
         });
+        
+        ApplyCustomColorsCommand = new RelayCommandService(param => {
+            ApplyCustomColors();
+        });
+    }
+    
+    private int FindCurrentThemeIndex()
+    {
+        var currentPrimary = ThemeService.Instance.CurrentPrimaryColor;
+        for (int i = 0; i < AvailableThemes.Count; i++)
+        {
+            if (AvailableThemes[i].PrimaryColor.Equals(currentPrimary, StringComparison.OrdinalIgnoreCase))
+                return i;
+        }
+        return 0; // Défaut sur le premier thème
+    }
+    
+    private void ApplyCustomColors()
+    {
+        try
+        {
+            // Générer automatiquement une couleur hover plus foncée
+            var primaryColor = Color.Parse(CustomPrimaryColor);
+            var hoverColor = Color.FromRgb(
+                (byte)(primaryColor.R * 0.7),
+                (byte)(primaryColor.G * 0.7),
+                (byte)(primaryColor.B * 0.7)
+            );
+            
+            ThemeService.Instance.ApplyColors(
+                CustomPrimaryColor, 
+                hoverColor.ToString(),
+                CustomSecondaryColor, 
+                ThemeService.Instance.CurrentTextColor);
+            
+            // Mettre à jour l'aperçu
+            OnPropertyChanged(nameof(PreviewPrimaryBrush));
+            OnPropertyChanged(nameof(PreviewSecondaryBrush));
+            
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("ThemeAppliedMessage") ? DictText["ThemeAppliedMessage"] : "Thème appliqué",
+                ToastType.Success);
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Instance.Show(
+                DictText.ContainsKey("ErrorThemeInvalid") ? DictText["ErrorThemeInvalid"] : $"Couleur invalide : {ex.Message}",
+                ToastType.Error);
+        }
     }
     
     private async void OpenFilePickerFunction()
@@ -200,8 +360,14 @@ public class SettingsViewModel : ViewModelBase
         
         try
         {
-            // FileSizeMo est déjà en Mo, on le passe directement
-            ConfigManager.ConfigWritter(LogPath, FileSizeMo);
+            // Sauvegarder les paramètres avec les couleurs du thème
+            ConfigManager.ConfigWritter(
+                LogPath, 
+                FileSizeMo,
+                ThemeService.Instance.CurrentPrimaryColor,
+                ThemeService.Instance.CurrentHoverColor,
+                ThemeService.Instance.CurrentSecondaryColor,
+                ThemeService.Instance.CurrentTextColor);
             LogService.Observer.StartWatcher();
             
             NotificationService.Instance.Show(
