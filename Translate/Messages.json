@@ -89,5 +89,8 @@
   "DecryptPasswordPlaceholder": "Enter your decryption password",
   "DecryptErrorFieldsRequired": "All fields are required.",
   "DecryptErrorCryptoSoft": "Could not connect to CryptoSoft server.",
-  "DecryptInProgressMessage": "Decryption in progress..."
+  "DecryptInProgressMessage": "Decryption in progress...",
+  "SaveStart": "Save in progress",
+  "JobDoneMessage": "Save finished",
+  "JobBlockedMessage": "Save blocked"
 }

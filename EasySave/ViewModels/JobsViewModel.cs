@@ -303,11 +303,31 @@ public class JobsViewModel : ViewModelBase
                         var jobDto = Jobs.FirstOrDefault(j => j.Id == update.Id);
                         if (jobDto != null)
                         {
-                            
                             jobDto.Progress = (int)update.Status.Progress;
-                            // On ne change le status que s'il est différent pour éviter des clignotements
+            
+                            // On vérifie si le statut a changé
                             if(jobDto.Status != update.Status.Status)
                             {
+                                if (update.Status.Status == "Terminé" && jobDto.Status != "Prêt")
+                                {
+                                    string doneMessage = DictText.ContainsKey("JobDoneMessage") 
+                                        ? DictText["JobDoneMessage"] 
+                                        : "Sauvegarde terminée";
+                        
+                                    // On peut même ajouter le nom du job pour être précis
+                                    NotificationService.Instance.Show($"{jobDto.Name} : {doneMessage}", ToastType.Success);
+                                }
+                                else if (update.Status.Status == "Bloqué" && jobDto.Status != "Bloqué")
+                                {
+                                    string doneMessage = DictText.ContainsKey("JobBlockedMessage") 
+                                        ? DictText["JobBlockedMessage"] 
+                                        : "Sauvegarde bloquée";
+                        
+                                    // On peut même ajouter le nom du job pour être précis
+                                    NotificationService.Instance.Show($"{jobDto.Name} : {doneMessage}", ToastType.Error);
+                                }
+                
+                                // On applique le nouveau statut
                                 jobDto.Status = update.Status.Status;
                             }
                         }
@@ -423,8 +443,9 @@ public class JobsViewModel : ViewModelBase
         LogService.Observer.StartWatcher();
         var index = Jobs.IndexOf(jobDto);
 
+        NotificationService.Instance.Show(DictText.ContainsKey("SaveStart") ? DictText["SaveStart"] : "Sauvegarde en cours...",
+            ToastType.Info);
         JobManager.StartMultipleSave(index.ToString());
-        NotificationService.Instance.Show(DictText.ContainsKey("JobDoneMessage") ? DictText["JobDoneMessage"] : "Sauvegarde terminée");
         // Dispatcher.UIThread.InvokeAsync(() => { RefreshJobsStatus(); });
     }
 
