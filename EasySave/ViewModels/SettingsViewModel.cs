@@ -115,7 +115,7 @@ public class SettingsViewModel : ViewModelBase
         DictText = jobManager.Language.GetTranslations();
         ListeProcess = jobManager.ListeProcess;
         LogPath = ConfigManager.LogPath ?? "";
-        FileSizeMo = ConfigManager.FileSizeMo;
+        FileSizeMo = ConfigManager.FileSizeKo;
         
         string extFile = "";
         if (jobManager.PrioFilesExtension != null && jobManager.PrioFilesExtension.Count > 0)

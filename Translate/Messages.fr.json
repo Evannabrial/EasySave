@@ -68,7 +68,7 @@
   "ErrorInvalidInput": "Entrée invalide, veuillez réessayer.",
   "FileSizeDescriptionMessage": "Sélectionnez la taille maximale des fichier que vous pouvez sauvegarder :",
   "FileSizeMessage": "Taille maximale des fichiers :",
-  "SizeMessage": "Taille (Mo) :",
+  "SizeMessage": "Taille (Ko) :",
   "FileTooLargeMessage": "Fichier trop volumineux : {0} ({1:F2} Mo)",
   "EncryptionKeyMessage": "Mot de passe de chiffrement (obligatoire) :",
   "EncryptionKeyPlaceholder": "Entrez votre mot de passe de chiffrement",

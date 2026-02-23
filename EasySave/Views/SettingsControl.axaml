@@ -103,9 +103,9 @@
                         <Grid ColumnDefinitions="*, Auto">
                             <Slider Grid.Column="0" 
                                     Minimum="0" 
-                                    Maximum="40000" 
+                                    Maximum="40000000" 
                                     Value="{Binding FileSizeMo, Mode=TwoWay}"
-                                    TickFrequency="1"
+                                    TickFrequency="100"
                                     IsSnapToTickEnabled="True"
                                     Width="300"
                                     HorizontalAlignment="Left"
@@ -113,9 +113,9 @@
                             
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="20,0,0,0">
                                 <TextBox Text="{Binding FileSizeMo, Mode=TwoWay, StringFormat={}{0:F1}}" 
-                                         Width="80"
+                                         Width="100"
                                          VerticalAlignment="Center"/>
-                                <TextBlock Text=" Mo" 
+                                <TextBlock Text=" Ko" 
                                            VerticalAlignment="Center" 
                                            Margin="5,0,0,0"
                                            Foreground="{DynamicResource TextColor}"/>

@@ -3,7 +3,7 @@ namespace EasySaveLibrary.Model;
 public class AppSettingData
 {
     private string _pathLog;
-    private double _fileSizeMo;
+    private double _fileSizeKo;
 
     public string PathLog
     {
@@ -11,9 +11,9 @@ public class AppSettingData
         set => _pathLog = value ?? throw new ArgumentNullException(nameof(value));
     }
     
-    public double FileSizeMo
+    public double FileSizeKo
     {
-        get => _fileSizeMo;
-        set => _fileSizeMo = value;
+        get => _fileSizeKo;
+        set => _fileSizeKo = value;
     }
 }

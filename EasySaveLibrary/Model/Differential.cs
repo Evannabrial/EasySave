@@ -154,16 +154,43 @@ public class Differential : ITypeSave
                         sizeFileLeft: new FileInfo(job.Source).Length
                     );
                     
-                    Stopwatch startTime = Stopwatch.StartNew();
-                    File.Copy(job.Source, target + "\\"  + nameFile);
-                    startTimeDir.Stop();
-                    logManager.WriteNewLog(
-                        name: job.Name, 
-                        sourcePath: job.Source, 
-                        targetPath: target,
-                        action: "Copy of a file", 
-                        execTime: startTimeDir.Elapsed.TotalMilliseconds
-                    );
+                    long fileSizeBytes = new FileInfo(job.Source).Length;
+                    long limitBytes = (long)(ConfigManager.FileSizeKo * 1024);
+
+                    if (limitBytes > 0 && fileSizeBytes > limitBytes)
+                    {
+                        TransferManager.LargeFileSemaphore.Wait(token);
+                        try
+                        {
+                            Stopwatch startTime = Stopwatch.StartNew();
+                            File.Copy(job.Source, target + "\\" + nameFile);
+                            startTime.Stop();
+        
+                            logManager.WriteNewLog(
+                                name: job.Name, 
+                                sourcePath: job.Source, 
+                                targetPath: target,
+                                action: "Copy of a file", 
+                                execTime: startTime.Elapsed.TotalMilliseconds
+                            );
+                        }
+                        catch (OperationCanceledException) { return -1; }
+                        finally { TransferManager.LargeFileSemaphore.Release(); }
+                    }
+                    else
+                    {
+                        Stopwatch startTime = Stopwatch.StartNew();
+                        File.Copy(job.Source, target + "\\" + nameFile);
+                        startTime.Stop();
+    
+                        logManager.WriteNewLog(
+                            name: job.Name, 
+                            sourcePath: job.Source, 
+                            targetPath: target,
+                            action: "Copy of a file", 
+                            execTime: startTime.Elapsed.TotalMilliseconds
+                        );
+                    }
                     logManager.WriteNewLog(
                         name: job.Name,
                         sourcePath: job.Source,
@@ -351,17 +378,45 @@ public class Differential : ITypeSave
                                     nbFileLeft: nbFile - nbFileManaged,
                                     sizeFileLeft: size / (nbFileManaged + 1)
                                 );
-                                Stopwatch startTimeFile = Stopwatch.StartNew();
-                                File.Copy(el, target + pathToCreate);
-                                startTimeFile.Stop();
-                                nbFileManaged++;
-                                logManager.WriteNewLog(
-                                    name: job.Name, 
-                                    sourcePath: job.Source, 
-                                    targetPath: target + pathToCreate, 
-                                    action: "Copy of a file", 
-                                    execTime: startTimeFile.Elapsed.TotalMilliseconds
-                                );
+                                long fileSizeBytes = new FileInfo(el).Length;
+                                long limitBytes = (long)(ConfigManager.FileSizeKo * 1024);
+
+                                if (limitBytes > 0 && fileSizeBytes > limitBytes)
+                                {
+                                    TransferManager.LargeFileSemaphore.Wait(token);
+                                    try
+                                    {
+                                        Stopwatch startTimeFile = Stopwatch.StartNew();
+                                        File.Copy(el, target + pathToCreate);
+                                        startTimeFile.Stop();
+                                        nbFileManaged++;
+        
+                                        logManager.WriteNewLog(
+                                            name: job.Name, 
+                                            sourcePath: job.Source, 
+                                            targetPath: target + pathToCreate, 
+                                            action: "Copy of a file", 
+                                            execTime: startTimeFile.Elapsed.TotalMilliseconds
+                                        );
+                                    }
+                                    catch (OperationCanceledException) { return -1; }
+                                    finally { TransferManager.LargeFileSemaphore.Release(); }
+                                }
+                                else
+                                {
+                                    Stopwatch startTimeFile = Stopwatch.StartNew();
+                                    File.Copy(el, target + pathToCreate);
+                                    startTimeFile.Stop();
+                                    nbFileManaged++;
+    
+                                    logManager.WriteNewLog(
+                                        name: job.Name, 
+                                        sourcePath: job.Source, 
+                                        targetPath: target + pathToCreate, 
+                                        action: "Copy of a file", 
+                                        execTime: startTimeFile.Elapsed.TotalMilliseconds
+                                    );
+                                }
                                 logManager.WriteNewLog(
                                     name: job.Name,
                                     sourcePath: job.Source,

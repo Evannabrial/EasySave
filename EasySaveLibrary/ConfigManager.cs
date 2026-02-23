@@ -27,12 +27,12 @@ public class ConfigManager
         }
     }
     
-    public static double FileSizeMo
+    public static double FileSizeKo
     {
         get
         {
             BuildRoot();
-            var value = Root["FileSizeMo"];
+            var value = Root["FileSizeKo"];
             return double.TryParse(value, out var result) ? result : 0;
         }
     }
@@ -48,7 +48,7 @@ public class ConfigManager
     /// <summary>
     /// Met à jour le chemin des logs dans le fichier appsettings.json
     /// </summary>
-    public static void ConfigWritter(string newLogPath, double fileSizeMo = 0)
+    public static void ConfigWritter(string newLogPath, double fileSizeKo = 0)
     {
         try
         {
@@ -56,7 +56,7 @@ public class ConfigManager
             var settings = new AppSettingData 
             { 
                 PathLog = newLogPath,
-                FileSizeMo = fileSizeMo
+                FileSizeKo = fileSizeKo
             };
 
             // 2. Sérialiser en JSON (avec indentation pour la lisibilité)
