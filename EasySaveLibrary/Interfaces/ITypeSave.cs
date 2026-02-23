@@ -6,6 +6,6 @@ namespace EasySaveLibrary.Interfaces;
 public interface ITypeSave
 {
     string DisplayName { get; }
-    int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, CancellationToken token, 
+    int StartSave(Job job, LogType logType, ManualResetEvent pauseEvent, CancellationToken token, List<string> fileExtensions,
         string[] listBlockProcess, bool enableEncryption = false, string encryptionExtensions = "", string encryptionKey = "");
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -116,6 +117,17 @@ public class SettingsViewModel : ViewModelBase
         LogPath = ConfigManager.LogPath ?? "";
         FileSizeMo = ConfigManager.FileSizeMo;
         
+        string extFile = "";
+        if (jobManager.PrioFilesExtension != null && jobManager.PrioFilesExtension.Count > 0)
+        {
+            foreach (string ext in jobManager.PrioFilesExtension)
+            {
+                extFile += ext + ",";
+            }
+        }
+        
+        ExtensionsPrio = extFile;
+        
         SelectedFormatIndex = (_jobManager.LogType == LogType.XML) ? 1 : 0;
 
         OpenFilePickerCommand = new RelayCommandService(param => {
@@ -154,7 +166,21 @@ public class SettingsViewModel : ViewModelBase
     {
         _jobManager.LogType = ActualLogType;
         _jobManager.ListeProcess = ListeProcess;
+        if (!string.IsNullOrWhiteSpace(ExtensionsPrio))
+        {
+            _jobManager.PrioFilesExtension = ExtensionsPrio
+                .Split(',')
+                .Select(ext => ext.Trim()) // Retire les espaces accidentels (ex: " txt " -> "txt")
+                .Where(ext => !string.IsNullOrEmpty(ext)) // Ignore les éléments vides (ex: "txt,")
+                .Select(ext => ext.StartsWith(".") ? ext : "." + ext) // Ajoute le point s'il manque
+                .ToList();
+        }
+        else
+        {
+            _jobManager.PrioFilesExtension = new List<string>();
+        }
 
+        
         // Validate encryption key is provided when encryption is enabled
         if (EnableEncryption && string.IsNullOrWhiteSpace(EncryptionKey))
         {

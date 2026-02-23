@@ -13,6 +13,7 @@ public class JobManager
     private string _encryptionExtensions = "";
     private ILanguage _language;
     private string _listeProcess = "";
+    private List<string> _prioFilesExtension;
     private List<Job> _lJobs;
     
     private Dictionary<Guid, ManualResetEvent> _jobPauseEvents = new Dictionary<Guid, ManualResetEvent>();
@@ -54,6 +55,12 @@ public class JobManager
     {
         get => _listeProcess;
         set => _listeProcess = value ?? "";
+    }
+
+    public List<string> PrioFilesExtension
+    {
+        get => _prioFilesExtension;
+        set => _prioFilesExtension = value ?? new List<string>();
     }
 
     public Job AddJob(string name, string source, string target, ITypeSave typeSave)
@@ -194,7 +201,7 @@ public class JobManager
                 {
                     try 
                     {
-                        job.Save.StartSave(job, LogType, pauseEvent, cts.Token, lProcessBlock, EnableEncryption, 
+                        job.Save.StartSave(job, LogType, pauseEvent, cts.Token, PrioFilesExtension, lProcessBlock, EnableEncryption, 
                             EncryptionExtensions, EncryptionKey);
                     }
                     finally
