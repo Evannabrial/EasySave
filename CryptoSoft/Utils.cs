@@ -4,16 +4,12 @@ using System.Text;
 
 namespace CryptoSoft;
 
-/// <summary>
-/// Utility class for cryptographic operations: IV generation, key derivation from salt, and execution timing.
-/// </summary>
+// Utility class for cryptographic operations: IV generation, key derivation from salt, and execution timing.
 public static class Utils
 {
-    /// <summary>
-    /// Generates a random 16-byte Initialization Vector (IV) for AES encryption.
-    /// The IV ensures that encrypting the same plaintext twice produces different ciphertexts.
-    /// </summary>
-    /// <returns>A 16-byte random IV.</returns>
+    // Generates a random 16-byte Initialization Vector (IV) for AES encryption.
+    // The IV ensures that encrypting the same plaintext twice produces different ciphertexts.
+    // Returns: A 16-byte random IV.
     public static byte[] GenerateIv()
     {
         // AES block size is 128 bits = 16 bytes, so the IV must be 16 bytes
@@ -24,11 +20,9 @@ public static class Utils
         return iv;
     }
 
-    /// <summary>
-    /// Generates a random 16-byte salt for key derivation.
-    /// The salt prevents dictionary/rainbow-table attacks on the password.
-    /// </summary>
-    /// <returns>A 16-byte random salt.</returns>
+    // Generates a random 16-byte salt for key derivation.
+    // The salt prevents dictionary/rainbow-table attacks on the password.
+    // Returns: A 16-byte random salt.
     public static byte[] GenerateSalt()
     {
         byte[] salt = new byte[16];
@@ -37,13 +31,12 @@ public static class Utils
         return salt;
     }
 
-    /// <summary>
-    /// Derives a 256-bit AES key from a password and salt using PBKDF2.
-    /// PBKDF2 applies SHA-256 hashing 100,000 times to make brute-force attacks slow.
-    /// </summary>
-    /// <param name="password">The user-supplied password / secret key.</param>
-    /// <param name="salt">The salt bytes (unique per encryption).</param>
-    /// <returns>A 32-byte derived key suitable for AES-256.</returns>
+    // Derives a 256-bit AES key from a password and salt using PBKDF2.
+    // PBKDF2 applies SHA-256 hashing 100,000 times to make brute-force attacks slow.
+    // Params:
+    //   password: The user-supplied password / secret key.
+    //   salt: The salt bytes (unique per encryption).
+    // Returns: A 32-byte derived key suitable for AES-256.
     public static byte[] DeriveKey(string password, byte[] salt)
     {
         // Pbkdf2 static method: password + salt + iterations + hash algo + output length in bytes
@@ -51,12 +44,11 @@ public static class Utils
         return Rfc2898DeriveBytes.Pbkdf2(password, salt, 100_000, HashAlgorithmName.SHA256, 32);
     }
 
-    /// <summary>
-    /// Measures the execution time of an action and returns its duration in milliseconds.
-    /// Used to report encryption/decryption performance.
-    /// </summary>
-    /// <param name="action">The action to time.</param>
-    /// <returns>Elapsed time in milliseconds.</returns>
+    // Measures the execution time of an action and returns its duration in milliseconds.
+    // Used to report encryption/decryption performance.
+    // Params:
+    //   action: The action to time.
+    // Returns: Elapsed time in milliseconds.
     public static double MeasureExecutionTime(Action action)
     {
         Stopwatch sw = Stopwatch.StartNew(); // Start high-resolution timer
