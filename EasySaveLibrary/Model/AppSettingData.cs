@@ -4,6 +4,9 @@ public class AppSettingData
 {
     private string _pathLog;
     private double _fileSizeKo;
+    private string _logDestination;
+    private string _serverIp;
+    private int _serverPort;
     private string? _primaryColor;
     private string? _hoverColor;
     private string? _secondaryColor;
@@ -20,7 +23,25 @@ public class AppSettingData
         get => _fileSizeKo;
         set => _fileSizeKo = value;
     }
-    
+
+    public string LogDestination
+    {
+        get => _logDestination;
+        set => _logDestination = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public string ServerIp
+    {
+        get => _serverIp;
+        set => _serverIp = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public int ServerPort
+    {
+        get => _serverPort;
+        set => _serverPort = value;
+    }
+
     // Couleurs du thème
     public string? PrimaryColor
     {

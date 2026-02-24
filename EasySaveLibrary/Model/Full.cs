@@ -14,7 +14,12 @@ public class Full : ITypeSave
 
     public Full()
     {
-        logManager = new LogManager(ConfigManager.LogPath);
+        logManager = new LogManager(
+            baseLogPath: ConfigManager.LogPath,
+            logDestination: ConfigManager.LogDestination,
+            serverIp: ConfigManager.ServerIp,
+            serverPort: ConfigManager.ServerPort
+            );
     }
 
     /// <summary>
@@ -32,7 +37,12 @@ public class Full : ITypeSave
         string[] listBlockProcess, bool enableEncryption = false, string encryptionExtensions = "",
         string encryptionKey = "")
     {
-        logManager = new LogManager(ConfigManager.LogPath);
+        logManager = new LogManager(
+            baseLogPath: ConfigManager.LogPath,
+            logDestination: ConfigManager.LogDestination,
+            serverIp: ConfigManager.ServerIp,
+            serverPort: ConfigManager.ServerPort
+        );
         logManager.TypeSave = logType;
 
         bool isFile = File.Exists(job.Source);

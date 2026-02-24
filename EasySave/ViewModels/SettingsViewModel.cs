@@ -27,6 +27,9 @@ public class SettingsViewModel : ViewModelBase
     private int _selectedThemeIndex;
     private string _customPrimaryColor;
     private string _customSecondaryColor;
+    private int _logDestinationIndex;
+    private string _serverIp;
+    private int _serverPort;
     
 
     public ICommand OpenFilePickerCommand { get; }
@@ -210,6 +213,48 @@ public class SettingsViewModel : ViewModelBase
         get => _extensionsPrio;
         set => _extensionsPrio = value ?? throw new ArgumentNullException(nameof(value));
     }
+    
+    // Index : 0 = Local, 1 = Serveur, 2 = Les Deux
+    public int LogDestinationIndex
+    {
+        get => _logDestinationIndex;
+        set
+        {
+            if (_logDestinationIndex != value)
+            {
+                _logDestinationIndex = value;
+                OnPropertyChanged();
+                
+                // On notifie la vue que les conditions de visibilité ont changé
+                OnPropertyChanged(nameof(IsLocalPathVisible));
+                OnPropertyChanged(nameof(IsServerConfigVisible));
+            }
+        }
+    }
+
+    // Propriétés calculées pour l'affichage conditionnel dans le XAML
+    public bool IsLocalPathVisible => LogDestinationIndex == 0 || LogDestinationIndex == 2;
+    public bool IsServerConfigVisible => LogDestinationIndex == 1 || LogDestinationIndex == 2;
+
+    public string ServerIp
+    {
+        get => _serverIp;
+        set
+        {
+            _serverIp = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int ServerPort
+    {
+        get => _serverPort;
+        set
+        {
+            _serverPort = value;
+            OnPropertyChanged();
+        }
+    }
 
 
     public SettingsViewModel(JobManager jobManager)
@@ -224,6 +269,10 @@ public class SettingsViewModel : ViewModelBase
         AvailableThemes = new ObservableCollection<ThemePreset>(ThemeService.Instance.AvailableThemes);
         CustomPrimaryColor = ThemeService.Instance.CurrentPrimaryColor;
         CustomSecondaryColor = ThemeService.Instance.CurrentSecondaryColor;
+        
+        LogDestinationIndex = (int)ConfigManager.LogDestination;
+        ServerIp = ConfigManager.ServerIp;
+        ServerPort = ConfigManager.ServerPort;
         
         // Trouver le thème actuel dans la liste
         _selectedThemeIndex = FindCurrentThemeIndex();
@@ -367,7 +416,11 @@ public class SettingsViewModel : ViewModelBase
                 ThemeService.Instance.CurrentPrimaryColor,
                 ThemeService.Instance.CurrentHoverColor,
                 ThemeService.Instance.CurrentSecondaryColor,
-                ThemeService.Instance.CurrentTextColor);
+                ThemeService.Instance.CurrentTextColor,
+                (LogDestination)LogDestinationIndex,
+                ServerIp,
+                ServerPort);
+            
             LogService.Observer.StartWatcher();
             
             NotificationService.Instance.Show(

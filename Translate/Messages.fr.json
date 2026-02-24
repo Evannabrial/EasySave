@@ -102,4 +102,8 @@
   "SaveStart": "Sauvegarde en cours",
   "JobDoneMessage": "Sauvegarde terminé",
   "JobBlockedMessage": "Sauvegarde bloquée",
+  "LogDestinationMessage": "Destination des logs :",
+  "LocalLogMessage": "Local uniquement",
+  "BothLogMessage": "Local et serveur Docker",
+  "DockerLogMessage": "Docker uniquement"
 }

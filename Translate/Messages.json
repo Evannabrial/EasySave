@@ -101,5 +101,9 @@
   "ErrorThemeInvalid": "Invalid color format",
   "SaveStart": "Save in progress",
   "JobDoneMessage": "Save finished",
-  "JobBlockedMessage": "Save blocked"
+  "JobBlockedMessage": "Save blocked",
+  "LogDestinationMessage": "Log destination :",
+  "LocalLogMessage": "Local only",
+  "BothLogMessage": "Local and Docker server",
+  "DockerLogMessage": "Docker only"
 }

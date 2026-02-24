@@ -41,6 +41,8 @@ public class DailyLog : Log
         get => _execTime;
         set => _execTime = value;
     }
+    
+    public string Username { get; set; } = Environment.MachineName + " - " + Environment.UserName;
 
     public DailyLog()
     {
