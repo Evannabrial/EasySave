@@ -45,5 +45,18 @@ EasySave is completely transparent and audit-friendly:
   2. Type `%ProgramData%` and press Enter.
   3. Navigate to the `EasySave` folder, where you will find the `Logs` and `State` folders. 
 
+## 🐳 6. Centralized Logging (Docker)
+For advanced deployments, you can use our centralized log server via Docker.
+
+**Build the image**:
+```bash
+docker build -t easysave-logserver .
+```
+
+**Run the container**:
+```bash
+docker run -d -p 4242:4242 -v volume_logs:/app/logs --name EasySaveLogServer easysave-logserver
+```
+
 ---
 _Cesi 2025-2026 FISA A3 - Project developed by Elio Faivre, Arthur Roux, and Evann Abrial._
