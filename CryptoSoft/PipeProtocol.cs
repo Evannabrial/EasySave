@@ -30,20 +30,3 @@ public static class PipeProtocol
         return JsonSerializer.Deserialize<T>(line);
     }
 }
-
-// Model for a request sent by EasySave to the CryptoSoft server
-public class PipeRequest
-{
-    public string Action { get; set; } = "";      // "encrypt" or "decrypt"
-    public string Source { get; set; } = "";       // File or directory path to process
-    public string Key { get; set; } = "";          // Encryption/decryption key (Base64)
-    public string? Extensions { get; set; }        // Optional: comma-separated list of file extensions to filter
-}
-
-// Model for a response sent by the CryptoSoft server back to EasySave
-public class PipeResponse
-{
-    public int ExitCode { get; set; }              // 0 = success, non-zero = error
-    public string Output { get; set; } = "";       // Standard output (e.g. encryption time)
-    public string Error { get; set; } = "";        // Error message if something went wrong
-}
