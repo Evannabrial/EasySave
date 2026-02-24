@@ -2,20 +2,15 @@ using System.Security.Cryptography;
 
 namespace CryptoSoft;
 
-/// <summary>
-/// AES-256-CBC file decryptor.
-/// Reads files produced by <see cref="Encryptor"/>:
-///   [salt 16 bytes] [IV 16 bytes] [cipher data …]
-/// </summary>
+// AES-256-CBC file decryptor.
+// Reads files produced by Encryptor: [salt 16 bytes] [IV 16 bytes] [cipher data ...]
 public static class Decryptor
 {
-    /// <summary>
-    /// Decrypts a single file that was encrypted with <see cref="Encryptor.EncryptFile"/>.
-    /// </summary>
-    /// <param name="sourceFilePath">Path to the encrypted file.</param>
-    /// <param name="destinationFilePath">Path where the decrypted file will be written.</param>
-    /// <param name="key">Secret key / password (must match the one used for encryption).</param>
-    /// <returns>Decryption time in milliseconds.</returns>
+    // Decrypts a single file that was encrypted with Encryptor.EncryptFile.
+    // sourceFilePath: Path to the encrypted file.
+    // destinationFilePath: Path where the decrypted file will be written.
+    // key: Secret key / password (must match the one used for encryption).
+    // Returns: Decryption time in milliseconds.
     public static double DecryptFile(string sourceFilePath, string destinationFilePath, string key)
     {
         // Validate that the encrypted source file exists
@@ -66,14 +61,12 @@ public static class Decryptor
         return elapsed; // Return decryption time in milliseconds
     }
 
-    /// <summary>
-    /// Decrypts all files in a directory (recursively) in-place.
-    /// Only files matching extensions (if specified) are decrypted.
-    /// </summary>
-    /// <param name="directoryPath">Root directory to scan.</param>
-    /// <param name="key">Secret key / password.</param>
-    /// <param name="extensions">Optional: comma-separated extensions filter (e.g. ".txt,.docx").</param>
-    /// <returns>Total decryption time in milliseconds and count of decrypted files.</returns>
+    // Decrypts all files in a directory (recursively) in-place.
+    // Only files matching extensions (if specified) are decrypted.
+    // directoryPath: Root directory to scan.
+    // key: Secret key / password.
+    // extensions: Optional comma-separated extensions filter (e.g. ".txt,.docx").
+    // Returns: Total decryption time in ms and count of decrypted files.
     public static (double totalTimeMs, int fileCount) DecryptDirectory(string directoryPath, string key, string? extensions = null)
     {
         // Check that the directory exists
