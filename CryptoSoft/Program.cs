@@ -1,10 +1,21 @@
 ﻿using System.IO.Pipes;
+using System.Threading;
 using CryptoSoft;
 
 // Entry point: CryptoSoft always runs as a Named Pipe server.
 // It is started by EasySave and listens for encryption/decryption requests.
-RunServer();
-return 0;
+bool isNewInstance;
+using (Mutex mutex = new Mutex(true, "Global\\CryptoSoft_Mutex", out isNewInstance))
+{
+    if (!isNewInstance)
+    {
+        // An instance of CryptoSoft is already running.
+        return 1;
+    }
+
+    RunServer();
+    return 0;
+}
 
 // Executes an encrypt or decrypt command on a file or directory.
 // Returns a PipeResponse with the result (exit code, output, error).
