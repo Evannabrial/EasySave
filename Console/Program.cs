@@ -4,7 +4,7 @@ using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 
 
-JobManager jm = new JobManager(new English(), LogType.XML);
+JobManager jm = new JobManager(new English(), LogType.JSON);
 Dictionary<string, string> dictText = jm.Language.GetTranslations();
 Console.ForegroundColor = ConsoleColor.DarkBlue;
 
