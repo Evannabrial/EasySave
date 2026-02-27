@@ -1,134 +1,161 @@
-﻿using CryptoSoft;
+﻿using System.IO.Pipes;
+using System.Threading;
+using CryptoSoft;
 
-// Minimum arguments: action + source + key
-if (args.Length < 3)
+// Entry point: CryptoSoft always runs as a Named Pipe server.
+// It is started by EasySave and listens for encryption/decryption requests.
+bool isNewInstance;
+using (Mutex mutex = new Mutex(true, "Global\\CryptoSoft_Mutex", out isNewInstance))
 {
-    PrintUsage();
-    return 1;
+    if (!isNewInstance)
+    {
+        // An instance of CryptoSoft is already running.
+        return 1;
+    }
+
+    RunServer();
+    return 0;
 }
 
-string action = args[0].ToLowerInvariant();
-string source = args[1];
-string key = args[2];
-string? extensions = args.Length >= 4 ? args[3] : null;
-
-if (action != "encrypt" && action != "decrypt")
+// Executes an encrypt or decrypt command on a file or directory.
+// Returns a PipeResponse with the result (exit code, output, error).
+// This method is called by the server for each client request.
+static PipeResponse ExecuteCommand(string action, string source, string key, string? extensions)
 {
-    Console.Error.WriteLine($"Unknown action: {action}");
-    PrintUsage();
-    return 1;
-}
+    // StringWriters to capture output and error messages
+    var output = new StringWriter();
+    var error = new StringWriter();
+    int exitCode = 0;
 
-// AUTOMATIC DETECTION: FILE OR DIRECTORY
-if (Directory.Exists(source))
-{
-    // DIRECTORY MODE
+    action = action.ToLowerInvariant();
+
+    // Validate the action (must be "encrypt" or "decrypt")
+    if (action != "encrypt" && action != "decrypt")
+    {
+        error.WriteLine($"Unknown action: {action}");
+        return new PipeResponse { ExitCode = 1, Output = output.ToString(), Error = error.ToString() };
+    }
+
     try
     {
-        if (action == "encrypt")
+        if (Directory.Exists(source))
         {
-            var (totalMs, count) = Encryptor.EncryptDirectory(source, key, extensions);
-            Console.WriteLine($"\nEncrypted {count} file(s) in {totalMs:F2} ms total");
-            Console.WriteLine(totalMs.ToString("F2"));
-        }
-        else
-        {
-            var (totalMs, count) = Decryptor.DecryptDirectory(source, key, extensions);
-            Console.WriteLine($"\nDecrypted {count} file(s) in {totalMs:F2} ms total");
-            Console.WriteLine(totalMs.ToString("F2"));
-        }
-        return 0;
-    }
-    catch (Exception ex)
-    {
-        Console.Error.WriteLine($"Error: {ex.Message}");
-        return 3;
-    }
-}
-else if (File.Exists(source))
-{
-    // SINGLE FILE MODE
-    try
-    {
-        if (action == "encrypt")
-        {
-            // Check extension filter if provided
-            if (extensions != null)
+            // Source is a directory: encrypt or decrypt all files inside it
+            if (action == "encrypt")
             {
-                string ext = Path.GetExtension(source);
-                var allowed = extensions
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(e => e.StartsWith('.') ? e : "." + e)
-                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-                if (!allowed.Contains(ext))
+                var (totalMs, count) = Encryptor.EncryptDirectory(source, key, extensions);
+                output.WriteLine($"\nEncrypted {count} file(s) in {totalMs:F2} ms total");
+                output.WriteLine(totalMs.ToString("F2"));
+            }
+            else
+            {
+                var (totalMs, count) = Decryptor.DecryptDirectory(source, key, extensions);
+                output.WriteLine($"\nDecrypted {count} file(s) in {totalMs:F2} ms total");
+                output.WriteLine(totalMs.ToString("F2"));
+            }
+        }
+        else if (File.Exists(source))
+        {
+            // Source is a single file
+            if (action == "encrypt")
+            {
+                // If an extension filter is provided, check if the file matches
+                if (extensions != null)
                 {
-                    Console.Error.WriteLine($"Extension '{ext}' is not in the allowed list. File skipped.");
-                    return 2;
-                }
-            }
+                    string ext = Path.GetExtension(source);
+                    var allowed = extensions
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                        .Select(e => e.StartsWith('.') ? e : "." + e)
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            // Encrypt to .enc file
-            string encryptedFile = source + ".enc";
-            double encryptTime = Encryptor.EncryptFile(source, encryptedFile, key);
-            
-            // Delete original file
-            File.Delete(source);
-            
-            Console.WriteLine($"Encryption completed in {encryptTime:F2} ms");
-            Console.WriteLine(encryptTime.ToString("F2"));
-            return 0;
+                    // Skip file if extension is not in the allowed list
+                    if (!allowed.Contains(ext))
+                    {
+                        error.WriteLine($"Extension '{ext}' is not in the allowed list. File skipped.");
+                        return new PipeResponse { ExitCode = 2, Output = output.ToString(), Error = error.ToString() };
+                    }
+                }
+
+                // Encrypt the file and replace the original with the .enc version
+                string encryptedFile = source + ".enc";
+                double ms = Encryptor.EncryptFile(source, encryptedFile, key);
+                File.Delete(source);
+                output.WriteLine($"Encryption completed in {ms:F2} ms");
+                output.WriteLine(ms.ToString("F2"));
+            }
+            else
+            {
+                // Decrypt the file: remove .enc extension for the output name
+                string decryptedFile = source.EndsWith(".enc")
+                    ? source.Substring(0, source.Length - 4)
+                    : source;
+
+                double ms = Decryptor.DecryptFile(source, decryptedFile, key);
+                File.Delete(source);
+                output.WriteLine($"Decryption completed in {ms:F2} ms");
+                output.WriteLine(ms.ToString("F2"));
+            }
         }
         else
         {
-            // For decryption, check if source is .enc file
-            string decryptedFile = source;
-            string sourceFile = source;
-            
-            if (source.EndsWith(".enc"))
-            {
-                // Remove .enc extension for output
-                decryptedFile = source.Substring(0, source.Length - 4);
-            }
-            
-            double decryptTime = Decryptor.DecryptFile(sourceFile, decryptedFile, key);
-            
-            // Delete encrypted file
-            File.Delete(sourceFile);
-            
-            Console.WriteLine($"Decryption completed in {decryptTime:F2} ms");
-            Console.WriteLine(decryptTime.ToString("F2"));
-            return 0;
+            // Source path does not exist
+            error.WriteLine($"Path not found: {source}");
+            exitCode = 1;
         }
     }
     catch (Exception ex)
     {
-        Console.Error.WriteLine($"Error: {ex.Message}");
-        return 3;
+        error.WriteLine($"Error: {ex.Message}");
+        exitCode = 3;
     }
-}
-else
-{
-    Console.Error.WriteLine($"Path not found: {source}");
-    return 1;
+
+    return new PipeResponse { ExitCode = exitCode, Output = output.ToString(), Error = error.ToString() };
 }
 
-/// <summary>
-/// Displays the usage instructions for the CryptoSoft CLI tool.
-/// </summary>
-static void PrintUsage()
+// Named Pipe server.
+// Runs an infinite loop that:
+// 1. Creates a pipe and waits for a client (EasySave) to connect
+// 2. Reads the encryption/decryption request from the client
+// 3. Spawns a new thread to handle the request (allows parallel processing)
+// 4. Goes back to step 1 to accept the next client
+// The server runs forever until EasySave kills it on shutdown.
+static void RunServer()
 {
-    Console.WriteLine("CryptoSoft – AES-256 File Encryption Tool");
-    Console.WriteLine();
-    Console.WriteLine("Unified usage (in-place modification):");
-    Console.WriteLine();
-    Console.WriteLine("  CryptoSoft encrypt <source> <key> [extensions]");
-    Console.WriteLine("  CryptoSoft decrypt <source> <key> [extensions]");
-    Console.WriteLine();
-    Console.WriteLine("Arguments:");
-    Console.WriteLine("  <source>       File or directory to encrypt/decrypt (modified in-place)");
-    Console.WriteLine("  <key>          Secret password for encryption / decryption");
-    Console.WriteLine("  [extensions]   Optional: comma-separated extensions (e.g., .txt,.docx)");
-    Console.WriteLine("                 Required for directory encryption");
-    Console.WriteLine("                 Optional for decryption");
+    while (true)
+    {
+        // Create a new Named Pipe instance and wait for a client to connect
+        var pipe = new NamedPipeServerStream(
+            PipeProtocol.PipeName,
+            PipeDirection.InOut,
+            NamedPipeServerStream.MaxAllowedServerInstances);
+
+        pipe.WaitForConnection();
+
+        // Read the request sent by the client
+        var request = PipeProtocol.Receive<PipeRequest>(pipe);
+        if (request == null)
+        {
+            pipe.Dispose();
+            continue;
+        }
+
+        // Process the request in a separate thread for parallel execution.
+        // We capture the pipe reference so each thread uses its own pipe.
+        var currentPipe = pipe;
+        new Thread(() =>
+        {
+            try
+            {
+                // Execute the encrypt/decrypt command and send the result back
+                var response = ExecuteCommand(request.Action, request.Source, request.Key, request.Extensions);
+                PipeProtocol.Send(currentPipe, response);
+            }
+            catch { }
+            finally
+            {
+                // Always close the pipe after the response is sent
+                currentPipe.Dispose();
+            }
+        }).Start();
+    }
 }

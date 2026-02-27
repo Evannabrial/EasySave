@@ -5,18 +5,51 @@ namespace EasyLog;
 
 public class LiveLog : Log
 {
+    private static readonly object _fileLock = new();
+    private string _source;
     private string _state;
+    private string _target;
     private long _nbFile;
     private double _progress;
     private long _nbFileLeft;
     private long _sizeFileLeft;
-    private string _source;
-    private string _target;
+
+    public LiveLog()
+    {
+    }
+
+    public LiveLog(string name, string action, string state, long nbFile, double progress, long nbFileLeft,
+        long sizeFileLeft, string source, string target, LogType logType)
+    {
+        DateTime = DateTime.Now;
+        Name = name;
+        Action = action;
+        State = state;
+        NbFile = nbFile;
+        Progress = progress;
+        NbFileLeft = nbFileLeft;
+        SizeFileLeft = sizeFileLeft;
+        Source = source;
+        Target = target;
+        Type = logType;
+    }
 
     public string State
     {
         get => _state;
         set => _state = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public string Source
+    {
+        get => _source;
+        set => _source = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public string Target
+    {
+        get => _target;
+        set => _target = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     public long NbFile
@@ -43,82 +76,91 @@ public class LiveLog : Log
         set => _sizeFileLeft = value;
     }
 
-    public string Source
-    {
-        get => _source;
-        set => _source = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public string Target
-    {
-        get => _target;
-        set => _target = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public LiveLog()
-    {
-    }
-
-    public LiveLog(string name, string action, string state, long nbFile, double progress, long nbFileLeft, 
-        long sizeFileLeft, string source, string target, LogType logType)
-    {
-        DateTime = DateTime.Now;
-        Name = name;
-        Action = action;
-        State = state;
-        NbFile = nbFile;
-        Progress = progress;
-        NbFileLeft = nbFileLeft;
-        SizeFileLeft = sizeFileLeft;
-        Source = source;
-        Target = target;
-        Type = logType;
-    }
-
     /// <summary>
-    /// Write the object inside a file in json.
+    ///     Write the object inside a file in json.
     /// </summary>
     /// <param name="path"></param>
     /// <returns>
-    /// 0 => OK
-    /// 1 => KO
+    ///     0 => OK
+    ///     1 => KO
     /// </returns>
     public override int WriteLog(string path)
     {
-        try
+        lock (_fileLock)
         {
-            switch (Type)
+            try
             {
-                // Dans LiveLog.cs -> WriteLog
-                case LogType.JSON:
-                    string jsonObject = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-    
-                    // On utilise FileShare.Read pour que l'UI puisse lire pendant qu'on écrit
-                    using (var fs = new FileStream(Path.Combine(path, "livestate.json"), FileMode.Create, FileAccess.Write, FileShare.Read))
-                    using (var sw = new StreamWriter(fs))
-                    {
-                        sw.Write(jsonObject);
-                    }
-                    break;
-                
-                case LogType.XML:
-                    XmlSerializer xmlSerializer = new(typeof(LiveLog));
+                var jsonPath = Path.Combine(path, "livestate.json");
+                var currentStates = new List<LiveLog>();
 
-                    // Utilisation d'un FileStream partagé pour éviter le blocage de l'UI
-                    using (var fs = new FileStream(Path.Combine(path, "livestate.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
-                    using (var writer = new StreamWriter(fs))
-                    {
-                        xmlSerializer.Serialize(writer, this);
-                    }
-                    break;
+                switch (Type)
+                {
+                    // Dans LiveLog.cs -> WriteLog
+                    case LogType.JSON:
+                        // 1. Lire l'état actuel du fichier (s'il existe)
+                        if (File.Exists(jsonPath))
+                            try
+                            {
+                                var existingJson = File.ReadAllText(jsonPath);
+                                if (!string.IsNullOrWhiteSpace(existingJson))
+                                    // On essaie de récupérer la liste des jobs en cours
+                                    currentStates = JsonSerializer.Deserialize<List<LiveLog>>(existingJson) ??
+                                                    new List<LiveLog>();
+                            }
+                            catch
+                            {
+                                // Si le fichier est corrompu ou au mauvais format, on repart à neuf
+                                currentStates = new List<LiveLog>();
+                            }
+
+                        // 2. Mettre à jour SEULEMENT mon job dans la liste
+                        // On supprime l'ancienne entrée de ce job s'il y en avait une
+                        currentStates.RemoveAll(x => x.Name == Name);
+
+                        // On ajoute mon nouvel état
+                        currentStates.Add(this);
+
+                        // 3. Réécrire le fichier complet
+                        var jsonOutput = JsonSerializer.Serialize(currentStates,
+                            new JsonSerializerOptions { WriteIndented = true });
+                        File.WriteAllText(jsonPath, jsonOutput);
+                        break;
+
+                    case LogType.XML:
+                        var xmlPath = Path.Combine(path, "livestate.xml");
+                        var serializer = new XmlSerializer(typeof(List<LiveLog>));
+
+                        if (File.Exists(xmlPath))
+                            try
+                            {
+                                using (var reader = new StreamReader(xmlPath))
+                                {
+                                    currentStates = (List<LiveLog>)serializer.Deserialize(reader);
+                                }
+                            }
+                            catch
+                            {
+                                currentStates = new List<LiveLog>();
+                            }
+
+                        currentStates.RemoveAll(x => x.Name == Name);
+                        currentStates.Add(this);
+
+                        using (var writer = new StreamWriter(xmlPath))
+                        {
+                            serializer.Serialize(writer, currentStates);
+                        }
+
+                        break;
+                }
+
+                return 0;
             }
-            
-            return 0;
-        }
-        catch (Exception e)
-        {
-            // Console.WriteLine(e);
-            return 1;
+            catch (Exception e)
+            {
+                // Console.WriteLine(e);
+                return 1;
+            }
         }
     }
 }

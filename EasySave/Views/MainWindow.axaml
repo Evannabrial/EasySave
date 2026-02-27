@@ -7,6 +7,7 @@
         x:Class="EasySave.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
+        Background="{DynamicResource SecondaryColor}"
         Title="EasySave">
 
     <Design.DataContext>
@@ -16,14 +17,16 @@
     </Design.DataContext>
 
 
-    <Grid RowDefinitions="Auto, *">
-        <Border Grid.Row="0"
-                Background="{StaticResource PrimaryColor}"
+    <Grid>
+        <!-- Contenu principal -->
+        <Grid RowDefinitions="Auto, *">
+            <Border Grid.Row="0"
+                Background="{DynamicResource PrimaryColor}"
                 Height="50">
             <Grid ColumnDefinitions="*, Auto">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
                     <TextBlock Text="{Binding DictText[EasySaveMessage]}" FontWeight="Bold"
-                               VerticalAlignment="Center" Foreground="{StaticResource TextColor}" />
+                               VerticalAlignment="Center" Foreground="{DynamicResource TextColor}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
@@ -32,14 +35,14 @@
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Svg Path="avares://EasySave/Assets/fr-logo.svg" Width="20" Height="20" />
                                 <TextBlock Text="{Binding DictText[FrenchMessage]}"
-                                           Foreground="{StaticResource SecondaryColor}" />
+                                           Foreground="{DynamicResource SecondaryColor}" />
                             </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Svg Path="avares://EasySave/Assets/uk-logo.svg" Width="20" Height="20" />
                                 <TextBlock Text="{Binding DictText[EnglishMessage]}"
-                                           Foreground="{StaticResource SecondaryColor}" />
+                                           Foreground="{DynamicResource SecondaryColor}" />
                             </StackPanel>
                         </ComboBoxItem>
                     </ComboBox>
@@ -55,30 +58,30 @@
                        HorizontalAlignment="Left"
                        Grid.Column="0">
                 <SplitView.Pane>
-                    <Grid Row="3" RowDefinitions="Auto,7*,*" Background="{StaticResource SecondaryColor}">
+                    <Grid Row="3" RowDefinitions="Auto,7*,*" Background="{DynamicResource SecondaryColor}">
                         <StackPanel Spacing="5" Margin="5" Grid.Row="0">
                             <Button Content="{Binding DictText[JobsMessage]}"
                                     Command="{Binding NavJobs}"
-                                    HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
-                                    Foreground="{StaticResource TextColor}" />
-                            <Button Content="{Binding DictText[StatusMessage]}"
+                                    HorizontalAlignment="Stretch" Background="{DynamicResource ButtonColor}"
+                                    Foreground="{DynamicResource ButtonTextBrush}" />
+                            <Button Content="{Binding DictText[DecryptMessage]}"
                                     Command="{Binding NavStatus}"
-                                    HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
-                                    Foreground="{StaticResource TextColor}" />
+                                    HorizontalAlignment="Stretch" Background="{DynamicResource ButtonColor}"
+                                    Foreground="{DynamicResource ButtonTextBrush}" />
                             <Button Content="{Binding DictText[SettingsMessage]}"
                                     Command="{Binding NavSettings}"
-                                    HorizontalAlignment="Stretch" Background="{StaticResource ButtonColor}"
-                                    Foreground="{StaticResource TextColor}" />
+                                    HorizontalAlignment="Stretch" Background="{DynamicResource ButtonColor}"
+                                    Foreground="{DynamicResource ButtonTextBrush}" />
                         </StackPanel>
 
                         <StackPanel Grid.Row="2">
-                            <Separator Background="{StaticResource PrimaryColor}" />
+                            <Separator Background="{DynamicResource PrimaryColor}" />
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBlock HorizontalAlignment="Center" Foreground="{StaticResource TextColor}">
+                                <TextBlock HorizontalAlignment="Center" Foreground="{DynamicResource TextColor}">
                                     EasySave
                                 </TextBlock>
                                 <TextBlock HorizontalAlignment="Center" FontSize="10" Foreground="Gray">
-                                    Version 2.0.0
+                                    Version 3.0.0
                                 </TextBlock>
                             </StackPanel>
                         </StackPanel>
@@ -89,5 +92,27 @@
                 <ContentControl Content="{Binding CurrentPage}" />
             </Grid>
         </Grid>
+        </Grid>
+        
+        <Border IsVisible="{Binding Notifications.IsVisible}"
+                Background="{Binding Notifications.BackgroundColor}"
+                CornerRadius="8"
+                Padding="20,12"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,30"
+                BoxShadow="0 4 12 0 #40000000">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{Binding Notifications.Icon}" 
+                           Foreground="White"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Notifications.CurrentNotification.Message}"
+                           Foreground="White"
+                           FontSize="14"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

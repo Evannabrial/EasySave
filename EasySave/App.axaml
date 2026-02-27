@@ -12,8 +12,8 @@
             <views:JobControl />
         </DataTemplate>
         
-        <DataTemplate DataType="{x:Type vm:StatusViewModel}">
-            <views:StatusControl />
+        <DataTemplate DataType="{x:Type vm:DecryptViewModel}">
+            <views:DecryptControl />
         </DataTemplate>
         
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">

@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSoft", "CryptoSoft\Cr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasySave", "EasySave\EasySave.csproj", "{DA811C40-3604-4510-9ACF-AF9BF961C5D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyLogServer", "EasyLogServer\EasyLogServer.csproj", "{086C79DD-6C0F-4622-8FCE-1FA3B2A903E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA811C40-3604-4510-9ACF-AF9BF961C5D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{086C79DD-6C0F-4622-8FCE-1FA3B2A903E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{086C79DD-6C0F-4622-8FCE-1FA3B2A903E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{086C79DD-6C0F-4622-8FCE-1FA3B2A903E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{086C79DD-6C0F-4622-8FCE-1FA3B2A903E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

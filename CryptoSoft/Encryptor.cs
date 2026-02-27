@@ -2,20 +2,15 @@ using System.Security.Cryptography;
 
 namespace CryptoSoft;
 
-/// <summary>
-/// AES-256-CBC file encryptor.
-/// Writes the output file with the following binary layout:
-///   [salt 16 bytes] [IV 16 bytes] [cipher data …]
-/// </summary>
+// AES-256-CBC file encryptor.
+// Writes the output file with the following binary layout: [salt 16 bytes] [IV 16 bytes] [cipher data ...]
 public static class Encryptor
 {
-    /// <summary>
-    /// Encrypts a single file using AES-256-CBC.
-    /// </summary>
-    /// <param name="sourceFilePath">Path to the plain-text file.</param>
-    /// <param name="destinationFilePath">Path where the encrypted file will be written.</param>
-    /// <param name="key">Secret key / password used to derive the AES key.</param>
-    /// <returns>Encryption time in milliseconds.</returns>
+    // Encrypts a single file using AES-256-CBC.
+    // sourceFilePath: Path to the plain-text file.
+    // destinationFilePath: Path where the encrypted file will be written.
+    // key: Secret key / password used to derive the AES key.
+    // Returns: Encryption time in milliseconds.
     public static double EncryptFile(string sourceFilePath, string destinationFilePath, string key)
     {
         // Validate that the source file exists before proceeding
@@ -68,15 +63,12 @@ public static class Encryptor
         return elapsed; // Return encryption time in milliseconds
     }
 
-    /// <summary>
-    /// Encrypts all matching files in a directory (recursively) in-place.
-    /// If extensions is specified, only files with those extensions are encrypted.
-    /// If extensions is null or empty, all files are encrypted.
-    /// </summary>
-    /// <param name="directoryPath">Root directory to scan.</param>
-    /// <param name="key">Secret key / password.</param>
-    /// <param name="extensions">Optional: Comma-separated extensions (e.g. ".txt,.docx,.pdf"). If null, encrypts all files.</param>
-    /// <returns>Total encryption time in milliseconds and count of encrypted files.</returns>
+    // Encrypts all matching files in a directory (recursively) in-place.
+    // If extensions is null or empty, all files are encrypted.
+    // directoryPath: Root directory to scan.
+    // key: Secret key / password.
+    // extensions: Optional Comma-separated extensions (e.g. ".txt,.docx,.pdf").
+    // Returns: Total encryption time in ms and count of encrypted files.
     public static (double totalTimeMs, int fileCount) EncryptDirectory(string directoryPath, string key, string? extensions)
     {
         // Check that the directory exists
@@ -99,8 +91,12 @@ public static class Encryptor
         double totalTime = 0;
         int count = 0;
 
-        // Recursively iterate through all files in the directory and subdirectories
-        foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
+        // Snapshot the file list BEFORE iterating.
+        // Using GetFiles() (eager) instead of EnumerateFiles() (lazy) because
+        // we delete originals and create .enc files during the loop, which
+        // mutates the directory and causes the lazy enumerator to skip files.
+        string[] files = Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories);
+        foreach (string filePath in files)
         {
             // If extensions filter is specified, skip files that don't match
             if (allowed.Count > 0)
@@ -126,12 +122,10 @@ public static class Encryptor
 
                 totalTime += elapsed;
                 count++;
-                Console.WriteLine($"  Encrypted: {filePath} → {encryptedFile} ({elapsed:F2} ms)");
             }
             catch (Exception ex)
             {
-                // On error, clean up the temp file and report the failure
-                Console.Error.WriteLine($"  Failed: {filePath} — {ex.Message}");
+                // On error, clean up the temp file
                 if (File.Exists(tempFile))
                     File.Delete(tempFile);
             }

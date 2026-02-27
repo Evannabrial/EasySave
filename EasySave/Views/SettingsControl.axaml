@@ -5,81 +5,109 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              xmlns:vm="clr-namespace:EasySave.ViewModels"
              x:DataType="vm:SettingsViewModel"
+             Background="{DynamicResource SecondaryColor}"
              x:Class="EasySave.Views.SettingsControl">
 
     <UserControl.Styles>
         <Style Selector="Border.Card">
             <Setter Property="Background">
-                <SolidColorBrush Color="{DynamicResource SecondaryColor}"/>
+                <SolidColorBrush Color="{DynamicResource SecondaryColor}" />
             </Setter>
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/> 
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="Margin" Value="0,0,0,20" />
         </Style>
 
         <Style Selector="Border.IconContainer">
-            <Setter Property="Width" Value="48"/>
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Margin" Value="0,0,20,0"/>
-            <Setter Property="Background" Value="{DynamicResource HoverButtonBrush}"/>
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="0,0,20,0" />
+            <Setter Property="Background" Value="{DynamicResource HoverButtonBrush}" />
         </Style>
 
         <Style Selector="TextBlock.Title">
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
         </Style>
 
         <Style Selector="TextBlock.Description">
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/> 
-            <Setter Property="Opacity" Value="0.6"/>
-            <Setter Property="Margin" Value="0,4,0,15"/>
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
+            <Setter Property="Opacity" Value="0.6" />
+            <Setter Property="Margin" Value="0,4,0,15" />
         </Style>
-        
+
         <Style Selector="TextBlock.Label">
-            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Margin" Value="0,10,0,5"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="0,10,0,5" />
         </Style>
     </UserControl.Styles>
 
     <ScrollViewer>
         <StackPanel Margin="40" MaxWidth="800" HorizontalAlignment="Left">
-            
+
             <TextBlock Text="{Binding DictText[SettingsMessage]}"
-                       FontSize="32" 
-                       FontWeight="Bold" 
+                       FontSize="32"
+                       FontWeight="Bold"
                        Foreground="{DynamicResource TextColor}"
-                       Margin="0,0,0,30"/>
+                       Margin="0,0,0,30" />
 
             <Border Classes="Card">
                 <Grid ColumnDefinitions="Auto, *">
                     <Border Classes="IconContainer">
-                        <Path Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z" 
-                              Fill="{DynamicResource PrimaryBrush}" 
-                              Stretch="Uniform" 
-                              Width="24" Height="24"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Path
+                            Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
-                    
+
                     <StackPanel Grid.Column="1">
-                        <TextBlock Classes="Title" Text="{Binding DictText[LogDirectoryMessage]}"/>
-                        <TextBlock Classes="Description" Text="{Binding DictText[LogDirectoryDescriptionMessage]}"/>
-                        
-                        <TextBlock Classes="Label" Text="{Binding DictText[PathMessage]}"/>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="15">
-                            <TextBox Watermark="C:\Users\Admin\EasySave\Logs" Text="{Binding LogPath }"
-                                     HorizontalAlignment="Stretch"/>
-                            <Button Command="{Binding OpenFilePickerCommand}">
-                                ...
-                            </Button>
+                        <TextBlock Classes="Title" Text="{Binding DictText[LogDirectoryMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[LogDirectoryDescriptionMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[LogDestinationMessage]}" />
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  SelectedIndex="{Binding LogDestinationIndex, Mode=TwoWay}"
+                                  Margin="0,0,0,15">
+                            <ComboBoxItem Content="{Binding DictText[LocalLogMessage]}"></ComboBoxItem>
+                            <ComboBoxItem Content="{Binding DictText[BothLogMessage]}"></ComboBoxItem>
+                            <ComboBoxItem Content="{Binding DictText[DockerLogMessage]}"></ComboBoxItem>
+                        </ComboBox>
+
+                        <StackPanel IsVisible="{Binding IsLocalPathVisible}">
+                            <TextBlock Classes="Label" Text="{Binding DictText[PathMessage]}" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="15"
+                                        Margin="0,0,0,10">
+                                <TextBox Watermark="C:\Users\Admin\EasySave\Logs" Text="{Binding LogPath}"
+                                         HorizontalAlignment="Stretch"
+                                         Width="300"/>
+                                <Button Command="{Binding OpenFilePickerCommand}">...</Button>
+                            </StackPanel>
                         </StackPanel>
+
+                        <StackPanel IsVisible="{Binding IsServerConfigVisible}">
+                            <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Classes="Label" Text="Adresse IP du serveur" />
+                                    <TextBox Text="{Binding ServerIp}" Watermark="ex: 192.168.1.50" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Classes="Label" Text="Port" />
+                                    <TextBox Text="{Binding ServerPort}" Watermark="4242" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
                     </StackPanel>
                 </Grid>
             </Border>
@@ -87,20 +115,62 @@
             <Border Classes="Card">
                 <Grid ColumnDefinitions="Auto, *">
                     <Border Classes="IconContainer">
-                        <Path Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M11.5,11L13,12.5L11.5,14L10,12.5L11.5,11M16.5,11L18,12.5L16.5,14L15,12.5L16.5,11M11,15H9V16.5L7.5,15H6V18H7.5V16.5H9V18H10.5V15H11M15.5,18H14V15H18V16.5H15.5V18Z" 
-                              Fill="{DynamicResource PrimaryBrush}" 
-                              Stretch="Uniform" 
-                              Width="24" Height="24"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Path
+                            Data="M1.39,18.36L3.16,16.6L4.58,18L5.64,16.95L4.22,15.54L5.64,14.12L8.11,16.6L9.17,15.54L6.7,13.06L8.11,11.65L9.53,13.06L10.59,12L9.17,10.59L10.59,9.17L13.06,11.65L14.12,10.59L11.65,8.11L13.06,6.7L14.47,8.11L15.54,7.05L14.12,5.64L15.54,4.22L18,6.7L19.07,5.64L16.6,3.16L18.36,1.39L22.61,5.64L5.64,22.61L1.39,18.36Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
 
                     <StackPanel Grid.Column="1">
-                        <TextBlock Classes="Title" Text="{Binding DictText[LogFormatMessage]}"/>
-                        <TextBlock Classes="Description" Text="{Binding DictText[LogFormatDescriptionMessage]}"/>
+                        <TextBlock Classes="Title" Text="{Binding DictText[FileSizeMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[FileSizeDescriptionMessage]}" />
 
-                        <TextBlock Classes="Label" Text="{Binding DictText[FormatMessage]}"/>
+                        <TextBlock Classes="Label" Text="{Binding DictText[SizeMessage]}" />
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Slider Grid.Column="0"
+                                    Minimum="0"
+                                    Maximum="40000000"
+                                    Value="{Binding FileSizeMo, Mode=TwoWay}"
+                                    TickFrequency="100"
+                                    IsSnapToTickEnabled="True"
+                                    Width="300"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="20,0,0,0">
+                                <TextBox Text="{Binding FileSizeMo, Mode=TwoWay, StringFormat={}{0:F1}}"
+                                         Width="100"
+                                         VerticalAlignment="Center" />
+                                <TextBlock Text=" Ko"
+                                           VerticalAlignment="Center"
+                                           Margin="5,0,0,0"
+                                           Foreground="{DynamicResource TextColor}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M11.5,11L13,12.5L11.5,14L10,12.5L11.5,11M16.5,11L18,12.5L16.5,14L15,12.5L16.5,11M11,15H9V16.5L7.5,15H6V18H7.5V16.5H9V18H10.5V15H11M15.5,18H14V15H18V16.5H15.5V18Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[LogFormatMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[LogFormatDescriptionMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[FormatMessage]}" />
                         <ComboBox HorizontalAlignment="Stretch"
-                                  SelectedIndex="{Binding SelectedFormatIndex, Mode=TwoWay}" >
+                                  SelectedIndex="{Binding SelectedFormatIndex, Mode=TwoWay}">
                             <ComboBoxItem>JSON File (.json)</ComboBoxItem>
                             <ComboBoxItem>XML File (.xml)</ComboBoxItem>
                         </ComboBox>
@@ -111,48 +181,183 @@
             <Border Classes="Card">
                 <Grid ColumnDefinitions="Auto, *">
                     <Border Classes="IconContainer">
-                        <Path Data="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" 
-                              Fill="{DynamicResource PrimaryBrush}" 
-                              Stretch="Uniform" 
-                              Width="24" Height="24"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Path
+                            Data="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
 
                     <StackPanel Grid.Column="1">
-                        <TextBlock Classes="Title" Text="{Binding DictText[EncryptionMessage]}"/>
-                        <TextBlock Classes="Description" Text="{Binding DictText[EncryptionDescriptionMessage]}"/>
-                        
+                        <TextBlock Classes="Title" Text="{Binding DictText[EncryptionMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[EncryptionDescriptionMessage]}" />
+
                         <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,5">
-                            <TextBlock Text="{Binding DictText[EnableEncryptionMessage]}" 
-                                       VerticalAlignment="Center" 
-                                       Foreground="{DynamicResource TextColor}"/>
-                            <ToggleSwitch x:Name="EncryptionToggle" 
+                            <TextBlock Text="{Binding DictText[EnableEncryptionMessage]}"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextColor}" />
+                            <ToggleSwitch x:Name="EncryptionToggle"
                                           Grid.Column="1"
-                                          OffContent="No" 
+                                          OffContent="No"
                                           OnContent="Yes"
-                                          IsChecked="{Binding EnableEncryption}"/>
+                                          Foreground="{DynamicResource PrimaryColor}"
+                                          IsChecked="{Binding EnableEncryption}">
+                                <ToggleSwitch.Resources>
+                                </ToggleSwitch.Resources>
+                            </ToggleSwitch>
                         </Grid>
 
                         <StackPanel IsVisible="{Binding #EncryptionToggle.IsChecked}">
-                            <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}"/>
-                            <TextBox Watermark="e.g.: .txt, .docx, .pdf" 
+                            <TextBlock Classes="Label" Text="{Binding DictText[EncryptionKeyMessage]}" />
+                            <TextBox Watermark="{Binding DictText[EncryptionKeyPlaceholder]}"
+                                     Text="{Binding EncryptionKey}"
+                                     PasswordChar="•"
+                                     HorizontalAlignment="Stretch" />
+
+                            <TextBlock Classes="Label" Text="{Binding DictText[ExtensionsToEncryptMessage]}"
+                                       Margin="0,15,0,5" />
+                            <TextBox Watermark="e.g.: .txt, .docx, .pdf"
                                      Text="{Binding EncryptionExtensions}"
-                                     HorizontalAlignment="Stretch"/>
-                            <TextBlock Text="{Binding DictText[ExtensionsEncryptionDescriptionMessage]}" 
-                                       FontSize="11" 
-                                       Foreground="{DynamicResource TextColor}" 
-                                       Opacity="0.5" 
-                                       Margin="0,5,0,0" 
-                                       TextWrapping="Wrap"/>
+                                     HorizontalAlignment="Stretch" />
+                            <TextBlock Text="{Binding DictText[ExtensionsEncryptionDescriptionMessage]}"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextColor}"
+                                       Opacity="0.5"
+                                       Margin="0,5,0,0"
+                                       TextWrapping="Wrap" />
                         </StackPanel>
-                        
+
                     </StackPanel>
                 </Grid>
             </Border>
-            
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M17,13H7V11H17V13Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[ProcessMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[ProcessExplainMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[ProcessInputMessage]}" />
+                        <TextBox Text="{Binding ListeProcess }" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M14 2H6C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H18C19.11 22 20 21.11 20 20V8L14 2M11.3 19V14.5H8.8L13 7V11.5H15.5L11.3 19M13 9V3.5L18.5 9H13Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[PriorityFileMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[PriorityFileExplainMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[PriorityFileInputMessage]}" />
+                        <TextBox Text="{Binding ExtensionsPrio }" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Section Thème de couleurs -->
+            <Border Classes="Card">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Classes="IconContainer">
+                        <Path
+                            Data="M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform"
+                            Width="24" Height="24"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Classes="Title" Text="{Binding DictText[ThemeMessage]}" />
+                        <TextBlock Classes="Description" Text="{Binding DictText[ThemeDescriptionMessage]}" />
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[SelectThemeMessage]}" />
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding AvailableThemes}"
+                                  SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Width="20" Height="20" CornerRadius="4">
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{Binding PrimaryColor}" />
+                                            </Border.Background>
+                                        </Border>
+                                        <Border Width="20" Height="20" CornerRadius="4">
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{Binding SecondaryColor}" />
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Classes="Label" Text="{Binding DictText[CustomColorsMessage]}" Margin="0,20,0,5" />
+                        <Grid ColumnDefinitions="*, *, Auto" RowDefinitions="Auto, Auto">
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="{Binding DictText[PrimaryColorMessage]}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource TextColor}"
+                                           Opacity="0.7" />
+                                <TextBox Text="{Binding CustomPrimaryColor, Mode=TwoWay}"
+                                         Watermark="#008000" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Text="{Binding DictText[SecondaryColorMessage]}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource TextColor}"
+                                           Opacity="0.7" />
+                                <TextBox Text="{Binding CustomSecondaryColor, Mode=TwoWay}"
+                                         Watermark="#000000" />
+                            </StackPanel>
+
+                            <Button Grid.Row="0" Grid.Column="2"
+                                    Content="{Binding DictText[ApplyColorsMessage]}"
+                                    Command="{Binding ApplyCustomColorsCommand}"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0,0,0,0" />
+                        </Grid>
+
+                        <!-- Aperçu du thème -->
+                        <TextBlock Classes="Label" Text="{Binding DictText[PreviewMessage]}" Margin="0,15,0,5" />
+                        <Border CornerRadius="8" Padding="15" Margin="0,5,0,0"
+                                Background="{Binding PreviewSecondaryBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="15">
+                                <Border Width="40" Height="40" CornerRadius="8"
+                                        Background="{Binding PreviewPrimaryBrush}" />
+                                <TextBlock Text="Aperçu du thème"
+                                           VerticalAlignment="Center"
+                                           Foreground="{Binding PreviewTextBrush}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
             <Button Content="{Binding DictText[SaveButtonMessage]}"
-                    Command="{Binding ApplySavesCommand}">
-            </Button>
+                    Command="{Binding ApplySavesCommand}" />
 
         </StackPanel>
     </ScrollViewer>

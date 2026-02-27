@@ -1,35 +1,38 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using EasySaveLibrary;
 using EasySave.Services;
+using EasySaveLibrary;
 using EasySaveLibrary.Interfaces;
 using EasySaveLibrary.Model;
 
 namespace EasySave.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ViewModelBase
 {
     private readonly JobManager _jobManager;
-    private Dictionary<string, string> _dictText;
-    private int _selectedLanguageIndex;
 
     private ViewModelBase _currentPage;
+    private Dictionary<string, string> _dictText;
+    private int _selectedLanguageIndex;
+    public NotificationService Notifications => NotificationService.Instance;
+
+
+    public MainWindowViewModel()
+    {
+        _jobManager = null;
+    }
+
+    public MainWindowViewModel(JobManager jobManager)
+    {
+        _jobManager = jobManager;
+        DictText = jobManager.Language.GetTranslations();
+        _selectedLanguageIndex = jobManager.Language is French ? 0 : 1;
+    }
 
     // Cette propriété est liée au ContentControl du XAML
     public ViewModelBase CurrentPage
     {
         get => _currentPage;
         set => SetProperty(ref _currentPage, value);
-    }
-
-    public void NavJobs() => CurrentPage = new JobsViewModel(_jobManager);
-    public void NavStatus() => CurrentPage = new StatusViewModel(_jobManager);
-    public void NavSettings() => CurrentPage = new SettingsViewModel(_jobManager);
-    
-    public MainWindowViewModel()
-    {
-        _jobManager = null; 
     }
 
     public Dictionary<string, string> DictText
@@ -43,11 +46,23 @@ public partial class MainWindowViewModel : ViewModelBase
         get => _selectedLanguageIndex;
         set
         {
-            if (SetProperty(ref _selectedLanguageIndex, value))
-            {
-                ChangeLanguage(value);
-            }
+            if (SetProperty(ref _selectedLanguageIndex, value)) ChangeLanguage(value);
         }
+    }
+
+    public void NavJobs()
+    {
+        CurrentPage = new JobsViewModel(_jobManager);
+    }
+
+    public void NavStatus()
+    {
+        CurrentPage = new DecryptViewModel(_jobManager);
+    }
+
+    public void NavSettings()
+    {
+        CurrentPage = new SettingsViewModel(_jobManager);
     }
 
     private void ChangeLanguage(int languageIndex)
@@ -61,12 +76,15 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _jobManager.Language = newLanguage;
         DictText = _jobManager.Language.GetTranslations();
-    }
-    
-    public MainWindowViewModel(JobManager jobManager)
-    {
-        _jobManager = jobManager;
-        DictText = jobManager.Language.GetTranslations();
-        _selectedLanguageIndex = jobManager.Language is French ? 0 : 1;
+
+        if (CurrentPage is JobsViewModel jobsVm) jobsVm.DictText = _jobManager.Language.GetTranslations();
+
+        if (CurrentPage is SettingsViewModel settingsVm)
+        {
+            settingsVm.DictText = _jobManager.Language.GetTranslations();
+        }
+        
+        string message = languageIndex == 0 ? "Langue : Français" : "Language: English";
+        NotificationService.Instance.Show(message, ToastType.Info);
     }
 }
